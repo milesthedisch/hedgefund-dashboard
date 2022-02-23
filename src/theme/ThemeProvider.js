@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles";
 import { themeCreator } from "./base";
 
 export const ThemeContext = React.createContext({
@@ -14,7 +14,9 @@ const CustomThemeProvider = function (props) {
 
   return (
     <ThemeContext.Provider value={{ setThemeName, themeName }}>
-      <ThemeProvider theme={theme}>{props.children}</ThemeProvider>
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={theme}>{props.children}</ThemeProvider>
+      </StyledEngineProvider>
     </ThemeContext.Provider>
   );
 };

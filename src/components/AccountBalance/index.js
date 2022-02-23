@@ -98,7 +98,7 @@ function AccountBalance() {
           xs={12}
           md={6}
         >
-          <Hidden mdDown>
+          <Hidden lgDown>
             <Divider absolute orientation="vertical" />
           </Hidden>
           <Box p={4} flex={1}>
@@ -124,12 +124,7 @@ function AccountBalance() {
                         display: "flex",
                         alignItems: "center",
                       }}
-                    >
-                      <img
-                        alt="BTC"
-                        src="/static/images/placeholders/logo/bitcoin.png"
-                      />
-                    </ListItemAvatar>
+                    ></ListItemAvatar>
                     <ListItemText
                       primary="BTC"
                       primaryTypographyProps={{ variant: "h5", noWrap: true }}
@@ -153,12 +148,7 @@ function AccountBalance() {
                         display: "flex",
                         alignItems: "center",
                       }}
-                    >
-                      <img
-                        alt="XRP"
-                        src="/static/images/placeholders/logo/ripple.png"
-                      />
-                    </ListItemAvatar>
+                    ></ListItemAvatar>
                     <ListItemText
                       primary="XRP"
                       primaryTypographyProps={{ variant: "h5", noWrap: true }}
@@ -182,12 +172,7 @@ function AccountBalance() {
                         display: "flex",
                         alignItems: "center",
                       }}
-                    >
-                      <img
-                        alt="ADA"
-                        src="/static/images/placeholders/logo/cardano.png"
-                      />
-                    </ListItemAvatar>
+                    ></ListItemAvatar>
                     <ListItemText
                       primary="ADA"
                       primaryTypographyProps={{ variant: "h5", noWrap: true }}
@@ -211,12 +196,7 @@ function AccountBalance() {
                         display: "flex",
                         alignItems: "center",
                       }}
-                    >
-                      <img
-                        alt="ETH"
-                        src="/static/images/placeholders/logo/ethereum.png"
-                      />
-                    </ListItemAvatar>
+                    ></ListItemAvatar>
                     <ListItemText
                       primary="ETH"
                       primaryTypographyProps={{ variant: "h5", noWrap: true }}

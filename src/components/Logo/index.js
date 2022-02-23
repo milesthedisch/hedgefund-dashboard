@@ -1,4 +1,4 @@
-import { Box, Hidden, Tooltip } from "@mui/material";
+import { Box, Hidden } from "@mui/material";
 import logoSrc from "../../../public/Balmoral_Brandmark-Logo_RGB_Black-150x150.png";
 import Image from "next/image";
 import { Link } from "next/link";
@@ -33,8 +33,13 @@ const LogoText = styled(Box)(
 function Logo() {
   return (
     <LogoWrapper component={Link} href="/">
-      <Image src={logoSrc} width="50px" height="50px" />
-      <Hidden smDown>
+      <Image
+        alt="Balmoral Digital Logo"
+        src={logoSrc}
+        width="50px"
+        height="50px"
+      />
+      <Hidden mdDown>
         <LogoTextWrapper>
           <LogoText>Baloral Digital</LogoText>
         </LogoTextWrapper>

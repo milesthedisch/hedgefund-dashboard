@@ -7,7 +7,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import { useRef, useState } from "react";
-import { Link } from "../../../components/Link";
+import Link from "../../../components/Link";
 import { styled } from "@mui/material/styles";
 import ExpandMoreTwoToneIcon from "@mui/icons-material/ExpandMoreTwoTone";
 
@@ -82,22 +82,11 @@ function HeaderMenu() {
             classes={{ root: "MuiListItem-indicators" }}
             button
             component={Link}
-            to="/components/buttons"
+            href="/dashboard"
           >
             <ListItemText
               primaryTypographyProps={{ noWrap: true }}
-              primary="Buttons"
-            />
-          </ListItem>
-          <ListItem
-            classes={{ root: "MuiListItem-indicators" }}
-            button
-            component={Link}
-            to="/components/forms"
-          >
-            <ListItemText
-              primaryTypographyProps={{ noWrap: true }}
-              primary="Forms"
+              primary="Dashboard"
             />
           </ListItem>
           <ListItem
@@ -121,16 +110,16 @@ function HeaderMenu() {
         </List>
       </ListWrapper>
       <Menu anchorEl={ref.current} onClose={handleClose} open={isOpen}>
-        <MenuItem sx={{ px: 3 }} component={Link} to="/overview">
+        <MenuItem sx={{ px: 3 }} component={Link} href="/overview">
           Overview
         </MenuItem>
-        <MenuItem sx={{ px: 3 }} component={Link} to="/components/tabs">
+        <MenuItem sx={{ px: 3 }} component={Link} href="/components/tabs">
           Tabs
         </MenuItem>
-        <MenuItem sx={{ px: 3 }} component={Link} to="/components/cards">
+        <MenuItem sx={{ px: 3 }} component={Link} href="/components/cards">
           Cards
         </MenuItem>
-        <MenuItem sx={{ px: 3 }} component={Link} to="/components/modals">
+        <MenuItem sx={{ px: 3 }} component={Link} href="/components/modals">
           Modals
         </MenuItem>
       </Menu>

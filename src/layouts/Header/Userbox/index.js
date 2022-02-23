@@ -62,7 +62,7 @@ function HeaderUserbox() {
   const user = {
     name: "Jesse",
     avatar: "/static/images/avatars/1.jpg",
-    jobtitle: "Client",
+    jobtitle: "client",
   };
 
   const ref = useRef(null);
@@ -80,7 +80,7 @@ function HeaderUserbox() {
     <>
       <UserBoxButton color="secondary" ref={ref} onClick={handleOpen}>
         <Avatar variant="rounded" alt={user.name} src={user.avatar} />
-        <Hidden mdDown>
+        <Hidden lgDown>
           <UserBoxText>
             <UserBoxLabel variant="body1">{user.name}</UserBoxLabel>
             <UserBoxDescription variant="body2">
@@ -88,7 +88,7 @@ function HeaderUserbox() {
             </UserBoxDescription>
           </UserBoxText>
         </Hidden>
-        <Hidden smDown>
+        <Hidden mdDown>
           <ExpandMoreTwoToneIcon sx={{ ml: 1 }} />
         </Hidden>
       </UserBoxButton>

@@ -60,7 +60,7 @@ const AccountBalanceChart = ({ data: dataProp, ...rest }) => {
   useEffect(() => {
     setOptions(_options(theme));
     setData(_data(dataProp, theme));
-  }, []);
+  }, [dataProp, theme]);
 
   return !data ? (
     "Loading.."
