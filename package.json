@@ -26,8 +26,8 @@
   },
   "devDependencies": {
     "@mui/lab": "^5.0.0-alpha.69",
-    "eslint": "latest",
-    "eslint-config-next": "latest",
+    "eslint": "^8.9.0",
+    "eslint-plugin-react": "^7.28.0",
     "recharts": "^2.1.9"
   }
 }
