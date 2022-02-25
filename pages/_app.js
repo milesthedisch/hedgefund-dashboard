@@ -1,11 +1,13 @@
 import * as React from "react";
 import PropTypes from "prop-types";
 import Head from "next/head";
+import { UserProvider } from "@auth0/nextjs-auth0";
+
+import createEmotionCache from "../src/utility/createEmotionCache";
 import CustomThemeProvider from "../src/theme/ThemeProvider.js";
 import CssBaseline from "@mui/material/CssBaseline";
 import { CacheProvider } from "@emotion/react";
 import { LightTheme } from "../src/theme/schemes/LightTheme.js";
-import createEmotionCache from "../src/utility/createEmotionCache";
 import Layout from "../src/layouts";
 
 // Client-side cache, shared for the whole session of the user in the browser.
@@ -22,9 +24,11 @@ export default function MyApp(props) {
       <CustomThemeProvider theme={LightTheme}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
+        <UserProvider>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </UserProvider>
       </CustomThemeProvider>
     </CacheProvider>
   );

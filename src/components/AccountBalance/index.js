@@ -98,9 +98,6 @@ function AccountBalance() {
           xs={12}
           md={6}
         >
-          <Hidden lgDown>
-            <Divider absolute orientation="vertical" />
-          </Hidden>
           <Box p={4} flex={1}>
             <Grid container spacing={0}>
               <Grid

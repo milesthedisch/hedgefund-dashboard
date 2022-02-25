@@ -1,11 +1,10 @@
 import * as React from "react";
-import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-import ProTip from "../src/ProTip";
+import { Typography, Container, Box, Card } from "@mui/material";
 import Link from "../src/components/Link";
 import Head from "next/head";
-import Copyright from "../src/Copyright";
+import Copyright from "../src/components/Copyright";
+import SignInOther from "../src/components/SignIn/auth0";
+import SignIn from "../src/components/SignIn";
 import { Button } from "@mui/material";
 
 export default function Index() {
@@ -14,13 +13,12 @@ export default function Index() {
       <Head>
         <title>index</title>
       </Head>
-      <Box sx={{ my: 4 }}>
-        <Button component={Link} href="/dashboard">
-          Dashboard
-        </Button>
-        <ProTip />
-        <Copyright />
-      </Box>
+      <Card sx={{ my: 10 }}>
+        <Container>
+          <SignInOther />
+          <SignIn />
+        </Container>
+      </Card>
     </Container>
   );
 }

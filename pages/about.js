@@ -4,9 +4,8 @@ import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import ProTip from "../src/ProTip";
 import Link from "../src/components/Link";
-import Copyright from "../src/Copyright";
+import Copyright from "../src/components/Copyright";
 import { ThemeContext } from "../src/theme/ThemeProvider";
 
 export default function About() {
@@ -27,7 +26,6 @@ export default function About() {
         </Button>
         <Button onClick={() => setThemeName("DarkTheme")}>Dark Theme</Button>
         <Button onClick={() => setThemeName("LightTheme")}>Light Theme</Button>
-        <ProTip />
         <Copyright />
       </Box>
     </Container>
