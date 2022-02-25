@@ -16,6 +16,8 @@ const clientSideEmotionCache = createEmotionCache();
 export default function MyApp(props) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
 
+  console.log(LightTheme);
+
   return (
     <CacheProvider value={emotionCache}>
       <Head>

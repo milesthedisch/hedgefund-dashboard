@@ -1,6 +1,4 @@
 import { alpha, createTheme, lighten, darken } from "@mui/material";
-import { adaptV4Theme } from '@mui/material/styles';
-import "@mui/lab/themeAugmentation";
 
 const themeColors = {
   primary: "#5569ff",
@@ -124,7 +122,7 @@ const colors = {
   },
 };
 
-export const LightTheme = createTheme(adaptV4Theme({
+export const LightTheme = createTheme({
   // direction: i18n.dir(),
   colors: {
     gradients: {
@@ -1152,4 +1150,4 @@ export const LightTheme = createTheme(adaptV4Theme({
     "none",
     "none",
   ],
-}));
+});

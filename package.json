@@ -23,6 +23,7 @@
     "date-fns": "^2.28.0",
     "formik": "^2.2.9",
     "next": "latest",
+    "nprogress": "^0.2.0",
     "prop-types": "latest",
     "react": "latest",
     "react-chartjs-2": "^4.0.1",

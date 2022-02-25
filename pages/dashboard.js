@@ -9,10 +9,16 @@ import AccountSecurity from "../src/components/AccountSecurity";
 
 function DashboardCrypto() {
   return (
-    <Container>
+    <>
       <Head>
         <title>Crypto Dashboard</title>
       </Head>
+      <style jsx global>{`
+        #__next {
+          height: 100%;
+          width: 100%;
+        }
+      `}</style>
       <PageTitleWrapper>
         <PageHeader />
       </PageTitleWrapper>
@@ -33,7 +39,7 @@ function DashboardCrypto() {
         </Grid>
       </Container>
       <Footer />
-    </Container>
+    </>
   );
 }
 

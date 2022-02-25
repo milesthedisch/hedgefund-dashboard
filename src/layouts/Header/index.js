@@ -9,6 +9,7 @@ import HeaderMenu from "./Menu";
 import HeaderButtons from "./Buttons";
 import HeaderUserbox from "./Userbox";
 import Logo from "../../components/Logo";
+import { useUser } from "@auth0/nextjs-auth0";
 
 const HeaderWrapper = styled(Box)(
   ({ theme }) => `
@@ -30,6 +31,7 @@ const HeaderWrapper = styled(Box)(
 );
 
 function Header() {
+  const { user } = useUser();
   return (
     <HeaderWrapper display="flex" alignItems="center">
       <Box display="flex" alignItems="center">
@@ -38,10 +40,14 @@ function Header() {
           <HeaderMenu />
         </Hidden>
       </Box>
-      <Box display="flex" alignItems="center">
-        <HeaderButtons />
-        <HeaderUserbox />
-      </Box>
+      {user ? (
+        <Box display="flex" alignItems="center">
+          <HeaderButtons />
+          <HeaderUserbox />
+        </Box>
+      ) : (
+        ""
+      )}
     </HeaderWrapper>
   );
 }
