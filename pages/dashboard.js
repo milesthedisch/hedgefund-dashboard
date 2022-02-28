@@ -49,7 +49,7 @@ const Dashboard = (props) => (
     </Container>
     <Footer />
   </>
-)user={user};
+);
 
 function DashboardCrypto() {
   const router = useRouter();

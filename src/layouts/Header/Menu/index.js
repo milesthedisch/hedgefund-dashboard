@@ -11,6 +11,8 @@ import Link from "../../../components/Link";
 import { styled } from "@mui/material/styles";
 import ExpandMoreTwoToneIcon from "@mui/icons-material/ExpandMoreTwoTone";
 
+import { useUser } from "@auth0/nextjs-auth0";
+
 const ListWrapper = styled(Box)(
   ({ theme }) => `
         .MuiTouchRipple-root {
@@ -63,21 +65,27 @@ const ListWrapper = styled(Box)(
 );
 
 function HeaderMenu() {
+  const { user } = useUser();
+
   return (
     <>
       <ListWrapper>
         <List disablePadding component={Box} display="flex">
-          <ListItem
-            classes={{ root: "MuiListItem-indicators" }}
-            button
-            component={Link}
-            href="/dashboard"
-          >
-            <ListItemText
-              primaryTypographyProps={{ noWrap: true }}
-              primary="Dashboard"
-            />
-          </ListItem>
+          {user ? (
+            <ListItem
+              classes={{ root: "MuiListItem-indicators" }}
+              button
+              component={Link}
+              href="/dashboard"
+            >
+              <ListItemText
+                primaryTypographyProps={{ noWrap: true }}
+                primary="Dashboard"
+              />
+            </ListItem>
+          ) : (
+            ""
+          )}
         </List>
       </ListWrapper>
     </>
