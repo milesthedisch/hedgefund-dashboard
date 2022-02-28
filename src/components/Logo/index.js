@@ -32,7 +32,7 @@ const LogoText = styled(Box)(
 
 function Logo() {
   return (
-    <LogoWrapper component={Link} href="/">
+    <LogoWrapper component={Link} href="/dashboard">
       <Image
         alt="Balmoral Digital Logo"
         src={logoSrc}

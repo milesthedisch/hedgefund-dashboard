@@ -1,11 +1,9 @@
 import { Typography, Avatar, Grid } from "@mui/material";
+import { useUser } from "@auth0/nextjs-auth0";
 import { useTheme } from "@mui/material/styles";
 
 function PageHeader() {
-  const user = {
-    name: "Jesse",
-    avatar: "/static/images/avatars/1.jpg",
-  };
+  const { user } = useUser();
   const theme = useTheme();
 
   return (

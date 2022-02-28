@@ -43,7 +43,7 @@ function Header() {
       {user ? (
         <Box display="flex" alignItems="center">
           <HeaderButtons />
-          <HeaderUserbox />
+          <HeaderUserbox user={user} />
         </Box>
       ) : (
         ""

@@ -5,18 +5,22 @@ import {
   Box,
   Card,
   CircularProgress,
+  Anchor,
+  Button,
 } from "@mui/material";
 import Head from "next/head";
 import SignInOther from "../src/components/SignIn/auth0";
-import SignIn from "../src/components/SignIn";
-import SuspenseLoader from "../src/components/SuspenseLoader";
 import { useUser } from "@auth0/nextjs-auth0";
+import { useRouter } from "next/router";
 
 export default function Index() {
   const { user, error, isLoading } = useUser();
 
-  console.log(user, error, isLoading);
+  const router = useRouter();
 
+  if (user) {
+    router.push("/dashboard");
+  }
   return (
     <Container maxWidth="sm">
       <Head>
@@ -38,7 +42,14 @@ export default function Index() {
               ""
             )}
             {!isLoading && user ? (
-              <a href="/api/auth/logout">logout</a>
+              <Button
+                component={Anchor}
+                href="/api/auth/logout"
+                fullWidth
+                variant="outlined"
+              >
+                Log Out
+              </Button>
             ) : (
               <SignInOther />
             )}

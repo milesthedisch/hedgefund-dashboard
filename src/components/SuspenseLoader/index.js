@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import NProgress from "nprogress";
 import { Box, CircularProgress } from "@mui/material";
 
-function SuspenseLoader() {
+function SuspenseLoader({ size }) {
   useEffect(() => {
     NProgress.start();
 
@@ -18,7 +18,11 @@ function SuspenseLoader() {
       alignItems="center"
       justifyContent="center"
     >
-      <CircularProgress size={64} disableshrink thickness={3} />
+      <CircularProgress
+        size={size || 64}
+        disableshrink={"true"}
+        thickness={3}
+      />
     </Box>
   );
 }

@@ -34,7 +34,7 @@ const AvatarSuccess = styled(Avatar)(
 `
 );
 
-function AccountBalance() {
+function AccountBalance({ data }) {
   const cryptoBalance = {
     datasets: [
       {
@@ -55,14 +55,14 @@ function AccountBalance() {
             </Typography>
             <Box>
               <Typography variant="h1" gutterBottom>
-                $54,584.23
+                ${data.balance}
               </Typography>
               <Typography
                 variant="h4"
                 fontWeight="normal"
                 color="text.secondary"
               >
-                1.0045983485234 BTC
+                {data.shares} Shares
               </Typography>
               <Box display="flex" sx={{ py: 4 }} alignItems="center">
                 <AvatarSuccess sx={{ mr: 2 }} variant="rounded">

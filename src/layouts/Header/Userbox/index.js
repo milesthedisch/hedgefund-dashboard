@@ -58,13 +58,8 @@ const UserBoxDescription = styled(Typography)(
 `
 );
 
-function HeaderUserbox() {
-  const user = {
-    name: "Jesse",
-    avatar: "/static/images/avatars/1.jpg",
-    jobtitle: "client",
-  };
-
+function HeaderUserbox(props) {
+  const { user } = props;
   const ref = useRef(null);
   const [isOpen, setOpen] = useState(false);
 
@@ -84,7 +79,7 @@ function HeaderUserbox() {
           <UserBoxText>
             <UserBoxLabel variant="body1">{user.name}</UserBoxLabel>
             <UserBoxDescription variant="body2">
-              {user.jobtitle}
+              {props.user.jobtitle || ""}
             </UserBoxDescription>
           </UserBoxText>
         </Hidden>
