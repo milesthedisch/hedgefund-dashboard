@@ -29,19 +29,7 @@ export default function Index() {
       <Card sx={{ my: 10 }}>
         <Container>
           <Box sx={{ my: 10 }}>
-            {isLoading ? (
-              <Box
-                sx={{ width: "100%", height: "100%" }}
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-              >
-                <CircularProgress size={64} thickness={3} />
-              </Box>
-            ) : (
-              ""
-            )}
-            {!isLoading && user ? (
+            {user ? (
               <Button
                 component={Anchor}
                 href="/api/auth/logout"

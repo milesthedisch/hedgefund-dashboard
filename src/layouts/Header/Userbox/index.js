@@ -23,6 +23,8 @@ import AccountBoxTwoToneIcon from "@mui/icons-material/AccountBoxTwoTone";
 import LockOpenTwoToneIcon from "@mui/icons-material/LockOpenTwoTone";
 import AccountTreeTwoToneIcon from "@mui/icons-material/AccountTreeTwoTone";
 
+import avatarHelper from "./helper";
+
 const UserBoxButton = styled(Button)(
   ({ theme }) => `
         padding-left: ${theme.spacing(1)};
@@ -41,6 +43,7 @@ const UserBoxText = styled(Box)(
   ({ theme }) => `
         text-align: left;
         padding-left: ${theme.spacing(1)};
+        align-items: center;
 `
 );
 
@@ -74,12 +77,12 @@ function HeaderUserbox(props) {
   return (
     <>
       <UserBoxButton color="secondary" ref={ref} onClick={handleOpen}>
-        <Avatar variant="rounded" alt={user.name} src={user.avatar} />
+        <Avatar alt={user.name} {...avatarHelper(user.name)} />
         <Hidden lgDown>
           <UserBoxText>
             <UserBoxLabel variant="body1">{user.name}</UserBoxLabel>
             <UserBoxDescription variant="body2">
-              {props.user.jobtitle || ""}
+              {user.jobtitle || "Client"}
             </UserBoxDescription>
           </UserBoxText>
         </Hidden>
@@ -101,7 +104,7 @@ function HeaderUserbox(props) {
         }}
       >
         <MenuUserBox sx={{ minWidth: 210 }} display="flex">
-          <Avatar variant="rounded" alt={user.name} src={user.avatar} />
+          <Avatar {...avatarHelper(user.name)} />
           <UserBoxText>
             <UserBoxLabel variant="body1">{user.name}</UserBoxLabel>
             <UserBoxDescription variant="body2">
