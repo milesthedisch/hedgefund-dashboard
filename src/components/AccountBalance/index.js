@@ -36,7 +36,6 @@ const AvatarSuccess = styled(Avatar)(
 );
 
 function AccountBalance({ data, isValidating, refreshInterval }) {
-  console.log(data, isValidating, refreshInterval);
   const cryptoBalance = {
     datasets: [
       {
@@ -64,6 +63,7 @@ function AccountBalance({ data, isValidating, refreshInterval }) {
                 fontWeight="normal"
                 color="text.secondary"
               >
+
                 {data.shares} Units
               </Typography>
               <Box display="flex" sx={{ py: 4 }} alignItems="center">

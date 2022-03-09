@@ -32,8 +32,6 @@ import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
 import BulkActions from "../BulkActions";
 
 const getStatusLabel = (userStatus) => {
-  console.log(userStatus);
-
   const map = {
     failed: {
       text: "Failed",
@@ -55,7 +53,6 @@ const getStatusLabel = (userStatus) => {
 };
 
 const applyFilters = (users, filters) => {
-  console.log(users);
   return users.filter((user) => {
     let matches = true;
 
@@ -72,7 +69,6 @@ const applyPagination = (cryptoOrders, page, limit) => {
 };
 
 const RecentOrdersTable = ({ users }) => {
-  console.log(users);
 
   const [selectedCryptoOrders, setSelectedCryptoOrders] = useState([]);
   const selectedBulkActions = selectedCryptoOrders.length > 0;

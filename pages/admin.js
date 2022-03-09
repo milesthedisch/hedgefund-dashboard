@@ -46,8 +46,6 @@ export default withPageAuthRequired(function (props) {
 
   const { data, error } = useSWR("/api/sheets", fetcher);
 
-  console.log(data);
-
   if (data) {
     return <ApplicationsTransactions users={data} />;
   }
