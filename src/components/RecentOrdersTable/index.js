@@ -77,9 +77,6 @@ const RecentOrdersTable = ({ cryptoOrders }) => {
     status: null,
   });
 
-  console.log(limit);
-  console.log(page);
-
   const statusOptions = [
     {
       id: "all",
@@ -341,7 +338,7 @@ RecentOrdersTable.propTypes = {
 
 RecentOrdersTable.defaultProps = {
   cryptoOrders: [],
-  cryptoOrders: []
+  cryptoOrders: [],
 };
 
 export default RecentOrdersTable;

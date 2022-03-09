@@ -2,7 +2,7 @@ import { Card } from "@mui/material";
 import RecentOrdersTable from "../RecentOrdersTable";
 import { subDays } from "date-fns";
 
-function RecentOrders() {
+function RecentOrders({ data }) {
   const cryptoOrders = [
     {
       id: "1",
@@ -138,7 +138,7 @@ function RecentOrders() {
 
   return (
     <Card>
-      <RecentOrdersTable cryptoOrders={cryptoOrders} />
+      <RecentOrdersTable data={data} cryptoOrders={cryptoOrders} />
     </Card>
   );
 }

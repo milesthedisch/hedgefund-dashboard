@@ -17,6 +17,7 @@ import { styled } from "@mui/material/styles";
 import TrendingUp from "@mui/icons-material/TrendingUp";
 import AccountBalanceChart from "../AccountBalanceChart";
 import Text from "../Text";
+import SuspenseLoader from "../SuspenseLoader";
 
 const AccountBalanceChartWrapper = styled(AccountBalanceChart)(
   () => `
@@ -34,7 +35,8 @@ const AvatarSuccess = styled(Avatar)(
 `
 );
 
-function AccountBalance({ data }) {
+function AccountBalance({ data, isValidating, refreshInterval }) {
+  console.log(data, isValidating, refreshInterval);
   const cryptoBalance = {
     datasets: [
       {

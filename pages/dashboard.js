@@ -12,12 +12,14 @@ import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import useSWR from "swr";
 import { useRouter } from "next/router";
 
+const REFRESH_INTERVAL = 10000;
+
 const fetcher = async (uri) => {
   const response = await fetch(uri);
   return response.json();
 };
 
-const Dashboard = (props) => (
+const Dashboard = ({ data, refreshInterval, isValidating }) => (
   <>
     <Head>
       <title>Crypto Dashboard</title>
@@ -40,7 +42,11 @@ const Dashboard = (props) => (
         spacing={3}
       >
         <Grid item xs={12}>
-          <AccountBalance data={props.data} />
+          <AccountBalance
+            data={data}
+            refreshInterval={refreshInterval}
+            isValidating={isValidating}
+          />
         </Grid>
         <Grid item lg={12} xs={12}>
           <AccountSecurity />
@@ -54,10 +60,18 @@ const Dashboard = (props) => (
 function DashboardCrypto() {
   const router = useRouter();
 
-  const { data, error } = useSWR("/api/sheets/user", fetcher);
+  const { data, error, isValidating } = useSWR("/api/sheets/user", fetcher, {
+    refreshInterval: REFRESH_INTERVAL,
+  });
 
   if (data) {
-    return <Dashboard data={data} />;
+    return (
+      <Dashboard
+        data={data}
+        isValidating={isValidating}
+        refreshInterval={REFRESH_INTERVAL}
+      />
+    );
   }
 
   if (error) {
