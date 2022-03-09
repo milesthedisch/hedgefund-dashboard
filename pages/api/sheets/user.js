@@ -4,6 +4,11 @@ import { withApiAuthRequired, getSession } from "@auth0/nextjs-auth0";
 
 async function handler(req, res) {
   const { user } = getSession(req, res);
+
+  if (!user) {
+    res.status(401);
+  }
+
   const auth = new google.auth.GoogleAuth({
     credentials: {
       client_email: process.env.GOOGLE_CLIENT_EMAIL,

@@ -8,9 +8,10 @@ import RecentOrders from "../src/components/RecentOrders";
 import SuspenseLoader from "../src/components/SuspenseLoader";
 
 import { useUser, withPageAuthRequired } from "@auth0/nextjs-auth0";
+import router from "next/router";
 import useSWR from "swr";
 
-const ApplicationsTransactions = (data) => (
+const ApplicationsTransactions = ({ users }) => (
   <>
     <Head>
       <title>Transactions - Applications</title>
@@ -27,7 +28,7 @@ const ApplicationsTransactions = (data) => (
         spacing={3}
       >
         <Grid item xs={12}>
-          <RecentOrders data={data} />
+          <RecentOrders users={users} />
         </Grid>
       </Grid>
     </Container>
@@ -45,11 +46,14 @@ export default withPageAuthRequired(function (props) {
 
   const { data, error } = useSWR("/api/sheets", fetcher);
 
+  console.log(data);
+
   if (data) {
-    return <ApplicationsTransactions data={data} />;
+    return <ApplicationsTransactions users={data} />;
   }
 
   if (error) {
+    console.error(error);
     return router.push("/404");
   }
 

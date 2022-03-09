@@ -24,13 +24,26 @@ async function handler(req, res) {
 
   const { data } = await sheets.spreadsheets.values.get({
     spreadsheetId: "1tzsbxOYZNQoHmJl0cxiGbx_F5tfl91Nq83aoC_WAI7Q",
-    range: "Sheet1!A:C",
+    range: "Sheet1!A:E",
   });
 
-  const row = data.values.shift;
-  const allUsers = data.values;
+  const rows = data.values.shift().map((v) => v.toLowerCase());
 
-  return res.status(201).json(allUsers);
+  const userData = data.values;
+
+  const result = userData.reduce((obj, user, i) => {
+    const result = {};
+
+    rows.forEach((row, idx) => (result[row] = userData[i][idx]));
+
+    result["id"] = i;
+
+    obj.push(result);
+
+    return obj;
+  }, []);
+
+  return res.status(201).json(result);
 }
 
 export default withApiAuthRequired(handler);
