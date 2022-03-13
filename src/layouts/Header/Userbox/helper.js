@@ -19,6 +19,10 @@ function stringToColor(string = "") {
 }
 
 function stringAvatar(name = "User User", opts = {}) {
+  if (name.includes("@")) {
+    name = name.split("@").join(" ");
+  }
+
   return {
     sx: {
       bgcolor: stringToColor(name),

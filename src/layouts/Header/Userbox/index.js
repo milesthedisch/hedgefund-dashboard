@@ -129,9 +129,9 @@ function HeaderUserbox(props) {
         </List>
         <Divider />
         <Box sx={{ m: 1 }}>
-          <Button color="primary" fullWidth>
+          <Button href="/api/auth/logout" color="primary" fullWidth>
             <LockOpenTwoToneIcon sx={{ mr: 1 }} />
-            <a href="/api/auth/logout">Sign out</a>
+            Sign out
           </Button>
         </Box>
       </Popover>

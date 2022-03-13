@@ -6,7 +6,7 @@ async function handler(req, res) {
   const { user } = getSession(req, res);
 
   if (!user) {
-    res.status(401);
+    return res.status(401);
   }
 
   const auth = new google.auth.GoogleAuth({
@@ -31,10 +31,14 @@ async function handler(req, res) {
   const rows = data.values.shift().map((str) => str.toLowerCase());
   const userData = data.values.filter((row, index) => row[0] === user.email);
 
-  var result = {};
-  rows.forEach((row, idx) => (result[row] = userData[0][idx]));
+  if (!userData.length) {
+    return res.status(404).send(404);
+  } else {
+    var result = {};
+    rows.forEach((row, idx) => (result[row] = userData[0][idx]));
 
-  return res.status(201).json(result);
+    return res.status(201).json(result);
+  }
 }
 
 export default withApiAuthRequired(handler);

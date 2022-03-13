@@ -69,7 +69,6 @@ const applyPagination = (cryptoOrders, page, limit) => {
 };
 
 const RecentOrdersTable = ({ users }) => {
-
   const [selectedCryptoOrders, setSelectedCryptoOrders] = useState([]);
   const selectedBulkActions = selectedCryptoOrders.length > 0;
   const [page, setPage] = useState(0);
@@ -215,17 +214,17 @@ const RecentOrdersTable = ({ users }) => {
                     />
                   </TableCell>
                   <TableCell>
-                    <Typography variant="body2" color="text.secondary" noWrap>
+                    <Typography variant="body2" color="text.primary" noWrap>
                       {user.date}
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography variant="body2" color="text.secondary" noWrap>
+                    <Typography variant="body2" color="text.primary" noWrap>
                       {user.clients}
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
-                    <Typography variant="body2" color="text.secondary" noWrap>
+                    <Typography variant="body2" color="text.primary" noWrap>
                       {user.email}
                     </Typography>
                   </TableCell>

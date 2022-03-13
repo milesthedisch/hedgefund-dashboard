@@ -64,7 +64,15 @@ function DashboardCrypto() {
     refreshInterval: REFRESH_INTERVAL,
   });
 
-  if (data) {
+  if (data == 404) {
+    return router.push("/404");
+  }
+
+  if (error) {
+    return router.push("/404");
+  }
+
+  if (!isValidating) {
     return (
       <Dashboard
         data={data}
@@ -72,10 +80,6 @@ function DashboardCrypto() {
         refreshInterval={REFRESH_INTERVAL}
       />
     );
-  }
-
-  if (error) {
-    return router.push("/404");
   }
 
   return (

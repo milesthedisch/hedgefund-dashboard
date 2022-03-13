@@ -57,6 +57,7 @@ function AccountBalance({ data, isValidating, refreshInterval }) {
             <Box>
               <Typography variant="h1" gutterBottom>
                 ${data.balance}
+
               </Typography>
               <Typography
                 variant="h4"

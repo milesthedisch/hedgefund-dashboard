@@ -18,9 +18,14 @@ export default function Index() {
 
   const router = useRouter();
 
+  if (error) {
+    router.push("/500");
+  }
+
   if (user) {
     router.push("/dashboard");
   }
+
   return (
     <Container maxWidth="sm">
       <Head>

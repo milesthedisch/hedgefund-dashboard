@@ -46,13 +46,16 @@ export default withPageAuthRequired(function (props) {
 
   const { data, error } = useSWR("/api/sheets", fetcher);
 
-  if (data) {
-    return <ApplicationsTransactions users={data} />;
+  if (typeof data === "number") {
+    return router.push("/404");
   }
 
   if (error) {
-    console.error(error);
     return router.push("/404");
+  }
+
+  if (data) {
+    return <ApplicationsTransactions users={data} />;
   }
 
   return (
