@@ -27,7 +27,7 @@ async function handler(req, res) {
 
   const { data } = await sheets.spreadsheets.values.get({
     spreadsheetId: "1tzsbxOYZNQoHmJl0cxiGbx_F5tfl91Nq83aoC_WAI7Q",
-    range: "Sheet1!A:E",
+    range: "productionA:E",
   });
 
   const rows = data.values.shift().map((v) => v.toLowerCase());

@@ -23,9 +23,16 @@ async function handler(req, res) {
     version: "v4",
   });
 
+  if (process.env.VERCEL_ENV === "preview") {
+    const { data } = await sheets.spreadsheets.values.get({
+      spreadsheetId: "1tzsbxOYZNQoHmJl0cxiGbx_F5tfl91Nq83aoC_WAI7Q",
+      range: "preview!A:F",
+    });
+  }
+
   const { data } = await sheets.spreadsheets.values.get({
     spreadsheetId: "1tzsbxOYZNQoHmJl0cxiGbx_F5tfl91Nq83aoC_WAI7Q",
-    range: "Sheet1!A:F",
+    range: "production!A:F",
   });
 
   const rows = data.values.shift().map((str) => str.toLowerCase());
