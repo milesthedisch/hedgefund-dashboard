@@ -27,7 +27,8 @@ async function handler(req, res) {
 
   const { data } = await sheets.spreadsheets.values.get({
     spreadsheetId: "1tzsbxOYZNQoHmJl0cxiGbx_F5tfl91Nq83aoC_WAI7Q",
-    range: "productionA:E",
+    range:
+      process.env.VERCEL_ENV === "preview" ? "preview!A:F" : "production!A:F",
   });
 
   const rows = data.values.shift().map((v) => v.toLowerCase());

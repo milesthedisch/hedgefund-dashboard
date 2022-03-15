@@ -9,8 +9,6 @@ async function handler(req, res) {
     return res.status(401);
   }
 
-  console.log(process.env);
-
   const auth = new google.auth.GoogleAuth({
     credentials: {
       client_email: process.env.GOOGLE_CLIENT_EMAIL,
@@ -24,9 +22,6 @@ async function handler(req, res) {
     auth,
     version: "v4",
   });
-
-  if (process.env.VERCEL_ENV === "preview") {
-  }
 
   const { data } = await sheets.spreadsheets.values.get({
     spreadsheetId: "1tzsbxOYZNQoHmJl0cxiGbx_F5tfl91Nq83aoC_WAI7Q",

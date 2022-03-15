@@ -42,11 +42,7 @@ const Dashboard = ({ data, refreshInterval, isValidating }) => (
         spacing={3}
       >
         <Grid item xs={12}>
-          <AccountBalance
-            data={data}
-            refreshInterval={refreshInterval}
-            isValidating={isValidating}
-          />
+          <AccountBalance data={data} isValidating={isValidating} />
         </Grid>
         <Grid item lg={12} xs={12}>
           <AccountSecurity />
