@@ -12,6 +12,8 @@ import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import useSWR from "swr";
 import { useRouter } from "next/router";
 
+import refreshInterval from "../src/utility/refreshInterval";
+
 const REFRESH_INTERVAL = 10000;
 
 const fetcher = async (uri) => {
@@ -42,7 +44,7 @@ const Dashboard = ({ data, refreshInterval, isValidating }) => (
         spacing={3}
       >
         <Grid item xs={12}>
-          <AccountBalance data={data} isValidating={isValidating} />
+          <AccountBalance userData={data} isValidating={isValidating} />
         </Grid>
         <Grid item lg={12} xs={12}>
           <AccountSecurity />
@@ -57,34 +59,30 @@ function DashboardCrypto() {
   const router = useRouter();
 
   const { data, error, isValidating } = useSWR("/api/sheets/user", fetcher, {
-    refreshInterval: REFRESH_INTERVAL,
+    refreshInterval: refreshInterval(),
   });
 
-  if (data == 404) {
+  if (data == 404 || error) {
     return router.push("/404");
   }
 
-  if (error) {
-    return router.push("/404");
-  }
-
-  if (!isValidating) {
+  if (!data) {
     return (
-      <Dashboard
-        data={data}
-        isValidating={isValidating}
-        refreshInterval={REFRESH_INTERVAL}
-      />
+      <Container
+        sx={{ height: "80vh", display: "flex", justifyContent: "center" }}
+      >
+        {/* The default value size is 64 */}
+        <SuspenseLoader size={64 * 1.5} />
+      </Container>
     );
   }
 
   return (
-    <Container
-      sx={{ height: "80vh", display: "flex", justifyContent: "center" }}
-    >
-      {/* The default value size is 64 */}
-      <SuspenseLoader size={64 * 1.5} />
-    </Container>
+    <Dashboard
+      data={data}
+      isValidating={isValidating}
+      refreshInterval={REFRESH_INTERVAL}
+    />
   );
 }
 

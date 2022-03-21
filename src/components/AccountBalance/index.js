@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   Button,
   Card,
@@ -11,10 +12,13 @@ import {
   ListItemText,
   List,
   ListItemAvatar,
+  CircularProgress,
 } from "@mui/material";
 
+import { useTheme } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import TrendingUp from "@mui/icons-material/TrendingUp";
+
 import AccountBalanceChart from "../AccountBalanceChart";
 import Text from "../Text";
 import SuspenseLoader from "../SuspenseLoader";
@@ -35,37 +39,44 @@ const AvatarSuccess = styled(Avatar)(
 `
 );
 
-function AccountBalance({ data, isValidating, refreshInterval }) {
-  const cryptoBalance = {
-    datasets: [
-      {
-        data: [20, 10, 40, 30],
-        backgroundColor: ["#ff9900", "#1c81c2", "#333", "#5c6ac0"],
-      },
-    ],
-    labels: ["Bitcoin", "Ripple", "Cardano", "Ethereum"],
-  };
-
+function AccountBalance({ userData, isValidating, refreshInterval }) {
   return (
     <Card>
       <Grid spacing={0} container>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={6} lg={5}>
           <Box p={4}>
             <Typography sx={{ pb: 3 }} variant="h4">
               Account Balance
             </Typography>
             <Box>
-              <Typography variant="h1" gutterBottom>
-                ${data.balance}
-
+              <Typography
+                variant="h1"
+                gutterBottom
+                display="flex"
+                alignItems="center"
+              >
+                ${userData.balance}
+                <Box
+                  sx={{ ml: 2 }}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  {isValidating ? (
+                    <CircularProgress size={"2rem"} />
+                  ) : (
+                    <CircularProgress size={0} />
+                  )}
+                </Box>
+                {/*
+                 */}
               </Typography>
               <Typography
                 variant="h4"
                 fontWeight="normal"
                 color="text.secondary"
               >
-
-                {data.shares} Units
+                {userData.shares} Units
               </Typography>
               <Box display="flex" sx={{ py: 4 }} alignItems="center">
                 <AvatarSuccess sx={{ mr: 2 }} variant="rounded">
@@ -79,143 +90,19 @@ function AccountBalance({ data, isValidating, refreshInterval }) {
                 </Box>
               </Box>
             </Box>
-            <Grid container spacing={3}>
-              <Grid sm item>
-                <Button fullWidth variant="outlined">
-                  Send
-                </Button>
-              </Grid>
-              <Grid sm item>
-                <Button fullWidth variant="contained">
-                  Receive
-                </Button>
-              </Grid>
-            </Grid>
           </Box>
         </Grid>
         <Grid
-          sx={{ position: "relative" }}
           display="flex"
           alignItems="center"
+          justifyContent="center"
           item
           xs={12}
           md={6}
+          lg={7}
         >
-          <Box p={4} flex={1}>
-            <Grid container spacing={0}>
-              <Grid
-                xs={12}
-                sm={5}
-                item
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-              >
-                <Box style={{ height: "160px" }}>
-                  <AccountBalanceChartWrapper data={cryptoBalance} />
-                </Box>
-              </Grid>
-              <Grid xs={12} sm={7} item display="flex" alignItems="center">
-                <List disablePadding sx={{ width: "100%" }}>
-                  <ListItem disableGutters>
-                    <ListItemAvatar
-                      sx={{
-                        minWidth: "46px",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    ></ListItemAvatar>
-                    <ListItemText
-                      primary="BTC"
-                      primaryTypographyProps={{ variant: "h5", noWrap: true }}
-                      secondary="Bitcoin"
-                      secondaryTypographyProps={{
-                        variant: "subtitle2",
-                        noWrap: true,
-                      }}
-                    />
-                    <Box>
-                      <Typography align="right" variant="h4" noWrap>
-                        20%
-                      </Typography>
-                      <Text color="success">+2.54%</Text>
-                    </Box>
-                  </ListItem>
-                  <ListItem disableGutters>
-                    <ListItemAvatar
-                      sx={{
-                        minWidth: "46px",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    ></ListItemAvatar>
-                    <ListItemText
-                      primary="XRP"
-                      primaryTypographyProps={{ variant: "h5", noWrap: true }}
-                      secondary="Ripple"
-                      secondaryTypographyProps={{
-                        variant: "subtitle2",
-                        noWrap: true,
-                      }}
-                    />
-                    <Box>
-                      <Typography align="right" variant="h4" noWrap>
-                        10%
-                      </Typography>
-                      <Text color="error">-1.22%</Text>
-                    </Box>
-                  </ListItem>
-                  <ListItem disableGutters>
-                    <ListItemAvatar
-                      sx={{
-                        minWidth: "46px",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    ></ListItemAvatar>
-                    <ListItemText
-                      primary="ADA"
-                      primaryTypographyProps={{ variant: "h5", noWrap: true }}
-                      secondary="Cardano"
-                      secondaryTypographyProps={{
-                        variant: "subtitle2",
-                        noWrap: true,
-                      }}
-                    />
-                    <Box>
-                      <Typography align="right" variant="h4" noWrap>
-                        40%
-                      </Typography>
-                      <Text color="success">+10.50%</Text>
-                    </Box>
-                  </ListItem>
-                  <ListItem disableGutters>
-                    <ListItemAvatar
-                      sx={{
-                        minWidth: "46px",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    ></ListItemAvatar>
-                    <ListItemText
-                      primary="ETH"
-                      primaryTypographyProps={{ variant: "h5", noWrap: true }}
-                      secondary="Ethereum"
-                      secondaryTypographyProps={{
-                        variant: "subtitle2",
-                        noWrap: true,
-                      }}
-                    />
-                    <Box>
-                      <Typography align="right" variant="h4" noWrap>
-                        30%
-                      </Typography>
-                      <Text color="error">-12.38%</Text>
-                    </Box>
-                  </ListItem>
-                </List>
-              </Grid>
-            </Grid>
+          <Box p={4} width="100%" justifyContent="center">
+            <AccountBalanceChart />
           </Box>
         </Grid>
       </Grid>
