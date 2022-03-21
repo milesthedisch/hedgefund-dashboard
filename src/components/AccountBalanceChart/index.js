@@ -95,7 +95,7 @@ const _data = (theme, range) => {
   return {
     datasets: [
       {
-        label: "Unit Price",
+        label: "Price Per Unit",
         data: ranges[range],
         tension: 0.4,
         borderColor: theme.colors.primary.main,

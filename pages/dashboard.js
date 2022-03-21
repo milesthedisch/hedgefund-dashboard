@@ -66,7 +66,7 @@ function DashboardCrypto() {
     return router.push("/404");
   }
 
-  if (!data) {
+  if (!data && isValidating) {
     return (
       <Container
         sx={{ height: "80vh", display: "flex", justifyContent: "center" }}
