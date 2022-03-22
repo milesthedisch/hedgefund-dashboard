@@ -76,7 +76,7 @@ function AccountBalance({ userData, isValidating, refreshInterval }) {
                 fontWeight="normal"
                 color="text.secondary"
               >
-                {userData.shares} Units
+                {userData.units} Units
               </Typography>
               <Box display="flex" sx={{ py: 4 }} alignItems="center">
                 <AvatarSuccess sx={{ mr: 2 }} variant="rounded">
