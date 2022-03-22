@@ -6,7 +6,7 @@ async function handler(req, res) {
   const { user } = getSession(req, res);
 
   if (!user) {
-    return res.status(401);
+    return res.redirect(401, "/401");
   }
 
   const auth = new google.auth.GoogleAuth({

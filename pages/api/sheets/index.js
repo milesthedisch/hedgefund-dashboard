@@ -8,7 +8,7 @@ async function handler(req, res) {
   const roles = user["https://balmoral-dashboard.vercel.com/roles"];
 
   if (!user || !roles.includes("admin")) {
-    return res.send(401);
+    return res.status(401).json({ redirect: "401" });
   }
 
   const auth = new google.auth.GoogleAuth({

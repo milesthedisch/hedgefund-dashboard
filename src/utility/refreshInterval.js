@@ -12,7 +12,5 @@ export default function refreshInterval(hour = 16, min = 0, sec = 0 /* 4pm */) {
     msDifference = timeAt4pmTmrw - currentTime;
   }
 
-  console.log(msDifference);
-
   return msDifference;
 }
