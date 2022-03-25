@@ -77,6 +77,8 @@ const RecentOrdersTable = ({ users }) => {
     status: null,
   });
 
+  console.log("current filter", filters);
+
   const statusOptions = [
     {
       id: "all",
@@ -93,14 +95,20 @@ const RecentOrdersTable = ({ users }) => {
   ];
 
   const handleStatusChange = (e) => {
+    console.log("Target value", e.target.value);
+
     let value = null;
 
-    if (e.target.value === "all") {
-      value = "all";
+    if (e.target.value !== "all") {
+      value = e.target.value;
     }
 
-    setFilters({
-      status: e.target.value,
+    setFilters((prevFilters) => {
+      console.log("prevFilters", prevFilters);
+      return {
+        ...prevFilters,
+        status: value,
+      };
     });
   };
 
@@ -173,7 +181,7 @@ const RecentOrdersTable = ({ users }) => {
               </FormControl>
             </Box>
           }
-          title="Recent Orders"
+          title="All Users"
         />
       )}
       <Divider />

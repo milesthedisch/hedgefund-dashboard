@@ -8,3 +8,27 @@ datasource db {
   url = env("DATABASE_URL")
   referentialIntegrity = "prisma"
 }
+
+model User {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  fullName String? 
+  firstName String?
+  lastName String?
+  address String?
+  shares Int @default(0)
+  createdAt DateTime @default(now())
+  role Role @default(USER)
+  activated Boolean @default(false)
+}
+
+model Strategies {
+  id    Int     @id @default(autoincrement())
+  name  String
+  balance Int @default(0)  
+}
+
+enum Role {
+  USER
+  ADMIN
+}
