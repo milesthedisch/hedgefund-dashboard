@@ -7,7 +7,6 @@ const prisma = new PrismaClient();
 export default protectRoute(handler);
 
 async function handler(req, res) {
-  const { user } = getSession(req, res);
   if (req.method === "POST") {
     return await createUser(req, res);
   } else {
