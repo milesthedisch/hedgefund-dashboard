@@ -2,7 +2,11 @@ import { google } from "googleapis";
 import { withApiAuthRequired, getSession } from "@auth0/nextjs-auth0";
 
 async function handler(req, res) {
+  console.log(req);
+
   const session = getSession(req, res);
+
+  console.log(session);
 
   const user = session.user;
   const roles = user["https://balmoral-dashboard.vercel.com/roles"];

@@ -7,16 +7,14 @@ const prisma = new PrismaClient();
 export default protectRoute(handler);
 
 async function handler(req, res) {
+  console.log("HITTING HANDLER");
+
   if (req.method === "POST") {
     return await createUser(req, res);
   } else {
     return res
       .status(405)
       .json({ message: "Method not allowed", success: false });
-  }
-
-  if (req.method === "GET") {
-    return await getAllUsers(req, res);
   }
 }
 

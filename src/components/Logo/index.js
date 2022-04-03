@@ -1,5 +1,5 @@
 import { Box, Hidden } from "@mui/material";
-import logoSrc from "../../../public/Balmoral_Brandmark-Logo_RGB_Black-150x150.png";
+import logoSrc from "../../../public/Balmoral_Brandmark-Logo_RGB_White-1.png";
 import Image from "next/image";
 import { Link } from "next/link";
 import { styled } from "@mui/material/styles";
