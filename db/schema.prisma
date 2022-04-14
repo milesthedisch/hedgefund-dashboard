@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+datasource db {
+  provider = "mysql"
+  url = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+model User {
+  id            Int                 @id @default(autoincrement())
+  subId         Int
+  email         String              @unique
+  fullName      String? 
+  firstName     String?
+  lastName      String?
+  address       String?
+  units         Int                 @default(0)
+  createdAt     DateTime            @default(now())
+  role          Role                @default(USER)
+  activated     Boolean             @default(false)
+  transactions  UserTransactions[]
+}
+
+model UserTransactions {
+  id        Int             @id @default(autoincrement())
+  type      TransactionType @default(PURCHASE)
+  amount    Int             @default(0)
+  datatime  DateTime        @default(now())
+  user      User            @relation(fields: [userId], references: [id])
+  userId    Int
+}
+
+model Strategies {
+  id                      Int                 @id @default(autoincrement())
+  name                    String              @unique 
+  strategyTransactions    StrategyTransactions[] 
+}
+
+model StrategyTransactions {
+  id         String     @unique @default(uuid())
+  datetime   DateTime   @default(now())
+  balance    Int        @default(0)
+  strategyId Int
+  strategy   Strategies @relation(fields: [strategyId] ,references: [id]) 
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum TransactionType {
+  REDEMPTION 
+  PURCHASE 
+  INITIAL_PURCHASE
+}
