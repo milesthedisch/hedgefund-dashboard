@@ -1,12 +1,13 @@
+import { Prisma } from "@prisma/client";
 import { prismaMock } from "../../../../db/singleton";
 import createUser from "../../../../db/user/create";
 
 test("should create new user ", async () => {
-  const user = {
+  const user: Prisma.UserCreateInput = {
     firstName: "Test",
     lastName: "Test",
     email: "test@test.com",
-    userId: 1,
+    auth0UserId: 1,
   };
 
   prismaMock.user.create.mockResolvedValue(user);

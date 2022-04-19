@@ -1,11 +1,17 @@
 import { createMocks } from "node-mocks-http";
+import { Prisma } from "@prisma/client";
 import handleCreate from "../../../../pages/api/user/create";
 
-const TEST_USER = {
-  firstName: "Test",
-  lastName: "Test",
-  email: "test@test.com",
-  userId: 1,
+const TEST_USER: Prisma.UserCreateInput = {
+  firstName: "John",
+  lastName: "Doe",
+  email: "johndoe@johndoe.com",
+  auth0UserId: 1,
+  role: "USER",
+  activated: false,
+  fullName: "John Doe",
+  units: 0,
+  address: null,
 };
 
 describe("/api/user/create", () => {
@@ -18,6 +24,8 @@ describe("/api/user/create", () => {
     await handleCreate(req, res);
 
     expect(res._getStatusCode()).toBe(200);
-    expect(JSON.parse(res._getData())).toEqual(TEST_USER);
+    expect(JSON.parse(res._getData())).toMatchObject({
+      ...TEST_USER,
+    });
   });
 });

@@ -4,14 +4,20 @@ export default async function createUser({
   firstName,
   lastName,
   email,
-  userId,
+  auth0UserId,
+  fullName = null,
 }) {
+  if (firstName && lastName && !fullName) {
+    fullName = firstName + " " + lastName;
+  }
+
   const newEntry = await prisma.user.create({
     data: {
       firstName,
       lastName,
       email,
-      auth0UserId: userId,
+      auth0UserId,
+      fullName,
     },
   });
 
