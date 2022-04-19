@@ -1,26 +1,36 @@
-const { PrismaClient, Role, TransactionType } = require("@prisma/client");
+import { PrismaClient } from "@prisma/client";
+import { Role, TransactionType } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 // Seed the database with data
-async function seed() {
-  const prisma = new PrismaClient();
-
+async function main() {
   await prisma.user.createMany({
     data: [
       {
         firstName: "admin",
         lastName: "miles",
         email: "milesthedisch@gmail.com",
-        subId: 111,
+        auth0UserId: 111,
         role: Role.ADMIN,
       },
       {
         firstName: "Yewande",
         lastName: "Bar",
         email: "yewande@prisma.io",
-        subId: 456,
+        auth0UserId: 456,
       },
-      { firstName: "Bob", lastName: "Foo", email: "bob@prisma.io", subId: 123 },
-      { firstName: "Angelique", email: "angelique@prisma.io", subId: 777 },
+      {
+        firstName: "Bob",
+        lastName: "Foo",
+        email: "bob@prisma.io",
+        auth0UserId: 123,
+      },
+      {
+        firstName: "Angelique",
+        email: "angelique@prisma.io",
+        auth0UserId: 777,
+      },
     ],
   });
 
@@ -111,4 +121,11 @@ async function seed() {
   });
 }
 
-return seed();
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

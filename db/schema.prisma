@@ -11,7 +11,7 @@ datasource db {
 
 model User {
   id            Int                 @id @default(autoincrement())
-  subId         Int
+  auth0UserId         Int
   email         String              @unique
   fullName      String? 
   firstName     String?
