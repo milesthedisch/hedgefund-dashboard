@@ -1,7 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "./client";
 import { Role, TransactionType } from "@prisma/client";
-
-const prisma = new PrismaClient();
 
 // Seed the database with data
 async function main() {
@@ -38,26 +36,26 @@ async function main() {
     data: [
       {
         type: TransactionType.INITIAL_PURCHASE,
-        amount: 31000,
-        datatime: new Date(2022, 4, 14, 13, 25),
+        units: 31000,
+        datetime: new Date(2022, 4, 14, 13, 25),
         userId: 1,
       },
       {
         type: TransactionType.INITIAL_PURCHASE,
-        amount: 22000,
-        datatime: new Date(2022, 4, 12, 13, 25),
+        units: 22000,
+        datetime: new Date(2022, 4, 12, 13, 25),
         userId: 2,
       },
       {
         type: TransactionType.INITIAL_PURCHASE,
-        amount: 20000,
-        datatime: new Date(2022, 3, 14, 13, 25),
+        units: 20000,
+        datetime: new Date(2022, 3, 14, 13, 25),
         userId: 3,
       },
       {
         type: TransactionType.INITIAL_PURCHASE,
-        amount: 50000,
-        datatime: new Date(2022, 2, 4, 13, 25),
+        units: 50000,
+        datetime: new Date(2022, 2, 4, 13, 25),
         userId: 4,
       },
     ],
@@ -116,6 +114,16 @@ async function main() {
         strategyId: 3,
         balance: 4000,
         datetime: new Date(2022, 5, 6),
+      },
+      {
+        strategyId: 4,
+        balance: 0,
+        datetime: new Date(2022, 5, 5),
+      },
+      {
+        strategyId: 4,
+        balance: 7000,
+        datetime: new Date(2022, 5, 16),
       },
     ],
   });

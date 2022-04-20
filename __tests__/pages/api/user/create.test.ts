@@ -15,7 +15,7 @@ const TEST_USER: Prisma.UserCreateInput = {
 };
 
 describe("/api/user/create", () => {
-  test("returns a message with the specified animal", async () => {
+  test("returns a message with most of user properties", async () => {
     const { req, res } = createMocks({
       method: "POST",
       body: TEST_USER,
@@ -24,6 +24,8 @@ describe("/api/user/create", () => {
     await handleCreate(req, res);
 
     expect(res._getStatusCode()).toBe(200);
+
+    // we dont check for date as its generated in the db
     expect(JSON.parse(res._getData())).toMatchObject({
       ...TEST_USER,
     });

@@ -5,6 +5,8 @@ import { withApiAuthRequired, getSession } from "@auth0/nextjs-auth0";
 async function handler(req, res) {
   const { user } = getSession(req, res);
 
+  console.log(user);
+
   if (!user) {
     return res.redirect(401, "/401");
   }

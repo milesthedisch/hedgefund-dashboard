@@ -37,15 +37,24 @@ const ApplicationsTransactions = ({ users }) => (
   </>
 );
 
+const fetcher = async (uri) => {
+  const response = await fetch(uri);
+  return response.json();
+};
+
 export default withPageAuthRequired(function (props) {
-  const fetcher = async (uri) => {
-    const response = await fetch(uri);
-    return response.json();
-  };
+  const isAdmin =
+    !props?.user["https://balmoral-dashboard.vercel.com/roles"]["admin"];
 
-  const { data, error, isValidating } = useSWR("/api/sheets", fetcher);
+  const { data, error, isValidating } = useSWR(() => {
+    if (user) {
+      return "/api/sheets";
+    } else {
+      return false;
+    }
+  }, fetcher);
 
-  if (data?.redirect) {
+  if (!isAdmin || data?.redirect) {
     return <Custom401 />;
   }
 
