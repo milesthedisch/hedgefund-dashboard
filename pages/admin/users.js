@@ -1,12 +1,12 @@
 import Head from "next/head";
 import { Container, Grid } from "@mui/material";
 
-import PageHeader from "../src/components/PageHeader";
-import PageTitleWrapper from "../src/components/PageTitleWrapper";
-import Footer from "../src/components/Footer";
-import RecentOrders from "../src/components/RecentOrders";
-import SuspenseLoader from "../src/components/SuspenseLoader";
-import Custom401 from "./401";
+import PageHeader from "../../src/components/PageHeader";
+import PageTitleWrapper from "../../src/components/PageTitleWrapper";
+import Footer from "../../src/components/Footer";
+import RecentOrders from "../../src/components/RecentOrders";
+import SuspenseLoader from "../../src/components/SuspenseLoader";
+import Custom401 from "../401";
 
 import { useUser, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import router from "next/router";
@@ -44,10 +44,12 @@ const fetcher = async (uri) => {
 
 export default withPageAuthRequired(function (props) {
   const isAdmin =
-    !props?.user["https://balmoral-dashboard.vercel.com/roles"]["admin"];
+    props?.user["https://balmoral-dashboard.vercel.com/roles"].includes(
+      "admin"
+    );
 
   const { data, error, isValidating } = useSWR(() => {
-    if (user) {
+    if (isAdmin) {
       return "/api/sheets";
     } else {
       return false;

@@ -64,8 +64,13 @@ const ListWrapper = styled(Box)(
 `
 );
 
-function HeaderMenu() {
-  const { user } = useUser();
+function HeaderMenu({ user }) {
+  let isAdmin;
+
+  if (user) {
+    isAdmin =
+      user["https://balmoral-dashboard.vercel.com/roles"].includes("admin");
+  }
 
   return (
     <>
@@ -83,6 +88,34 @@ function HeaderMenu() {
                 primary="Dashboard"
               />
             </ListItem>
+          ) : (
+            ""
+          )}
+          {isAdmin ? (
+            <>
+              <ListItem
+                classes={{ root: "MuiListItem-indicators" }}
+                button
+                component={Link}
+                href="/admin/users"
+              >
+                <ListItemText
+                  primaryTypographyProps={{ noWrap: true }}
+                  primary="Users"
+                />
+              </ListItem>
+              <ListItem
+                classes={{ root: "MuiListItem-indicators" }}
+                button
+                component={Link}
+                href="/admin/strategies"
+              >
+                <ListItemText
+                  primaryTypographyProps={{ noWrap: true }}
+                  primary="Strategies"
+                />
+              </ListItem>
+            </>
           ) : (
             ""
           )}

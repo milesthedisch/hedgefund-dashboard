@@ -83,47 +83,47 @@ async function main() {
       {
         strategyId: 1,
         balance: 0,
-        datetime: new Date(2022, 5, 5),
+        datetime: new Date(2022, 5, 5, 12),
       },
       {
         strategyId: 1,
         balance: 10000,
-        datetime: new Date(2022, 5, 6),
+        datetime: new Date(2022, 5, 6, 11),
       },
       {
         strategyId: 1,
         balance: 20000,
-        datetime: new Date(2022, 5, 7),
+        datetime: new Date(2022, 5, 7, 10),
       },
       {
         strategyId: 2,
         balance: 0,
-        datetime: new Date(2022, 5, 5),
+        datetime: new Date(2022, 5, 5, 9),
       },
       {
         strategyId: 2,
         balance: 20000,
-        datetime: new Date(2022, 5, 6),
+        datetime: new Date(2022, 5, 6, 8),
       },
       {
         strategyId: 3,
         balance: 0,
-        datetime: new Date(2022, 5, 5),
+        datetime: new Date(2022, 5, 5, 7),
       },
       {
         strategyId: 3,
         balance: 4000,
-        datetime: new Date(2022, 5, 6),
+        datetime: new Date(2022, 5, 6, 6),
       },
       {
         strategyId: 4,
         balance: 0,
-        datetime: new Date(2022, 5, 5),
+        datetime: new Date(2022, 5, 5, 5),
       },
       {
         strategyId: 4,
         balance: 7000,
-        datetime: new Date(2022, 5, 16),
+        datetime: new Date(2022, 5, 16, 4),
       },
     ],
   });

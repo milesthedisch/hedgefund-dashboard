@@ -14,14 +14,12 @@ import { useRouter } from "next/router";
 
 import refreshInterval from "../src/utility/refreshInterval";
 
-const REFRESH_INTERVAL = 10000;
-
 const fetcher = async (uri) => {
   const response = await fetch(uri);
   return response.json();
 };
 
-const Dashboard = ({ data, refreshInterval, isValidating }) => (
+const Dashboard = ({ data, isValidating }) => (
   <>
     <Head>
       <title>Crypto Dashboard</title>
@@ -77,13 +75,7 @@ function DashboardCrypto() {
     );
   }
 
-  return (
-    <Dashboard
-      data={data}
-      isValidating={isValidating}
-      refreshInterval={REFRESH_INTERVAL}
-    />
-  );
+  return <Dashboard data={data} isValidating={isValidating} />;
 }
 
 export default withPageAuthRequired(DashboardCrypto);

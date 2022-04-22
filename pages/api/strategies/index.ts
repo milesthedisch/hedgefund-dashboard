@@ -1,16 +1,16 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import createStrategy from "../../../db/strategies";
+import getStrategy from "../../../db/strategies";
 import { withApiAuthRequired } from "@auth0/nextjs-auth0";
 
 export default withApiAuthRequired(async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method === "POST") {
+  if (req.method === "GET") {
     const data = req.body;
 
     try {
-      const strategy = await createStrategy(data);
+      const strategy = await getStrategy();
 
       res.status(200).send(strategy);
     } catch (e) {

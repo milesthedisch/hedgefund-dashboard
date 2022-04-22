@@ -32,12 +32,13 @@ const HeaderWrapper = styled(Box)(
 
 function Header() {
   const { user } = useUser();
+
   return (
     <HeaderWrapper display="flex" alignItems="center">
       <Box display="flex" alignItems="center">
         <Logo />
         <Hidden lgDown>
-          <HeaderMenu />
+          <HeaderMenu user={user} />
         </Hidden>
       </Box>
       {user ? (

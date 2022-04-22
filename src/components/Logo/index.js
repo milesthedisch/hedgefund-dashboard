@@ -33,17 +33,14 @@ const LogoText = styled(Box)(
 function Logo() {
   return (
     <LogoWrapper component={Link} href="/dashboard">
-      <Image
-        alt="Balmoral Digital Logo"
-        src={logoSrc}
-        width="50px"
-        height="50px"
-      />
-      <Hidden mdDown>
-        <LogoTextWrapper>
-          <LogoText>Baloral Digital</LogoText>
-        </LogoTextWrapper>
-      </Hidden>
+      <Box sx={{ filter: "invert(1)" }}>
+        <Image
+          alt="Balmoral Digital Logo"
+          src={logoSrc}
+          width="50px"
+          height="50px"
+        />
+      </Box>
     </LogoWrapper>
   );
 }
