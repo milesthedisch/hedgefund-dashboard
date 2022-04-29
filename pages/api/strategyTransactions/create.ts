@@ -20,7 +20,7 @@ export default withApiAuthRequired(async function handler(
     const data = req.body;
 
     try {
-      const tx = await createStrategyBalance(data);
+      const tx = await createStrategyBalance(JSON.parse(data));
 
       res.status(200).json(tx);
     } catch (e) {

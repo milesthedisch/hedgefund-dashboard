@@ -1,8 +1,10 @@
-import * as React from "react";
-const useState = React.useState;
+import { useState, useEffect, forwardRef } from "react";
+
 import { Box, Container, Grid, Snackbar } from "@mui/material";
-import LoadingButton from "@mui/lab/LoadingButton";
+
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
+
+import LoadingButton from "@mui/lab/LoadingButton";
 
 import PageTitle from "../../src/components/PageTitle";
 import PageTitleWrapper from "../../src/components/PageTitleWrapper";
@@ -12,66 +14,83 @@ import SuspenseLoader from "../../src/components/SuspenseLoader";
 
 import Head from "next/head";
 
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { format, parseISO, parse } from "date-fns";
 
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
   ref
 ) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
+interface snackbar {
+  open: boolean;
+  severity: string;
+  message?: string;
+}
+
 const fetcher = async (uri: string) => {
   const response = await fetch(uri);
   return response.json();
 };
 
-// Fetch all strategies Done
-// Display balances Done
-// Create new startegy balance
-
-const updateStrategies = async (mutate, body) => {
-  const uri = "/api/startegyBalance/create";
+const updateStrategies = async (mutate, strategyBalances = {}, setSnackbar) => {
+  const uri = "/api/strategyTransactions/create";
 
   let response;
 
-  console.log(body);
-
-  throw body;
+  const strategy = Object.keys(strategyBalances)[0];
 
   try {
     response = await fetch(uri, {
       method: "POST",
-      body: JSON.stringify(body),
+      body: JSON.stringify({
+        strategyName: strategy,
+        balance: strategyBalances[strategy],
+      }),
     });
   } catch (e) {
-    throw e;
-  } finally {
-    const data = response.json();
-    mutate(data);
+    return setSnackbar({
+      open: true,
+      severity: "error",
+      message: e.message,
+    });
   }
+
+  const data = await response.json();
+
+  setSnackbar({
+    open: true,
+    severity: "success",
+    message: `Strategy ${strategy} update to ${strategyBalances[strategy]} successfully`,
+  });
+
+  mutate("/api/strategies");
 };
 
 export default withPageAuthRequired(function (props) {
+  const { mutate } = useSWRConfig();
+
+  const snackbarInital: snackbar = {
+    open: false,
+    severity: "success",
+    message: "Successful Update",
+  };
+
   const [strategyBalances, setStrategyBalances] = useState({});
-  const [snackbar, setSnackbar] = useState(false);
+  const [snackbar, setSnackbar] = useState(snackbarInital);
 
-  const isAdmin =
-    props?.user["https://balmoral-dashboard.vercel.com/roles"].includes(
-      "admin"
-    );
+  const { data, error, isValidating } = useSWR("/api/strategies", fetcher);
 
-  const { data, error, isValidating, mutate } = useSWR(() => {
-    if (isAdmin) {
-      return "/api/strategies";
-    } else {
-      return false;
-    }
-  }, fetcher);
+  if (error) {
+    setSnackbar({ open: true, severity: "error", message: error });
+  }
 
   let strategies;
+
+  console.log(data);
 
   if (data) {
     strategies = data.map((strat) => {
@@ -109,28 +128,35 @@ export default withPageAuthRequired(function (props) {
           alignItems="stretch"
           spacing={3}
         >
-          {!isValidating ? strategies : <SuspenseLoader />}
+          {!isValidating || !strategies ? (
+            strategies
+          ) : (
+            <SuspenseLoader size="large" />
+          )}
         </Grid>
         <LoadingButton
           loading={false}
           sx={{ width: "10rem", my: 3 }}
           variant="contained"
-          onClick={() => updateStrategies(mutate, strategyBalances)}
+          onClick={() =>
+            updateStrategies(mutate, strategyBalances, setSnackbar)
+          }
         >
           UPDATE
         </LoadingButton>
         <Snackbar
-          open={false}
+          open={snackbar.open}
           autoHideDuration={6000}
-          onClose={() => setSnackbar(false)}
+          onClose={() => setSnackbar({ open: false, severity: "success" })}
           message="Note archived"
         >
           <Alert
-            onClose={() => setSnackbar(false)}
-            severity="success"
+            onClose={() => setSnackbar({ open: false, severity: "success" })}
+            severity={snackbar.severity}
+            variant="filled"
             sx={{ width: "100%" }}
           >
-            This is a success message!
+            {snackbar.message}
           </Alert>
         </Snackbar>
       </Container>
