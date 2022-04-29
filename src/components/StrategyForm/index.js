@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import Head from "next/head";
 import {
   Grid,
@@ -11,7 +12,10 @@ import {
   Typography,
 } from "@mui/material";
 
-export default function StrategyForm({ balance, name, id, updateOn }) {
+export default function StrategyForm(
+  { balance, name, id, updateOn },
+  setStrategyBalances
+) {
   return (
     <Grid key={id} item xs={6}>
       <Card>
@@ -32,16 +36,30 @@ export default function StrategyForm({ balance, name, id, updateOn }) {
                 sx={{ width: "90%", margin: 0 }}
                 id="standard-number"
                 label="Update Balance"
-                type="number"
+                type="tel"
+                defaultValue={0}
                 InputLabelProps={{
                   shrink: true,
                 }}
+                // ref={inputEl}
                 variant="standard"
+                pattern={["0-9*"]}
+                onChange={({ target: { value } }) => {
+                  setStrategyBalances((prevValue) => {
+                    const currentValue = {
+                      [name]: value ? parseInt(value) : 0,
+                    };
+
+                    return { ...prevValue, ...currentValue };
+                  });
+                }}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                  }
+                }}
               />
             </Box>
-            <Button size="medium" variant="contained">
-              UPDATE
-            </Button>
           </Box>
         </CardContent>
         <Divider />

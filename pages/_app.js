@@ -9,6 +9,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { CacheProvider } from "@emotion/react";
 import { LightTheme } from "../src/theme/schemes/LightTheme.js";
 import Layout from "../src/layouts";
+import { SWRConfigurationProvider } from "../src/utility/SWRConfigurationProvider";
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -24,11 +25,13 @@ export default function MyApp(props) {
       <CustomThemeProvider theme={LightTheme}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
-        <UserProvider>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
-        </UserProvider>
+        <SWRConfigurationProvider>
+          <UserProvider>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </UserProvider>
+        </SWRConfigurationProvider>
       </CustomThemeProvider>
     </CacheProvider>
   );

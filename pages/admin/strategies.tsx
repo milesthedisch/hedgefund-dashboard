@@ -1,5 +1,5 @@
-import { forwardRef, useState, HTMLDivElement } from "react";
-
+import * as React from "react";
+const useState = React.useState;
 import { Box, Container, Grid, Snackbar } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
@@ -16,20 +16,17 @@ import useSWR from "swr";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { format, parseISO, parse } from "date-fns";
 
-
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
-  ref,
+  ref
 ) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-const fetcher = async (uri) => {
+const fetcher = async (uri: string) => {
   const response = await fetch(uri);
   return response.json();
 };
-
-const creater = async (uri, body) => {};
 
 // Fetch all strategies Done
 // Display balances Done
@@ -39,6 +36,10 @@ const updateStrategies = async (mutate, body) => {
   const uri = "/api/startegyBalance/create";
 
   let response;
+
+  console.log(body);
+
+  throw body;
 
   try {
     response = await fetch(uri, {
@@ -119,7 +120,7 @@ export default withPageAuthRequired(function (props) {
           UPDATE
         </LoadingButton>
         <Snackbar
-          open={true}
+          open={false}
           autoHideDuration={6000}
           onClose={() => setSnackbar(false)}
           message="Note archived"
