@@ -1,6 +1,6 @@
 import prisma from "../client";
 
-export default async function findMany() {
+export async function findMany() {
   return await prisma.user.findMany();
 }
 

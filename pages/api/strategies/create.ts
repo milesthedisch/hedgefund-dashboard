@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import createStrategy from "../../../db/strategies";
+import createStrategy from "../../../db/strategies/create";
 import { withApiAuthRequired } from "@auth0/nextjs-auth0";
 
 export default withApiAuthRequired(async function handler(

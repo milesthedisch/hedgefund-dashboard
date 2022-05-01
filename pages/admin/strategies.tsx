@@ -3,6 +3,7 @@ import { useState, useEffect, forwardRef } from "react";
 import { Box, Container, Grid, Snackbar } from "@mui/material";
 
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
+import type { AlertColor } from "@mui/lab";
 
 import LoadingButton from "@mui/lab/LoadingButton";
 
@@ -27,7 +28,7 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
 
 interface snackbar {
   open: boolean;
-  severity: string;
+  severity: AlertColor;
   message?: string;
 }
 
@@ -127,7 +128,7 @@ export default withPageAuthRequired(function (props) {
             strategies
           ) : (
             <Box>
-              <SuspenseLoader />
+              <SuspenseLoader size="large" />
             </Box>
           )}
         </Grid>
@@ -149,7 +150,7 @@ export default withPageAuthRequired(function (props) {
         >
           <Alert
             onClose={() => setSnackbar({ open: false, severity: "success" })}
-            severity={snackbar.severity}
+            severity={snackbar?.severity || "success"}
             variant="filled"
             sx={{ width: "100%" }}
           >
