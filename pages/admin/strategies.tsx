@@ -37,19 +37,14 @@ const fetcher = async (uri: string) => {
 };
 
 const updateStrategies = async (mutate, strategyBalances = {}, setSnackbar) => {
-  const uri = "/api/strategyTransactions/create";
+  const uri = "/api/strategyTransactions/createMany";
 
   let response;
-
-  const strategy = Object.keys(strategyBalances)[0];
 
   try {
     response = await fetch(uri, {
       method: "POST",
-      body: JSON.stringify({
-        strategyName: strategy,
-        balance: strategyBalances[strategy],
-      }),
+      body: JSON.stringify(strategyBalances),
     });
   } catch (e) {
     return setSnackbar({
@@ -59,12 +54,12 @@ const updateStrategies = async (mutate, strategyBalances = {}, setSnackbar) => {
     });
   }
 
-  const data = await response.json();
+  const { count } = await response.json();
 
   setSnackbar({
     open: true,
     severity: "success",
-    message: `Strategy ${strategy} update to ${strategyBalances[strategy]} successfully`,
+    message: `${count} Strategies updated successfully`,
   });
 
   mutate("/api/strategies");
@@ -79,7 +74,7 @@ export default withPageAuthRequired(function (props) {
     message: "Successful Update",
   };
 
-  const [strategyBalances, setStrategyBalances] = useState({});
+  const [strategyBalances, setStrategyBalances] = useState([]);
   const [snackbar, setSnackbar] = useState(snackbarInital);
 
   const { data, error, isValidating } = useSWR("/api/strategies", fetcher);
@@ -90,8 +85,6 @@ export default withPageAuthRequired(function (props) {
 
   let strategies;
 
-  console.log(data);
-
   if (data) {
     strategies = data.map((strat) => {
       const time = strat.strategyTransactions[0].datetime;
@@ -100,6 +93,8 @@ export default withPageAuthRequired(function (props) {
       return StrategyForm(strat, setStrategyBalances);
     });
   }
+
+  console.log(isValidating);
 
   return (
     <>
@@ -131,7 +126,9 @@ export default withPageAuthRequired(function (props) {
           {!isValidating || !strategies ? (
             strategies
           ) : (
-            <SuspenseLoader size="large" />
+            <Box>
+              <SuspenseLoader />
+            </Box>
           )}
         </Grid>
         <LoadingButton
