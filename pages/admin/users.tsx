@@ -4,7 +4,7 @@ import { Container, Grid } from "@mui/material";
 import PageHeader from "../../src/components/PageHeader";
 import PageTitleWrapper from "../../src/components/PageTitleWrapper";
 import Footer from "../../src/components/Footer";
-import RecentOrders from "../../src/components/RecentOrders";
+import Users from "../../src/components/Users";
 import SuspenseLoader from "../../src/components/SuspenseLoader";
 import Custom401 from "../401";
 
@@ -29,7 +29,7 @@ const ApplicationsTransactions = ({ users }) => (
         spacing={3}
       >
         <Grid item xs={12}>
-          <RecentOrders users={users} />
+          <Users users={users} />
         </Grid>
       </Grid>
     </Container>
@@ -37,7 +37,7 @@ const ApplicationsTransactions = ({ users }) => (
   </>
 );
 
-const fetcher = async (uri) => {
+const fetcher = async (uri: string) => {
   const response = await fetch(uri);
   return response.json();
 };
@@ -50,7 +50,7 @@ export default withPageAuthRequired(function (props) {
 
   const { data, error, isValidating } = useSWR(() => {
     if (isAdmin) {
-      return "/api/sheets";
+      return "/api/user";
     } else {
       return false;
     }

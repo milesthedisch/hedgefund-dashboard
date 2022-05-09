@@ -19,7 +19,7 @@ model User {
   address       String?
   createdAt     DateTime            @default(now())
   role          Role                @default(USER)
-  activated     Boolean             @default(false)
+  status        UserStatus          @default(PENDING)
   transactions  UserTransactions[]
 }
 
@@ -46,6 +46,11 @@ model StrategyTransactions {
   strategy   Strategies @relation(fields: [strategyId] ,references: [id]) 
 }
 
+model ProductionSharePrice {
+  datetime DateTime        @unique @default(now())
+  price    Decimal         @default(0) @db.Decimal(7, 6)
+}
+
 enum Role {
   USER
   ADMIN
@@ -55,4 +60,10 @@ enum TransactionType {
   REDEMPTION 
   PURCHASE 
   INITIAL_PURCHASE
+}
+
+enum UserStatus { 
+  PENDING
+  ACTIVE
+  DEACTIVATED
 }

@@ -1,5 +1,17 @@
 import prisma from "./client";
-import { Role, TransactionType } from "@prisma/client";
+import { Role, TransactionType, UserStatus } from "@prisma/client";
+import { faker } from "@faker-js/faker";
+
+const fakeUsers = Array(100)
+  .fill(0)
+  .map(() => ({
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    auth0UserId: faker.datatype.number({ min: 100, max: 1000 }),
+    role: faker.datatype.boolean() ? Role.ADMIN : Role.USER,
+    status: faker.datatype.boolean() ? UserStatus.PENDING : UserStatus.ACTIVE,
+  }));
 
 // Seed the database with data
 async function main() {
@@ -11,6 +23,7 @@ async function main() {
         email: "milesthedisch@gmail.com",
         auth0UserId: 111,
         role: Role.ADMIN,
+        status: UserStatus.ACTIVE,
       },
       {
         firstName: "Yewande",
@@ -28,7 +41,9 @@ async function main() {
         firstName: "Angelique",
         email: "angelique@prisma.io",
         auth0UserId: 777,
+        status: UserStatus.PENDING,
       },
+      ...fakeUsers,
     ],
   });
 
@@ -42,8 +57,20 @@ async function main() {
       },
       {
         type: TransactionType.INITIAL_PURCHASE,
+        units: 31103,
+        datetime: new Date(2022, 4, 16, 13, 25),
+        userId: 1,
+      },
+      {
+        type: TransactionType.INITIAL_PURCHASE,
         units: 22000,
         datetime: new Date(2022, 4, 12, 13, 25),
+        userId: 2,
+      },
+      {
+        type: TransactionType.INITIAL_PURCHASE,
+        units: 44000,
+        datetime: new Date(2022, 5, 2, 12, 15),
         userId: 2,
       },
       {
@@ -126,6 +153,20 @@ async function main() {
         datetime: new Date(2022, 3, 16, 4),
       },
     ],
+  });
+
+  const sharePrices = Array(100)
+    .fill(0)
+    .map((x) => ({
+      datetime: faker.date.between(
+        new Date(2021).toJSON(),
+        new Date(2022, 12).toJSON()
+      ),
+      price: faker.datatype.number({ min: 1, max: 2, precision: 0.00001 }),
+    }));
+
+  await prisma.productionSharePrice.createMany({
+    data: sharePrices,
   });
 }
 

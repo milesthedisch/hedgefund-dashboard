@@ -1,6 +1,7 @@
 // calculate unit price
 // inputs: each strategy balance aud, units on issue
 // output: unit price aud
+
 import type { NextApiRequest, NextApiResponse } from "next";
 import { withApiAuthRequired } from "@auth0/nextjs-auth0";
 import prisma from "../../../db/client";
@@ -52,4 +53,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(200).json(unitPrice);
 };
 
-export default handler;
+export default withApiAuthRequired(handler);

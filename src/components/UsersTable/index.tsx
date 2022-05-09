@@ -2,6 +2,7 @@ import { FC, ChangeEvent, useState } from "react";
 import { format, parse } from "date-fns";
 import numeral from "numeral";
 import PropTypes from "prop-types";
+
 import {
   Tooltip,
   Divider,
@@ -27,45 +28,43 @@ import {
 
 import Label from "../Label";
 
-import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
-import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
+import UserDialog from "../UserDialog";
+import AddCircleTwoTone from "@mui/icons-material/AddCircleTwoTone";
+import RemoveCircleTwoTone from "@mui/icons-material/RemoveCircleTwoTone";
 import BulkActions from "../BulkActions";
 
-const getStatusLabel = (userStatus) => {
-  const map = {
-    failed: {
-      text: "Failed",
-      color: "error",
-    },
-    activated: {
-      text: "Activated",
+const getStatusLabel = (userStatus = "pending") => {
+  const status = {
+    ACTIVE: {
+      text: "Active",
       color: "success",
     },
-    pending: {
+    PENDING: {
       text: "Pending",
       color: "warning",
     },
   };
 
-  const { text, color } = map[userStatus];
+  const props = status[userStatus];
 
-  return <Label color={color}>{text}</Label>;
+  return <Label color={props.color}>{props.text}</Label>;
 };
 
 const applyFilters = (users, filters) => {
   return users.filter((user) => {
-    let matches = true;
-
-    if (filters.status && user.status !== filters.status) {
-      matches = false;
+    // "All" is essentially no filter return true for all users
+    if (!filters.status) {
+      return true;
+    } else if (filters.status && user.status === filters.status) {
+      return true;
+    } else {
+      return false;
     }
-
-    return matches;
   });
 };
 
-const applyPagination = (cryptoOrders, page, limit) => {
-  return cryptoOrders.slice(page * limit, page * limit + limit);
+const applyPagination = (users, page, limit) => {
+  return users.slice(page * limit, page * limit + limit);
 };
 
 const RecentOrdersTable = ({ users }) => {
@@ -73,30 +72,28 @@ const RecentOrdersTable = ({ users }) => {
   const selectedBulkActions = selectedCryptoOrders.length > 0;
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(5);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [openUserDialog, setOpenUserDialog] = useState(false);
   const [filters, setFilters] = useState({
     status: null,
   });
 
-  console.log("current filter", filters);
-
   const statusOptions = [
     {
-      id: "all",
+      status: "all",
       name: "All",
     },
     {
-      id: "activated",
-      name: "Activated",
+      status: "ACTIVE",
+      name: "Active",
     },
     {
-      id: "pending",
+      status: "PENDING",
       name: "Pending",
     },
   ];
 
   const handleStatusChange = (e) => {
-    console.log("Target value", e.target.value);
-
     let value = null;
 
     if (e.target.value !== "all") {
@@ -104,7 +101,6 @@ const RecentOrdersTable = ({ users }) => {
     }
 
     setFilters((prevFilters) => {
-      console.log("prevFilters", prevFilters);
       return {
         ...prevFilters,
         status: value,
@@ -114,9 +110,7 @@ const RecentOrdersTable = ({ users }) => {
 
   const handleSelectAllCryptoOrders = (event) => {
     setSelectedCryptoOrders(
-      event.target.checked
-        ? cryptoOrders.map((cryptoOrder) => cryptoOrder.id)
-        : []
+      event.target.checked ? users.map((user) => user.id) : []
     );
   };
 
@@ -141,17 +135,24 @@ const RecentOrdersTable = ({ users }) => {
     setLimit(parseInt(event.target.value));
   };
 
-  const filteredCryptoOrders = applyFilters(users, filters);
-  const paginatedCryptoOrders = applyPagination(
-    filteredCryptoOrders,
-    page,
-    limit
-  );
+  const handleClickOpen = (id) => {
+    const filteredUser = users.filter((user) => user.id === id);
+    setSelectedUser(filteredUser[0]);
+    setOpenUserDialog(true);
+  };
+
+  const handleClose = (value: number) => {
+    setOpenUserDialog(false);
+  };
+
+  const filteredUsers = applyFilters(users, filters);
+  const paginatedCryptoOrders = applyPagination(filteredUsers, page, limit);
+
   const selectedSomeCryptoOrders =
     selectedCryptoOrders.length > 0 &&
     selectedCryptoOrders.length < users.length;
   const selectedAllCryptoOrders = selectedCryptoOrders.length === users.length;
-  const theme = useTheme();
+  const theme: any = useTheme();
 
   return (
     <Card>
@@ -173,7 +174,10 @@ const RecentOrdersTable = ({ users }) => {
                   autoWidth
                 >
                   {statusOptions.map((statusOption) => (
-                    <MenuItem key={statusOption.id} value={statusOption.id}>
+                    <MenuItem
+                      key={statusOption.status}
+                      value={statusOption.status}
+                    >
                       {statusOption.name}
                     </MenuItem>
                   ))}
@@ -199,12 +203,18 @@ const RecentOrdersTable = ({ users }) => {
               </TableCell>
               <TableCell>Date</TableCell>
               <TableCell>Name</TableCell>
+              <TableCell>Units</TableCell>
               <TableCell align="right">Email</TableCell>
               <TableCell align="right">Status</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
+            <UserDialog
+              open={openUserDialog}
+              onClose={() => handleClose(1)}
+              selectedUser={selectedUser}
+            />
             {paginatedCryptoOrders.map((user) => {
               const isCryptoOrderSelected = selectedCryptoOrders.includes(
                 user.id
@@ -216,19 +226,24 @@ const RecentOrdersTable = ({ users }) => {
                       color="primary"
                       checked={isCryptoOrderSelected}
                       onChange={(event) =>
-                        handleSelectOneCryptoOrder(event, cryptoOrder.id)
+                        handleSelectOneCryptoOrder(event, user.id)
                       }
                       value={isCryptoOrderSelected}
                     />
                   </TableCell>
                   <TableCell>
                     <Typography variant="body2" color="text.primary" noWrap>
-                      {user.date}
+                      {user.createdAt}
                     </Typography>
                   </TableCell>
                   <TableCell>
                     <Typography variant="body2" color="text.primary" noWrap>
-                      {user.clients}
+                      {user.firstName + " " + user.lastName}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="body2" color="text.primary" noWrap>
+                      {user.transactions[0]?.units || 0}
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
@@ -240,7 +255,7 @@ const RecentOrdersTable = ({ users }) => {
                     {getStatusLabel(user.status)}
                   </TableCell>
                   <TableCell align="right">
-                    <Tooltip title="Edit Order" arrow>
+                    <Tooltip title="Add Units" arrow>
                       <IconButton
                         sx={{
                           "&:hover": {
@@ -250,11 +265,12 @@ const RecentOrdersTable = ({ users }) => {
                         }}
                         color="inherit"
                         size="small"
+                        onClick={() => handleClickOpen(user.id)}
                       >
-                        <EditTwoToneIcon fontSize="small" />
+                        <AddCircleTwoTone fontSize="small" />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="Delete Order" arrow>
+                    <Tooltip title="Remove Units" arrow>
                       <IconButton
                         sx={{
                           "&:hover": { background: theme.colors.error.lighter },
@@ -262,8 +278,9 @@ const RecentOrdersTable = ({ users }) => {
                         }}
                         color="inherit"
                         size="small"
+                        onClick={handleClickOpen}
                       >
-                        <DeleteTwoToneIcon fontSize="small" />
+                        <RemoveCircleTwoTone fontSize="small" />
                       </IconButton>
                     </Tooltip>
                   </TableCell>
@@ -276,7 +293,7 @@ const RecentOrdersTable = ({ users }) => {
       <Box p={2}>
         <TablePagination
           component="div"
-          count={filteredCryptoOrders.length}
+          count={filteredUsers.length}
           onPageChange={handlePageChange}
           onRowsPerPageChange={handleLimitChange}
           page={page}

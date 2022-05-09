@@ -1,7 +1,19 @@
 import prisma from "../client";
 
 export async function findMany() {
-  return await prisma.user.findMany();
+  return await prisma.user.findMany({
+    include: {
+      transactions: {
+        select: {
+          units: true,
+        },
+        orderBy: {
+          datetime: "desc",
+        },
+        take: 1,
+      },
+    },
+  });
 }
 
 export async function findUserByID(id: number) {

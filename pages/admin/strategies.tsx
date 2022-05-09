@@ -1,10 +1,18 @@
 import { useState, useEffect, forwardRef } from "react";
 
-import { Box, Container, Grid, Snackbar } from "@mui/material";
-
+import {
+  Divider,
+  CardContent,
+  CardHeader,
+  Card,
+  Box,
+  Container,
+  Grid,
+  Snackbar,
+  Typography,
+} from "@mui/material";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import type { AlertColor } from "@mui/lab";
-
 import LoadingButton from "@mui/lab/LoadingButton";
 
 import PageTitle from "../../src/components/PageTitle";
@@ -64,6 +72,7 @@ const updateStrategies = async (mutate, strategyBalances = {}, setSnackbar) => {
   });
 
   mutate("/api/strategies");
+  mutate("/api/calcPrice");
 };
 
 export default withPageAuthRequired(function (props) {
@@ -79,6 +88,10 @@ export default withPageAuthRequired(function (props) {
   const [snackbar, setSnackbar] = useState(snackbarInital);
 
   const { data, error, isValidating } = useSWR("/api/strategies", fetcher);
+  const { data: unitPriceData, error: unitPriceError } = useSWR(
+    "/api/calcPrice",
+    fetcher
+  );
 
   if (error) {
     setSnackbar({ open: true, severity: "error", message: error });
@@ -94,8 +107,10 @@ export default withPageAuthRequired(function (props) {
       return StrategyForm(strat, setStrategyBalances);
     });
   }
-
-  console.log(isValidating);
+  const currencyUSD = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  });
 
   return (
     <>
@@ -103,11 +118,24 @@ export default withPageAuthRequired(function (props) {
         <title>Transactions - Applications</title>
       </Head>
       <PageTitleWrapper>
-        <PageTitle
-          heading="Strategies"
-          subHeading="Balances for each strategy"
-          noDoc={true}
-        />
+        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          <PageTitle
+            sx={{ width: "auto" }}
+            heading="Strategies"
+            subHeading="Balances for each strategy"
+            noDoc={true}
+          />
+          <Card>
+            <CardHeader
+              title="Unit Price"
+              subheader={
+                unitPriceError
+                  ? "Unavailable"
+                  : `${currencyUSD.format(unitPriceData || 0)}`
+              }
+            ></CardHeader>
+          </Card>
+        </Box>
       </PageTitleWrapper>
       <Container
         sx={{
@@ -124,11 +152,11 @@ export default withPageAuthRequired(function (props) {
           alignItems="stretch"
           spacing={3}
         >
-          {!isValidating || !strategies ? (
+          {!isValidating ? (
             strategies
           ) : (
             <Box>
-              <SuspenseLoader size="large" />
+              <SuspenseLoader size={64} />
             </Box>
           )}
         </Grid>

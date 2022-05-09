@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import createStrategyBalances from "../../../db/strategyBalance/createMany";
 import { withApiAuthRequired, getSession } from "@auth0/nextjs-auth0";
+import { findMany } from "../../../db/user";
 
 export default withApiAuthRequired(async function handler(
   req: NextApiRequest,
@@ -16,16 +16,14 @@ export default withApiAuthRequired(async function handler(
       .json({ redirect: "401", message: "Unauthorized", success: false });
   }
 
-  if (req.method === "POST") {
-    const data = req.body;
-
+  if (req.method === "GET") {
     try {
-      const tx = await createStrategyBalances(JSON.parse(data));
+      const result = await findMany();
 
-      res.status(200).json(tx);
+      res.status(200).json(result);
     } catch (e) {
       console.error(e);
-      res.status(500).json({ message: "Server Error", success: false });
+      res.status(500).json({ error: "Error updating balance", success: false });
     }
   } else {
     return res
