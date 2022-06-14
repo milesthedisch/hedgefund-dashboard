@@ -16,12 +16,15 @@ model User {
 }
 
 model UserTransactions {
-  id        Int             @id @default(autoincrement())
-  type      TransactionType @default(PURCHASE)
-  units     Decimal         @default(0) @db.Decimal(10, 2)
-  datetime  DateTime        @default(now())
-  user      User            @relation(fields: [userId], references: [id])
-  userId    Int
+  id              Int             @id @default(autoincrement())
+  type            TransactionType @default(PURCHASE)
+  units           Decimal         @default(0) @db.Decimal(10, 2)
+  unitPrice       Decimal         @db.Decimal(9, 6)
+  audInvestment   Decimal         @db.Decimal(15, 2) // Max investment is in the Trilloins
+  datetime        DateTime        @default(now())
+  fee             Decimal         @default(0.01) @db.Decimal(9, 6)
+  user            User            @relation(fields: [userId], references: [id])
+  userId          Int
 
   @@index([userId])
 }
@@ -35,7 +38,7 @@ model Strategies {
 model StrategyTransactions {
   id         String     @unique @default(uuid())
   datetime   DateTime   @default(now())
-  balance    Int        @default(0)
+  balance    Decimal    @default(0) 
   strategyId Int
   strategy   Strategies @relation(fields: [strategyId] ,references: [id]) 
   
@@ -56,8 +59,3 @@ enum TransactionType {
   PURCHASE 
 }
 
-enum UserStatus { 
-  PENDING
-  ACTIVE
-  DEACTIVATED
-}

@@ -40,11 +40,11 @@ async function main() {
     data: [
       {
         id: 1,
-        auth0UserId: "auth0|622de999c80965006a93c12c",
+        auth0UserId: "auth0|62a8ef45baeb511b8f5584f8",
       },
       {
         id: 2,
-        auth0UserId: "auth0|623d37f0125fca006a35293c",
+        auth0UserId: "auth0|62a8f016a3f6713dbe05582b",
       },
     ],
   });
@@ -53,27 +53,30 @@ async function main() {
     data: [
       {
         type: TransactionType.PURCHASE,
-        units: 31000,
-        datetime: new Date(2022, 4, 14, 13, 25),
+        units: 9900,
+        unitPrice: 1.0,
+        audInvestment: 9900,
+        fee: 0.01,
+        datetime: new Date(2022, 0, 1, 0, 0),
         userId: 1,
       },
       {
         type: TransactionType.PURCHASE,
-        units: 31103,
-        datetime: new Date(2022, 4, 16, 13, 25),
+        units: 9900,
+        unitPrice: 1.0,
+        audInvestment: 9900,
+        fee: 0.01,
+        datetime: new Date(2021, 11, 16, 0, 0),
         userId: 1,
       },
       {
         type: TransactionType.PURCHASE,
-        units: 22000,
-        datetime: new Date(2022, 4, 12, 13, 25),
-        userId: 2,
-      },
-      {
-        type: TransactionType.PURCHASE,
-        units: 44000,
-        datetime: new Date(2022, 5, 2, 12, 15),
-        userId: 2,
+        units: 9425.7562,
+        unitPrice: 1.05031,
+        audInvestment: 9900,
+        fee: 0.01,
+        datetime: new Date(2022, 2, 23, 0, 0),
+        userId: 1,
       },
     ],
   });
@@ -81,16 +84,72 @@ async function main() {
   await prisma.strategies.createMany({
     data: [
       {
-        name: "Cash",
+        id: 1,
+        name: "SOL (USD Value)",
       },
       {
-        name: "White Whale",
+        id: 2,
+        name: "Francium Delta Netural",
       },
       {
-        name: "Anchor",
+        id: 3,
+        name: "Terra Station Wallet",
       },
       {
-        name: "FTX",
+        id: 4,
+        name: "Terra Cold Wallet",
+      },
+      {
+        id: 5,
+        name: "Terra Hot Wallet",
+      },
+      {
+        id: 6,
+        name: "WW UST Cold",
+      },
+      {
+        id: 7,
+        name: "Karken USDT",
+      },
+      {
+        id: 8,
+        name: "CBA Cash",
+      },
+      {
+        id: 9,
+        name: "FTX USD",
+      },
+      {
+        id: 10,
+        name: "IB Net Liquidation Value",
+      },
+      {
+        id: 11,
+        name: "IB Fund For Hedging",
+      },
+      {
+        id: 12,
+        name: "IB P&L on FX Hedging",
+      },
+      {
+        id: 13,
+        name: "FTT Rebate",
+      },
+      {
+        id: 14,
+        name: "UST",
+      },
+      {
+        id: 15,
+        name: "Kraken AUD",
+      },
+      {
+        id: 16,
+        name: "Kraken USD",
+      },
+      {
+        id: 17,
+        name: "Coinspot",
       },
     ],
   });
@@ -98,49 +157,475 @@ async function main() {
   await prisma.strategyTransactions.createMany({
     data: [
       {
-        strategyId: 1,
-        balance: 0,
-        datetime: new Date(2022, 3, 5, 12),
-      },
-      {
-        strategyId: 1,
+        strategyId: 8,
         balance: 10000,
-        datetime: new Date(2022, 3, 6, 11),
+        datetime: new Date(2022, 0, 0),
+      },
+      {
+        strategyId: 8,
+        balance: 20000,
+        datetime: new Date(2022, 0, 0),
+      },
+      {
+        strategyId: 3,
+        balance: 17572,
+        datetime: new Date(2022, 0, 24),
       },
       {
         strategyId: 1,
-        balance: 20000,
-        datetime: new Date(2022, 3, 7, 10),
-      },
-      {
-        strategyId: 2,
-        balance: 0,
-        datetime: new Date(2022, 3, 5, 9),
-      },
-      {
-        strategyId: 2,
-        balance: 20000,
-        datetime: new Date(2022, 3, 6, 8),
+        balance: 3224.21,
+        datetime: new Date(2022, 0, 24),
       },
       {
         strategyId: 3,
-        balance: 0,
-        datetime: new Date(2022, 3, 5, 7),
+        balance: 27572,
+        datetime: new Date(2022, 0, 24, 0, 1),
+      },
+      {
+        strategyId: 8,
+        balance: 369,
+        datetime: new Date(2022, 1, 1),
       },
       {
         strategyId: 3,
-        balance: 4000,
-        datetime: new Date(2022, 3, 6, 6),
+        balance: 27825,
+        datetime: new Date(2022, 1, 1),
       },
       {
-        strategyId: 4,
+        strategyId: 2,
+        balance: 1478.37,
+        datetime: new Date(2022, 1, 1),
+      },
+      {
+        strategyId: 1,
+        balance: 4.54,
+        datetime: new Date(2022, 1, 1),
+      },
+      {
+        strategyId: 17,
+        balance: 1548.61,
+        datetime: new Date(2022, 1, 1),
+      },
+      {
+        strategyId: 8,
+        balance: 1943.59,
+        datetime: new Date(2022, 1, 1),
+      },
+      {
+        strategyId: 3,
+        balance: 27935.62,
+        datetime: new Date(2022, 2, 1),
+      },
+      {
+        strategyId: 2,
+        balance: 1480.2,
+        datetime: new Date(2022, 2, 1),
+      },
+      {
+        strategyId: 1,
+        balance: 2.76,
+        datetime: new Date(2022, 2, 1),
+      },
+      {
+        strategyId: 11,
         balance: 0,
-        datetime: new Date(2022, 3, 5, 5),
+        datetime: new Date(2022, 2, 1),
+      },
+      {
+        strategyId: 8,
+        balance: 2246.48,
+        datetime: new Date(2022, 2, 7),
+      },
+      {
+        strategyId: 3,
+        balance: 27955.89,
+        datetime: new Date(2022, 2, 7),
+      },
+      {
+        strategyId: 2,
+        balance: 1487.89,
+        datetime: new Date(2022, 2, 7),
+      },
+      {
+        strategyId: 1,
+        balance: 2.76,
+        datetime: new Date(2022, 2, 7),
       },
       {
         strategyId: 4,
-        balance: 7000,
-        datetime: new Date(2022, 3, 16, 4),
+        balance: 111.65,
+        datetime: new Date(2022, 2, 7),
+      },
+      {
+        strategyId: 11,
+        balance: 0,
+        datetime: new Date(2022, 2, 7),
+      },
+
+      {
+        strategyId: 8,
+        balance: 2314.55,
+        datetime: new Date(2022, 2, 14),
+      },
+      {
+        strategyId: 3,
+        balance: 28154.11,
+        datetime: new Date(2022, 2, 14),
+      },
+      {
+        strategyId: 2,
+        balance: 1493.7,
+        datetime: new Date(2022, 2, 14),
+      },
+      {
+        strategyId: 1,
+        balance: 3.26,
+        datetime: new Date(2022, 2, 14),
+      },
+      {
+        strategyId: 4,
+        balance: 118.64,
+        datetime: new Date(2022, 2, 14),
+      },
+      {
+        strategyId: 11,
+        balance: -668,
+        datetime: new Date(2022, 2, 14),
+      },
+
+      {
+        strategyId: 8,
+        balance: 2246,
+        datetime: new Date(2022, 2, 16),
+      },
+      {
+        strategyId: 3,
+        balance: 28036.04,
+        datetime: new Date(2022, 2, 16),
+      },
+      {
+        strategyId: 2,
+        balance: 1495.61,
+        datetime: new Date(2022, 2, 16),
+      },
+      {
+        strategyId: 1,
+        balance: 3.26,
+        datetime: new Date(2022, 2, 16),
+      },
+      {
+        strategyId: 4,
+        balance: 115.88,
+        datetime: new Date(2022, 2, 16),
+      },
+      {
+        strategyId: 11,
+        balance: -512,
+        datetime: new Date(2022, 2, 16),
+      },
+
+      {
+        strategyId: 8,
+        balance: 2246,
+        datetime: new Date(2022, 2, 17),
+      },
+      {
+        strategyId: 3,
+        balance: 27950.54,
+        datetime: new Date(2022, 2, 17),
+      },
+      {
+        strategyId: 2,
+        balance: 1485.51,
+        datetime: new Date(2022, 2, 17),
+      },
+      {
+        strategyId: 1,
+        balance: 3.26,
+        datetime: new Date(2022, 2, 17),
+      },
+      {
+        strategyId: 4,
+        balance: 115.88,
+        datetime: new Date(2022, 2, 17),
+      },
+      {
+        strategyId: 11,
+        balance: -411.2,
+        datetime: new Date(2022, 2, 17),
+      },
+
+      {
+        strategyId: 8,
+        balance: 2246,
+        datetime: new Date(2022, 2, 22),
+      },
+      {
+        strategyId: 3,
+        balance: 27950.54,
+        datetime: new Date(2022, 2, 22),
+      },
+      {
+        strategyId: 2,
+        balance: 1468.92,
+        datetime: new Date(2022, 2, 22),
+      },
+      {
+        strategyId: 1,
+        balance: 3.19,
+        datetime: new Date(2022, 2, 22),
+      },
+      {
+        strategyId: 4,
+        balance: 167.54,
+        datetime: new Date(2022, 2, 22),
+      },
+      {
+        strategyId: 11,
+        balance: -37,
+        datetime: new Date(2022, 2, 22),
+      },
+
+      {
+        strategyId: 8,
+        balance: 2246,
+        datetime: new Date(2022, 2, 23),
+      },
+      {
+        strategyId: 3,
+        balance: 27431.4,
+        datetime: new Date(2022, 2, 23),
+      },
+      {
+        strategyId: 2,
+        balance: 1453.24,
+        datetime: new Date(2022, 2, 23),
+      },
+      {
+        strategyId: 1,
+        balance: 3.16,
+        datetime: new Date(2022, 2, 23),
+      },
+      {
+        strategyId: 4,
+        balance: 163.21,
+        datetime: new Date(2022, 2, 23),
+      },
+      {
+        strategyId: 11,
+        balance: 270.5,
+        datetime: new Date(2022, 2, 23),
+      },
+
+      {
+        strategyId: 8,
+        balance: 22246.0,
+        datetime: new Date(2022, 2, 23, 0, 1),
+      },
+      {
+        strategyId: 3,
+        balance: 27431.4,
+        datetime: new Date(2022, 2, 23, 0, 1),
+      },
+      {
+        strategyId: 2,
+        balance: 1453.24,
+        datetime: new Date(2022, 2, 23, 0, 1),
+      },
+      {
+        strategyId: 1,
+        balance: 3.16,
+        datetime: new Date(2022, 2, 23, 0, 1),
+      },
+      {
+        strategyId: 4,
+        balance: 163.21,
+        datetime: new Date(2022, 2, 23, 0, 1),
+      },
+      {
+        strategyId: 11,
+        balance: 270.5,
+        datetime: new Date(2022, 2, 23, 0, 1),
+      },
+
+      {
+        strategyId: 8,
+        balance: 2246.01,
+        datetime: new Date(2022, 2, 23, 0, 2),
+      },
+      {
+        strategyId: 3,
+        balance: 42173.44,
+        datetime: new Date(2022, 2, 23, 0, 2),
+      },
+      {
+        strategyId: 2,
+        balance: 1452.43,
+        datetime: new Date(2022, 2, 23, 0, 2),
+      },
+      {
+        strategyId: 1,
+        balance: 3.15,
+        datetime: new Date(2022, 2, 23, 0, 2),
+      },
+      {
+        strategyId: 5,
+        balance: 0,
+        datetime: new Date(2022, 2, 23, 0, 2),
+      },
+      {
+        strategyId: 11,
+        balance: 256.3,
+        datetime: new Date(2022, 2, 23, 0, 2),
+      },
+      {
+        strategyId: 6,
+        balance: 4438.8,
+        datetime: new Date(2022, 2, 23, 0, 2),
+      },
+
+      {
+        strategyId: 8,
+        balance: 2850.82,
+        datetime: new Date(2022, 2, 23, 0, 3),
+      },
+      {
+        strategyId: 3,
+        balance: 42173.44,
+        datetime: new Date(2022, 2, 23, 0, 3),
+      },
+      {
+        strategyId: 2,
+        balance: 1452.43,
+        datetime: new Date(2022, 2, 23, 0, 3),
+      },
+      {
+        strategyId: 1,
+        balance: 3.15,
+        datetime: new Date(2022, 2, 23, 0, 3),
+      },
+      {
+        strategyId: 5,
+        balance: 0,
+        datetime: new Date(2022, 2, 23, 0, 3),
+      },
+      {
+        strategyId: 11,
+        balance: 256.3,
+        datetime: new Date(2022, 2, 23, 0, 3),
+      },
+      {
+        strategyId: 6,
+        balance: 4438.8,
+        datetime: new Date(2022, 2, 23, 0, 3),
+      },
+
+      {
+        strategyId: 8,
+        balance: 3050.82,
+        datetime: new Date(2022, 2, 23, 0, 4),
+      },
+      {
+        strategyId: 3,
+        balance: 42309.73,
+        datetime: new Date(2022, 2, 23, 0, 4),
+      },
+      {
+        strategyId: 2,
+        balance: 1434.31,
+        datetime: new Date(2022, 2, 23, 0, 4),
+      },
+      {
+        strategyId: 1,
+        balance: 4.0,
+        datetime: new Date(2022, 2, 23, 0, 4),
+      },
+      {
+        strategyId: 5,
+        balance: 0,
+        datetime: new Date(2022, 2, 23, 0, 4),
+      },
+      {
+        strategyId: 11,
+        balance: 256.3,
+        datetime: new Date(2022, 2, 23, 0, 4),
+      },
+      {
+        strategyId: 6,
+        balance: 4438.8,
+        datetime: new Date(2022, 2, 23, 0, 4),
+      },
+
+      {
+        strategyId: 8,
+        balance: 3050.82,
+        datetime: new Date(2022, 2, 31),
+      },
+      {
+        strategyId: 3,
+        balance: 42309.73,
+        datetime: new Date(2022, 2, 31),
+      },
+      {
+        strategyId: 2,
+        balance: 1434.31,
+        datetime: new Date(2022, 2, 31),
+      },
+      {
+        strategyId: 1,
+        balance: 4.0,
+        datetime: new Date(2022, 2, 31),
+      },
+      {
+        strategyId: 5,
+        balance: 0,
+        datetime: new Date(2022, 2, 31),
+      },
+      {
+        strategyId: 11,
+        balance: 425,
+        datetime: new Date(2022, 2, 31),
+      },
+      {
+        strategyId: 6,
+        balance: 4453.8,
+        datetime: new Date(2022, 2, 31),
+      },
+
+      {
+        strategyId: 8,
+        balance: 118050.82,
+        datetime: new Date(2022, 2, 31, 0, 1),
+      },
+      {
+        strategyId: 3,
+        balance: 42309.73,
+        datetime: new Date(2022, 2, 31, 0, 1),
+      },
+      {
+        strategyId: 2,
+        balance: 1434.31,
+        datetime: new Date(2022, 2, 31, 0, 1),
+      },
+      {
+        strategyId: 1,
+        balance: 4.0,
+        datetime: new Date(2022, 2, 31, 0, 1),
+      },
+      {
+        strategyId: 5,
+        balance: 0,
+        datetime: new Date(2022, 2, 31, 0, 1),
+      },
+      {
+        strategyId: 11,
+        balance: 425,
+        datetime: new Date(2022, 2, 31, 0, 1),
+      },
+      {
+        strategyId: 6,
+        balance: 4453.8,
+        datetime: new Date(2022, 2, 31, 0, 1),
       },
     ],
   });
