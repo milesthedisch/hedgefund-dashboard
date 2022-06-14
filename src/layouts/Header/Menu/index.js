@@ -76,7 +76,7 @@ function HeaderMenu({ user }) {
     <>
       <ListWrapper>
         <List disablePadding component={Box} display="flex">
-          {user ? (
+          {isAdmin ? (
             <ListItem
               classes={{ root: "MuiListItem-indicators" }}
               button

@@ -33,19 +33,14 @@ import AddCircleTwoTone from "@mui/icons-material/AddCircleTwoTone";
 import RemoveCircleTwoTone from "@mui/icons-material/RemoveCircleTwoTone";
 import BulkActions from "../BulkActions";
 
-const getStatusLabel = (userStatus = "pending") => {
-  const status = {
-    ACTIVE: {
-      text: "Active",
-      color: "success",
-    },
-    PENDING: {
-      text: "Pending",
-      color: "warning",
-    },
-  };
+const getStatusLabel = (userStatus = true) => {
+  let props: { text: string; color: string };
 
-  const props = status[userStatus];
+  if (userStatus) {
+    props = { text: "Active", color: "success" };
+  } else {
+    props = { text: "Blocked", color: "warning" };
+  }
 
   return <Label color={props.color}>{props.text}</Label>;
 };
@@ -53,9 +48,9 @@ const getStatusLabel = (userStatus = "pending") => {
 const applyFilters = (users, filters) => {
   return users.filter((user) => {
     // "All" is essentially no filter return true for all users
-    if (!filters.status) {
+    if (!filters.blocked) {
       return true;
-    } else if (filters.status && user.status === filters.status) {
+    } else if (filters.blocked && user.blocked === filters.blocked) {
       return true;
     } else {
       return false;
@@ -68,6 +63,8 @@ const applyPagination = (users, page, limit) => {
 };
 
 const RecentOrdersTable = ({ users }) => {
+  console.log(users);
+
   const [selectedCryptoOrders, setSelectedCryptoOrders] = useState([]);
   const selectedBulkActions = selectedCryptoOrders.length > 0;
   const [page, setPage] = useState(0);
@@ -80,16 +77,12 @@ const RecentOrdersTable = ({ users }) => {
 
   const statusOptions = [
     {
-      status: "all",
-      name: "All",
-    },
-    {
       status: "ACTIVE",
       name: "Active",
     },
     {
-      status: "PENDING",
-      name: "Pending",
+      value: "BLOCKED",
+      name: "Blocked",
     },
   ];
 
@@ -175,8 +168,8 @@ const RecentOrdersTable = ({ users }) => {
                 >
                   {statusOptions.map((statusOption) => (
                     <MenuItem
-                      key={statusOption.status}
-                      value={statusOption.status}
+                      key={statusOption.name}
+                      value={statusOption.value}
                     >
                       {statusOption.name}
                     </MenuItem>
@@ -252,7 +245,7 @@ const RecentOrdersTable = ({ users }) => {
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
-                    {getStatusLabel(user.status)}
+                    {getStatusLabel(user.blocked)}
                   </TableCell>
                   <TableCell align="right">
                     <Tooltip title="Add Units" arrow>

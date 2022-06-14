@@ -10,26 +10,20 @@ datasource db {
 }
 
 model User {
-  id            Int                 @id @default(autoincrement())
-  auth0UserId         Int
-  email         String              @unique
-  fullName      String? 
-  firstName     String?
-  lastName      String?
-  address       String?
-  createdAt     DateTime            @default(now())
-  role          Role                @default(USER)
-  status        UserStatus          @default(PENDING)
+  id            Int                 @id @default(autoincrement()) 
+  auth0UserId   String              @unique 
   transactions  UserTransactions[]
 }
 
 model UserTransactions {
   id        Int             @id @default(autoincrement())
   type      TransactionType @default(PURCHASE)
-  units     Int             @default(0)
+  units     Decimal         @default(0) @db.Decimal(10, 2)
   datetime  DateTime        @default(now())
   user      User            @relation(fields: [userId], references: [id])
   userId    Int
+
+  @@index([userId])
 }
 
 model Strategies {
@@ -44,11 +38,12 @@ model StrategyTransactions {
   balance    Int        @default(0)
   strategyId Int
   strategy   Strategies @relation(fields: [strategyId] ,references: [id]) 
+  
 }
 
 model ProductionSharePrice {
   datetime DateTime        @unique @default(now())
-  price    Decimal         @default(0) @db.Decimal(7, 6)
+  price    Decimal         @default(0) @db.Decimal(9, 6)
 }
 
 enum Role {
@@ -59,7 +54,6 @@ enum Role {
 enum TransactionType {
   REDEMPTION 
   PURCHASE 
-  INITIAL_PURCHASE
 }
 
 enum UserStatus { 

@@ -1,16 +1,24 @@
+import prisma from "../../../db/client";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { withApiAuthRequired, getSession } from "@auth0/nextjs-auth0";
 import protectRoute from "../../../util/protectRoute";
-import createUser from "../../../db/user/create";
+import getTxs from "../../../db/userTxs";
 
-export default protectRoute(async function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method === "POST") {
-    const data = req.body;
+  const { user } = getSession(req, res);
 
+  if (req.method === "GET") {
     try {
-      const result = await createUser(data);
+      const result = await getTxs(user.sub);
+
+      if (result === null) {
+        return res
+          .status(404)
+          .json({ error: "User not found", success: false });
+      }
 
       return res.status(200).json(result);
     } catch (e) {
@@ -24,4 +32,4 @@ export default protectRoute(async function handler(
       .status(405)
       .json({ message: "Method not allowed", success: false });
   }
-});
+}

@@ -6,20 +6,27 @@ import Footer from "../src/components/Footer";
 
 import AccountBalance from "../src/components/AccountBalance";
 import AccountSecurity from "../src/components/AccountSecurity";
-import SuspenseLoader from "../src/components/SuspenseLoader";
 
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
-import useSWR from "swr";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
+import useSWR from "swr";
 import refreshInterval from "../src/utility/refreshInterval";
 
 const fetcher = async (uri) => {
   const response = await fetch(uri);
-  return response.json();
+
+  const json = response.json();
+
+  if (json.success === false) {
+    throw json.message;
+  }
+
+  return json;
 };
 
-const Dashboard = ({ data, isValidating }) => (
+const Dashboard = ({ userTotalUnits, sharePriceData, isValidating }) => (
   <>
     <Head>
       <title>Crypto Dashboard</title>
@@ -42,7 +49,11 @@ const Dashboard = ({ data, isValidating }) => (
         spacing={3}
       >
         <Grid item xs={12}>
-          <AccountBalance userData={data} isValidating={isValidating} />
+          <AccountBalance
+            sharePriceData={sharePriceData}
+            userTotalUnits={userTotalUnits}
+            isValidating={isValidating}
+          />
         </Grid>
         <Grid item lg={12} xs={12}>
           <AccountSecurity />
@@ -56,26 +67,47 @@ const Dashboard = ({ data, isValidating }) => (
 function DashboardCrypto() {
   const router = useRouter();
 
-  const { data, error, isValidating } = useSWR("/api/sheets/user", fetcher, {
+  const {
+    data: userData,
+    error: userError,
+    isValidating: userIsValidating,
+  } = useSWR(`/api/user/txs`, fetcher, {
     refreshInterval: refreshInterval(),
   });
 
-  if (data == 404 || error) {
-    return router.push("/404");
+  const {
+    data: sharePriceData,
+    error: sharePriceError,
+    isValidating: sharePriceIsValidating,
+  } = useSWR(`/api/sharePrice`, fetcher, {
+    refreshInterval: refreshInterval(),
+  });
+
+  const userHasError = (!userData && !userIsValidating) || !!userError;
+  const sharePriceHasError =
+    (!sharePriceData && !sharePriceIsValidating) ||
+    (!sharePriceData?.length && !sharePriceIsValidating) ||
+    !!sharePriceError;
+
+  useEffect(() => {
+    (async () => {
+      if (userHasError || sharePriceHasError) {
+        await router.push("/404");
+      }
+    })();
+  }, [userHasError, sharePriceHasError, router]);
+
+  if (userHasError || sharePriceHasError) {
+    return <p>Redirecting...</p>;
   }
 
-  if (!data && isValidating) {
-    return (
-      <Container
-        sx={{ height: "80vh", display: "flex", justifyContent: "center" }}
-      >
-        {/* The default value size is 64 */}
-        <SuspenseLoader size={64 * 1.5} />
-      </Container>
-    );
-  }
-
-  return <Dashboard data={data} isValidating={isValidating} />;
+  return (
+    <Dashboard
+      userTotalUnits={userData}
+      sharePriceData={sharePriceData}
+      isValidating={userIsValidating || sharePriceIsValidating}
+    />
+  );
 }
 
 export default withPageAuthRequired(DashboardCrypto);

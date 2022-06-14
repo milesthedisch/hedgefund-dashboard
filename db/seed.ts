@@ -1,89 +1,79 @@
 import prisma from "./client";
-import { Role, TransactionType, UserStatus } from "@prisma/client";
-import { faker } from "@faker-js/faker";
+import { TransactionType } from "@prisma/client";
 
-const fakeUsers = Array(100)
-  .fill(0)
-  .map(() => ({
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    email: faker.internet.email(),
-    auth0UserId: faker.datatype.number({ min: 100, max: 1000 }),
-    role: faker.datatype.boolean() ? Role.ADMIN : Role.USER,
-    status: faker.datatype.boolean() ? UserStatus.PENDING : UserStatus.ACTIVE,
-  }));
+const gensis = new Date(2022, 0, 0);
 
-// Seed the database with data
+const sharePrices = [
+  "1",
+  "1",
+  "1.05031360266516",
+  "1.08012650833422",
+  "1.0866354271612",
+  "1.0866354271612",
+  "1.0866354271612",
+  "1.09612556506185",
+  "1.09612556506185",
+  "1.10297230722228",
+  "1.09670313764405",
+  "1.09670313764405",
+  "1.09670313764405",
+  "1.09860167281972",
+  "1.10724501212773",
+  "1.11324349173524",
+  "1.0971384133385",
+  "1.0971384133385",
+  "1.10466394994662",
+  "1.10554916591794",
+  "1.10294482403191",
+].map((x, i) => {
+  gensis.setDate(gensis.getDate() + 7);
+
+  return {
+    datetime: gensis.toISOString().replace("Z", "+10:00"),
+    price: parseFloat(x),
+  };
+});
+
+// Seed the date base
 async function main() {
   await prisma.user.createMany({
     data: [
       {
-        firstName: "admin",
-        lastName: "miles",
-        email: "milesthedisch@gmail.com",
-        auth0UserId: 111,
-        role: Role.ADMIN,
-        status: UserStatus.ACTIVE,
+        id: 1,
+        auth0UserId: "auth0|622de999c80965006a93c12c",
       },
       {
-        firstName: "Yewande",
-        lastName: "Bar",
-        email: "yewande@prisma.io",
-        auth0UserId: 456,
+        id: 2,
+        auth0UserId: "auth0|623d37f0125fca006a35293c",
       },
-      {
-        firstName: "Bob",
-        lastName: "Foo",
-        email: "bob@prisma.io",
-        auth0UserId: 123,
-      },
-      {
-        firstName: "Angelique",
-        email: "angelique@prisma.io",
-        auth0UserId: 777,
-        status: UserStatus.PENDING,
-      },
-      ...fakeUsers,
     ],
   });
 
   await prisma.userTransactions.createMany({
     data: [
       {
-        type: TransactionType.INITIAL_PURCHASE,
+        type: TransactionType.PURCHASE,
         units: 31000,
         datetime: new Date(2022, 4, 14, 13, 25),
         userId: 1,
       },
       {
-        type: TransactionType.INITIAL_PURCHASE,
+        type: TransactionType.PURCHASE,
         units: 31103,
         datetime: new Date(2022, 4, 16, 13, 25),
         userId: 1,
       },
       {
-        type: TransactionType.INITIAL_PURCHASE,
+        type: TransactionType.PURCHASE,
         units: 22000,
         datetime: new Date(2022, 4, 12, 13, 25),
         userId: 2,
       },
       {
-        type: TransactionType.INITIAL_PURCHASE,
+        type: TransactionType.PURCHASE,
         units: 44000,
         datetime: new Date(2022, 5, 2, 12, 15),
         userId: 2,
-      },
-      {
-        type: TransactionType.INITIAL_PURCHASE,
-        units: 20000,
-        datetime: new Date(2022, 3, 14, 13, 25),
-        userId: 3,
-      },
-      {
-        type: TransactionType.INITIAL_PURCHASE,
-        units: 50000,
-        datetime: new Date(2022, 2, 4, 13, 25),
-        userId: 4,
       },
     ],
   });
@@ -154,16 +144,6 @@ async function main() {
       },
     ],
   });
-
-  const sharePrices = Array(100)
-    .fill(0)
-    .map((x) => ({
-      datetime: faker.date.between(
-        new Date(2021).toJSON(),
-        new Date(2022, 12).toJSON()
-      ),
-      price: faker.datatype.number({ min: 1, max: 2, precision: 0.00001 }),
-    }));
 
   await prisma.productionSharePrice.createMany({
     data: sharePrices,

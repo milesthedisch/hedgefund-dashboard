@@ -5,6 +5,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { withApiAuthRequired } from "@auth0/nextjs-auth0";
 import prisma from "../../../db/client";
+import { getTotalUnits } from "../../../db/userTxs";
 
 const sum = (a: number, b: number): number => a + b;
 
@@ -21,22 +22,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     },
   });
 
-  const unitsOnIssue = await prisma.user.findMany({
-    select: {
-      transactions: {
-        orderBy: {
-          datetime: "desc",
-        },
-        take: 1,
-      },
-    },
-  });
-
-  const nonNullTxs = unitsOnIssue.filter((tx) => !!tx.transactions[0]);
-
-  const totalUnits = nonNullTxs
-    .map((tx) => tx.transactions[0].units)
-    .reduce(sum);
+  const totalUnits = await getTotalUnits();
 
   const nonNullBalances = strategies.filter(
     (strat) => strat.strategyTransactions[0]

@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/userHook": {
+      "includeFiles": "google-key.json"
+    }
+  }
+}

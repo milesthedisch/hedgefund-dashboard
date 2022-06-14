@@ -63,6 +63,14 @@ const UserBoxDescription = styled(Typography)(
 
 function HeaderUserbox(props) {
   const { user } = props;
+
+  let isAdmin;
+
+  if (user) {
+    isAdmin =
+      user["https://balmoral-dashboard.vercel.com/roles"].includes("admin");
+  }
+
   const ref = useRef(null);
   const [isOpen, setOpen] = useState(false);
 
@@ -114,14 +122,6 @@ function HeaderUserbox(props) {
         </MenuUserBox>
         <Divider sx={{ mb: 0 }} />
         <List sx={{ p: 1 }} component="nav">
-          <ListItem button to="/management/profile/details" component={Link}>
-            <AccountBoxTwoToneIcon fontSize="small" />
-            <ListItemText primary="My Profile" />
-          </ListItem>
-          <ListItem button to="/dashboards/messenger" component={Link}>
-            <InboxTwoToneIcon fontSize="small" />
-            <ListItemText primary="Messenger" />
-          </ListItem>
           <ListItem button to="/management/profile/settings" component={Link}>
             <AccountTreeTwoToneIcon fontSize="small" />
             <ListItemText primary="Account Settings" />

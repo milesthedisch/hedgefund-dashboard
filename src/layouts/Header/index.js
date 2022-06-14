@@ -30,8 +30,15 @@ const HeaderWrapper = styled(Box)(
 `
 );
 
-function Header() {
+function Header(props) {
   const { user } = useUser();
+
+  let isAdmin;
+
+  if (user) {
+    isAdmin =
+      user["https://balmoral-dashboard.vercel.com/roles"].includes("admin");
+  }
 
   return (
     <HeaderWrapper display="flex" alignItems="center">
@@ -43,8 +50,14 @@ function Header() {
       </Box>
       {user ? (
         <Box display="flex" alignItems="center">
-          <HeaderButtons />
-          <HeaderUserbox user={user} />
+          {isAdmin ? (
+            <>
+              <HeaderButtons key="a" />
+              <HeaderUserbox key="b" user={user} />
+            </>
+          ) : (
+            <HeaderUserbox user={user} />
+          )}
         </Box>
       ) : (
         ""
