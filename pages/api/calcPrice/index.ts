@@ -29,7 +29,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   );
 
   const balances = nonNullBalances.map(
-    (strategy) => strategy.strategyTransactions[0].balance
+    (strategy) => ~~strategy.strategyTransactions[0].balance
   );
 
   const totalBalance = balances.reduce(sum);

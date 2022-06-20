@@ -81,6 +81,7 @@ export default protectRoute(async function handler(
 
       balmoralUser = await createUser({
         auth0UserId: authUser.user_id,
+        initalInvestment: req.body.initalInvestment,
       });
 
       // Back reference in our db
