@@ -17,10 +17,10 @@ import refreshInterval from "../src/utility/refreshInterval";
 const fetcher = async (uri) => {
   const response = await fetch(uri);
 
-  const json = response.json();
+  const json = await response.json();
 
-  if (json.success === false) {
-    throw json.message;
+  if (response.status > 200) {
+    throw response;
   }
 
   return json;
@@ -84,6 +84,7 @@ function DashboardCrypto() {
   });
 
   const userHasError = (!userData && !userIsValidating) || !!userError;
+
   const sharePriceHasError =
     (!sharePriceData && !sharePriceIsValidating) ||
     (!sharePriceData?.length && !sharePriceIsValidating) ||

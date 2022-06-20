@@ -20,7 +20,7 @@ const colors = {
     orange1: "linear-gradient(135deg, #FCCF31 0%, #F55555 100%)",
     orange2: "linear-gradient(135deg, #FFD3A5 0%, #FD6585 100%)",
     purple1: "linear-gradient(135deg, #43CBFF 0%, #9708CC 100%)",
-    ink1: "linear-gradient(135deg, #F6CEEC 0%, #D939CD 100%)",
+    pink1: "linear-gradient(135deg, #F6CEEC 0%, #D939CD 100%)",
     pink2: "linear-gradient(135deg, #F761A1 0%, #8C1BAB 100%)",
     green1: "linear-gradient(135deg, #FFF720 0%, #3CD500 100%)",
     black1: "linear-gradient(100.66deg, #434343 6.56%, #000000 93.57%)",
@@ -142,6 +142,7 @@ export const LightTheme = createTheme({
       error: colors.shadows.error,
       primary: colors.shadows.primary,
       warning: colors.shadows.warning,
+      info: colors.shadows.info,
     },
     alpha: {
       white: {

@@ -4,10 +4,10 @@ import Head from "next/head";
 import { UserProvider } from "@auth0/nextjs-auth0";
 
 import createEmotionCache from "../src/utility/createEmotionCache";
-import CustomThemeProvider from "../src/theme/ThemeProvider.js";
+import CustomThemeProvider from "../src/theme/ThemeProvider";
 import CssBaseline from "@mui/material/CssBaseline";
 import { CacheProvider } from "@emotion/react";
-import { LightTheme } from "../src/theme/schemes/LightTheme.js";
+import { LightTheme } from "../src/theme/schemes/LightTheme";
 import Layout from "../src/layouts";
 import { SWRConfigurationProvider } from "../src/utility/SWRConfigurationProvider";
 
@@ -22,7 +22,7 @@ export default function MyApp(props) {
       <Head>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
-      <CustomThemeProvider theme={LightTheme}>
+      <CustomThemeProvider>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
         <SWRConfigurationProvider>

@@ -12,7 +12,7 @@ import { useUser, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import router from "next/router";
 import useSWR from "swr";
 
-const ApplicationsTransactions = ({ users }) => (
+const ApplicationsTransactions = ({ data }) => (
   <>
     <Head>
       <title>Transactions - Applications</title>
@@ -29,7 +29,7 @@ const ApplicationsTransactions = ({ users }) => (
         spacing={3}
       >
         <Grid item xs={12}>
-          <Users users={users} />
+          <Users users={data.users} />
         </Grid>
       </Grid>
     </Container>
@@ -39,6 +39,11 @@ const ApplicationsTransactions = ({ users }) => (
 
 const fetcher = async (uri: string) => {
   const response = await fetch(uri);
+
+  if (response.status > 200) {
+    throw response;
+  }
+
   return response.json();
 };
 
@@ -61,7 +66,7 @@ export default withPageAuthRequired(function (props) {
   }
 
   if (data) {
-    return <ApplicationsTransactions users={data} />;
+    return <ApplicationsTransactions data={data} />;
   }
 
   if (!data && isValidating) {

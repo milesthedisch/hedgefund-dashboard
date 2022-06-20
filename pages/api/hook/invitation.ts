@@ -1,10 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import createUserAndTx from "../../../db/user/createUserAndTx";
+import createUser from "../../../db/user/create";
 import protectRoute from "../../../util/protectRoute";
 import { AuthenticationClient, ManagementClient } from "auth0";
 import { getLatestSharePrice } from "../../../db/sharePrice";
 import sgMail from "@sendgrid/mail";
 import { nanoid } from "nanoid/non-secure";
+import type { User } from "auth0";
+import { Prisma } from "@prisma/client";
 
 export default protectRoute(async function handler(
   req: NextApiRequest,
@@ -48,9 +50,9 @@ export default protectRoute(async function handler(
       domain: auth0host,
     });
 
-    let authUser;
-    let balmoralUser;
-    let changeTicket;
+    let authUser: User;
+    let balmoralUser: { id: number };
+    let changeTicket: { ticket: string };
 
     try {
       authUser = await managmentClient.createUser({
@@ -77,8 +79,8 @@ export default protectRoute(async function handler(
 
       const totalUnits = netApplication / Number(unitPrice.price);
 
-      balmoralUser = await createUserAndTx(authUser.user_id, {
-        units: totalUnits,
+      balmoralUser = await createUser({
+        auth0UserId: authUser.user_id,
       });
 
       // Back reference in our db

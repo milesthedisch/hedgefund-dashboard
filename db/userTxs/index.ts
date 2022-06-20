@@ -1,8 +1,6 @@
 import prisma from "../client";
 
-export default async function getTxs(sub: string) {
-  console.log(sub);
-
+export default async function getTxs(sub: string): Promise<number> {
   const purchased = await prisma.userTransactions.aggregate({
     _sum: {
       units: true,
@@ -14,8 +12,6 @@ export default async function getTxs(sub: string) {
       },
     },
   });
-
-  console.log("purchased:", purchased);
 
   const redeemed = await prisma.userTransactions.aggregate({
     _sum: {
@@ -29,9 +25,7 @@ export default async function getTxs(sub: string) {
     },
   });
 
-  console.log("redeemed:", redeemed);
-
-  return purchased._sum.units - redeemed._sum.units;
+  return (purchased._sum.units as any) - (redeemed._sum.units as any);
 }
 
 export async function getTotalUnits(): Promise<number> {
@@ -53,5 +47,5 @@ export async function getTotalUnits(): Promise<number> {
     },
   });
 
-  return purchased._sum.units - redeemed._sum.units;
+  return (purchased._sum.units as any) - (redeemed._sum.units as any);
 }

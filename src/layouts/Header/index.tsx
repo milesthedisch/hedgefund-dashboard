@@ -1,15 +1,18 @@
-import { useContext } from "react";
-
 import { Box, Hidden, IconButton, Tooltip } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import MenuTwoToneIcon from "@mui/icons-material/MenuTwoTone";
-import CloseTwoToneIcon from "@mui/icons-material/CloseTwoTone";
 
+// import useSWR from "swr";
 import HeaderMenu from "./Menu";
 import HeaderButtons from "./Buttons";
 import HeaderUserbox from "./Userbox";
 import Logo from "../../components/Logo";
 import { useUser } from "@auth0/nextjs-auth0";
+import useSWR from "swr";
+import type { UserProfile } from "@auth0/nextjs-auth0";
+
+type User = UserProfile & {
+  [prop: string]: [admin: string] | unknown;
+};
 
 const HeaderWrapper = styled(Box)(
   ({ theme }) => `
@@ -28,16 +31,17 @@ const HeaderWrapper = styled(Box)(
             width: auto;
         }
 `
-);
+) as typeof Box;
 
 function Header(props) {
-  const { user } = useUser();
+  const { user }: { user?: User } = useUser();
 
-  let isAdmin;
+  let isAdmin: Boolean;
 
   if (user) {
-    isAdmin =
-      user["https://balmoral-dashboard.vercel.com/roles"].includes("admin");
+    const role: any = user["https://balmoral-dashboard.vercel.com/roles"];
+
+    isAdmin = role.includes("admin");
   }
 
   return (

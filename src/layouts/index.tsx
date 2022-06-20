@@ -1,6 +1,7 @@
 import { styled } from "@mui/material/styles";
 import { Box } from "@mui/material";
 import { useUser } from "@auth0/nextjs-auth0";
+import useSWR from "swr";
 
 import Header from "./Header";
 

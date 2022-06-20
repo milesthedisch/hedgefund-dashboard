@@ -4,11 +4,13 @@ import {
   Box,
   Divider,
   IconButton,
+  Button,
   List,
   ListItem,
   Popover,
   Tooltip,
   Typography,
+  Icon,
 } from "@mui/material";
 import { useRef, useState } from "react";
 import NotificationsActiveTwoToneIcon from "@mui/icons-material/NotificationsActiveTwoTone";
@@ -40,7 +42,24 @@ const NotificationsBadge = styled(Badge)(
 `
 );
 
-function HeaderNotifications() {
+const NotificationsItem = styled(Button)(
+  ({ theme }) => `
+    display: flex;
+    width: 100%;
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid ${theme.colors.primary.lighter};
+    border-radius: 6px;
+    color: ${theme.colors.alpha.trueWhite};
+    
+    :hover {
+      background: ${theme.colors.secondary.lighter};
+      transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    }
+`
+);
+
+function HeaderNotifications({ data = { users: [] }, isValidating, error }) {
   const ref = useRef(null);
   const [isOpen, setOpen] = useState(false);
 
@@ -52,12 +71,20 @@ function HeaderNotifications() {
     setOpen(false);
   };
 
+  let newUsers = [];
+  let amountOfNewUsers = 0;
+
+  if (data.users) {
+    newUsers = data.users;
+    amountOfNewUsers = data.users.length;
+  }
+
   return (
     <>
       <Tooltip arrow title="Notifications">
         <IconButton color="primary" ref={ref} onClick={handleOpen} size="large">
           <NotificationsBadge
-            badgeContent={1}
+            badgeContent={amountOfNewUsers}
             anchorOrigin={{
               vertical: "top",
               horizontal: "right",
@@ -95,23 +122,21 @@ function HeaderNotifications() {
           >
             <Box flex="1">
               <Box display="flex" justifyContent="space-between">
-                <Typography sx={{ fontWeight: "bold" }}>
-                  Messaging Platform
-                </Typography>
-                <Typography variant="caption" sx={{ textTransform: "none" }}>
-                  {formatDistance(subDays(new Date(), 3), new Date(), {
-                    addSuffix: true,
-                  })}
-                </Typography>
+                <Typography sx={{ fontWeight: "bold" }}>New Users</Typography>
               </Box>
-              <Typography
-                component="span"
-                variant="body2"
-                color="text.secondary"
-              >
-                {" "}
-                new messages in your inbox
-              </Typography>
+              {data.users.map((user) => {
+                return (
+                  <NotificationsItem key={user.user_id}>
+                    <Typography
+                      component="span"
+                      variant="body2"
+                      color="text.secondary"
+                    >
+                      {user.email}
+                    </Typography>
+                  </NotificationsItem>
+                );
+              })}
             </Box>
           </ListItem>
         </List>

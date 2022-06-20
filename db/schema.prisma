@@ -10,9 +10,10 @@ datasource db {
 }
 
 model User {
-  id            Int                 @id @default(autoincrement()) 
-  auth0UserId   String              @unique 
-  transactions  UserTransactions[]
+  id                Int                 @id @default(autoincrement()) 
+  auth0UserId       String              @unique 
+  initalInvestment  Int
+  transactions      UserTransactions[]
 }
 
 model UserTransactions {

@@ -1,17 +1,11 @@
-import { FC, ChangeEvent, useState } from "react";
-import { format, parse } from "date-fns";
-import numeral from "numeral";
+import { useState } from "react";
 import PropTypes from "prop-types";
-
 import {
-  Tooltip,
   Divider,
   Box,
   FormControl,
   InputLabel,
   Card,
-  Checkbox,
-  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -24,36 +18,39 @@ import {
   Typography,
   useTheme,
   CardHeader,
+  IconButton,
 } from "@mui/material";
-
 import Label from "../Label";
-
 import UserDialog from "../UserDialog";
-import AddCircleTwoTone from "@mui/icons-material/AddCircleTwoTone";
-import RemoveCircleTwoTone from "@mui/icons-material/RemoveCircleTwoTone";
-import BulkActions from "../BulkActions";
+import EditIcon from "@mui/icons-material/Edit";
 
-const getStatusLabel = (userStatus = true) => {
+const getStatusLabel = (userStatus = false) => {
   let props: { text: string; color: string };
 
   if (userStatus) {
-    props = { text: "Active", color: "success" };
-  } else {
     props = { text: "Blocked", color: "warning" };
+  } else {
+    props = { text: "Active", color: "success" };
   }
 
   return <Label color={props.color}>{props.text}</Label>;
 };
 
-const applyFilters = (users, filters) => {
+const applyFilters = (
+  users: [{ blocked: boolean }],
+  filters: { value: string }
+) => {
+  if (filters.value === "ALL") {
+    return users;
+  }
+
   return users.filter((user) => {
-    // "All" is essentially no filter return true for all users
-    if (!filters.blocked) {
-      return true;
-    } else if (filters.blocked && user.blocked === filters.blocked) {
-      return true;
-    } else {
-      return false;
+    if (filters.value === "BLOCKED") {
+      return user.blocked;
+    }
+
+    if (filters.value === "ACTIVE") {
+      return !user.blocked;
     }
   });
 };
@@ -63,61 +60,42 @@ const applyPagination = (users, page, limit) => {
 };
 
 const RecentOrdersTable = ({ users }) => {
-  console.log(users);
-
-  const [selectedCryptoOrders, setSelectedCryptoOrders] = useState([]);
-  const selectedBulkActions = selectedCryptoOrders.length > 0;
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(5);
   const [selectedUser, setSelectedUser] = useState(null);
   const [openUserDialog, setOpenUserDialog] = useState(false);
   const [filters, setFilters] = useState({
-    status: null,
+    value: "ALL",
   });
 
   const statusOptions = [
     {
-      status: "ACTIVE",
+      value: "ACTIVE",
       name: "Active",
     },
     {
       value: "BLOCKED",
       name: "Blocked",
     },
+    {
+      value: "ALL",
+      name: "All",
+    },
   ];
 
   const handleStatusChange = (e) => {
-    let value = null;
+    let value = "ALL";
 
-    if (e.target.value !== "all") {
+    if (e.target.value !== "ALL") {
       value = e.target.value;
     }
 
     setFilters((prevFilters) => {
       return {
         ...prevFilters,
-        status: value,
+        value: value,
       };
     });
-  };
-
-  const handleSelectAllCryptoOrders = (event) => {
-    setSelectedCryptoOrders(
-      event.target.checked ? users.map((user) => user.id) : []
-    );
-  };
-
-  const handleSelectOneCryptoOrder = (event, cryptoOrderId) => {
-    if (!selectedCryptoOrders.includes(cryptoOrderId)) {
-      setSelectedCryptoOrders((prevSelected) => [
-        ...prevSelected,
-        cryptoOrderId,
-      ]);
-    } else {
-      setSelectedCryptoOrders((prevSelected) =>
-        prevSelected.filter((id) => id !== cryptoOrderId)
-      );
-    }
   };
 
   const handlePageChange = (event, newPage) => {
@@ -128,8 +106,11 @@ const RecentOrdersTable = ({ users }) => {
     setLimit(parseInt(event.target.value));
   };
 
-  const handleClickOpen = (id) => {
-    const filteredUser = users.filter((user) => user.id === id);
+  const handleClickOpen = (id: string) => {
+    const filteredUser = users.filter(
+      (user) => user.user_metadata.balmoralId === id
+    );
+
     setSelectedUser(filteredUser[0]);
     setOpenUserDialog(true);
   };
@@ -138,100 +119,86 @@ const RecentOrdersTable = ({ users }) => {
     setOpenUserDialog(false);
   };
 
+  const handleActivateUserClick = (id) => {
+    const filteredUser = users.filter((user) => user.id === id);
+    setSelectedUser(filteredUser[0]);
+    alert(id);
+  };
+
+  const handleBlockUserClick = (id) => {
+    const filteredUser = users.filter((user) => user.id === id);
+    setSelectedUser(filteredUser[0]);
+    alert(id);
+  };
+
+  const setUnitsToUpdate = () => {};
+
   const filteredUsers = applyFilters(users, filters);
   const paginatedCryptoOrders = applyPagination(filteredUsers, page, limit);
 
-  const selectedSomeCryptoOrders =
-    selectedCryptoOrders.length > 0 &&
-    selectedCryptoOrders.length < users.length;
-  const selectedAllCryptoOrders = selectedCryptoOrders.length === users.length;
   const theme: any = useTheme();
 
   return (
     <Card>
-      {selectedBulkActions && (
-        <Box flex={1} p={2}>
-          <BulkActions />
-        </Box>
-      )}
-      {!selectedBulkActions && (
-        <CardHeader
-          action={
-            <Box width={150}>
-              <FormControl fullWidth variant="outlined">
-                <InputLabel>Status</InputLabel>
-                <Select
-                  value={filters.status || "all"}
-                  onChange={handleStatusChange}
-                  label="Status"
-                  autoWidth
-                >
-                  {statusOptions.map((statusOption) => (
+      <UserDialog
+        open={openUserDialog}
+        onClose={() => handleClose(1)}
+        setUnitsToUpdate={setUnitsToUpdate}
+        selectedUser={selectedUser}
+      />
+      <CardHeader
+        action={
+          <Box width={150}>
+            <FormControl fullWidth variant="outlined">
+              <InputLabel>Status</InputLabel>
+              <Select
+                value={filters.value || "ALL"}
+                onChange={handleStatusChange}
+                label="Status"
+                autoWidth
+              >
+                {statusOptions.map((statusOption) => {
+                  return (
                     <MenuItem
                       key={statusOption.name}
                       value={statusOption.value}
                     >
                       {statusOption.name}
                     </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Box>
-          }
-          title="All Users"
-        />
-      )}
+                  );
+                })}
+              </Select>
+            </FormControl>
+          </Box>
+        }
+        title="All Users"
+      />
+
       <Divider />
       <TableContainer>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell padding="checkbox">
-                <Checkbox
-                  color="primary"
-                  checked={selectedAllCryptoOrders}
-                  indeterminate={selectedSomeCryptoOrders}
-                  onChange={handleSelectAllCryptoOrders}
-                />
-              </TableCell>
               <TableCell>Date</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Units</TableCell>
               <TableCell align="right">Email</TableCell>
-              <TableCell align="right">Status</TableCell>
-              <TableCell align="right">Actions</TableCell>
+              <TableCell align="center">Status</TableCell>
+              <TableCell align="center">Edit User</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            <UserDialog
-              open={openUserDialog}
-              onClose={() => handleClose(1)}
-              selectedUser={selectedUser}
-            />
             {paginatedCryptoOrders.map((user) => {
-              const isCryptoOrderSelected = selectedCryptoOrders.includes(
-                user.id
-              );
               return (
-                <TableRow hover key={user.id} selected={isCryptoOrderSelected}>
-                  <TableCell padding="checkbox">
-                    <Checkbox
-                      color="primary"
-                      checked={isCryptoOrderSelected}
-                      onChange={(event) =>
-                        handleSelectOneCryptoOrder(event, user.id)
-                      }
-                      value={isCryptoOrderSelected}
-                    />
-                  </TableCell>
+                <TableRow hover key={user.user_id}>
                   <TableCell>
                     <Typography variant="body2" color="text.primary" noWrap>
-                      {user.createdAt}
+                      {new Date(user.created_at).toLocaleDateString()}
                     </Typography>
                   </TableCell>
                   <TableCell>
                     <Typography variant="body2" color="text.primary" noWrap>
-                      {user.firstName + " " + user.lastName}
+                      {user.name}
                     </Typography>
                   </TableCell>
                   <TableCell>
@@ -244,38 +211,24 @@ const RecentOrdersTable = ({ users }) => {
                       {user.email}
                     </Typography>
                   </TableCell>
-                  <TableCell align="right">
+                  <TableCell align="center">
                     {getStatusLabel(user.blocked)}
                   </TableCell>
-                  <TableCell align="right">
-                    <Tooltip title="Add Units" arrow>
-                      <IconButton
+                  <TableCell align="center">
+                    <IconButton
+                      color="primary"
+                      onClick={() =>
+                        handleClickOpen(user.user_metadata.balmoralId)
+                      }
+                    >
+                      <EditIcon
                         sx={{
-                          "&:hover": {
-                            background: theme.colors.primary.lighter,
-                          },
-                          color: theme.palette.primary.main,
+                          color: theme.colors.primary.main,
+                          borderRadius: 0.5,
                         }}
-                        color="inherit"
-                        size="small"
-                        onClick={() => handleClickOpen(user.id)}
-                      >
-                        <AddCircleTwoTone fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Remove Units" arrow>
-                      <IconButton
-                        sx={{
-                          "&:hover": { background: theme.colors.error.lighter },
-                          color: theme.palette.error.main,
-                        }}
-                        color="inherit"
-                        size="small"
-                        onClick={handleClickOpen}
-                      >
-                        <RemoveCircleTwoTone fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
+                        fontSize="medium"
+                      />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               );
