@@ -40,10 +40,12 @@ async function main() {
     data: [
       {
         id: 1,
+        initalInvestment: 20000,
         auth0UserId: "auth0|62a8ef45baeb511b8f5584f8",
       },
       {
         id: 2,
+        initalInvestment: 20000,
         auth0UserId: "auth0|62a8f016a3f6713dbe05582b",
       },
     ],
