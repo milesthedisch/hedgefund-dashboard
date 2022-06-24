@@ -23,12 +23,13 @@ import {
 import Label from "../Label";
 import UserDialog from "../UserDialog";
 import EditIcon from "@mui/icons-material/Edit";
+import type { BalmoralUser } from "../../hooks";
 
 const getStatusLabel = (userStatus = false) => {
   let props: { text: string; color: string };
 
   if (userStatus) {
-    props = { text: "Blocked", color: "warning" };
+    props = { text: "Blocked", color: "error" };
   } else {
     props = { text: "Active", color: "success" };
   }
@@ -36,10 +37,7 @@ const getStatusLabel = (userStatus = false) => {
   return <Label color={props.color}>{props.text}</Label>;
 };
 
-const applyFilters = (
-  users: [{ blocked: boolean }],
-  filters: { value: string }
-) => {
+const applyFilters = (users: BalmoralUser[], filters: { value: string }) => {
   if (filters.value === "ALL") {
     return users;
   }
@@ -55,12 +53,24 @@ const applyFilters = (
   });
 };
 
-const applyPagination = (users, page, limit) => {
+const applyPagination = (
+  users: BalmoralUser[],
+  page: number,
+  limit: number
+) => {
   return users.slice(page * limit, page * limit + limit);
 };
 
-const RecentOrdersTable = ({ users }) => {
-  const [page, setPage] = useState(0);
+const RecentOrdersTable = ({
+  users,
+  calcPrice,
+  productionUnitPrice,
+}: {
+  users: BalmoralUser[];
+  calcPrice: number;
+  productionUnitPrice: number;
+}) => {
+  const [page, setPage] = useState<number>(0);
   const [limit, setLimit] = useState(5);
   const [selectedUser, setSelectedUser] = useState(null);
   const [openUserDialog, setOpenUserDialog] = useState(false);
@@ -83,11 +93,11 @@ const RecentOrdersTable = ({ users }) => {
     },
   ];
 
-  const handleStatusChange = (e) => {
+  const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let value = "ALL";
 
-    if (e.target.value !== "ALL") {
-      value = e.target.value;
+    if (event.target.value !== "ALL") {
+      value = event.target.value;
     }
 
     setFilters((prevFilters) => {
@@ -98,11 +108,11 @@ const RecentOrdersTable = ({ users }) => {
     });
   };
 
-  const handlePageChange = (event, newPage) => {
+  const handlePageChange = (event: any, newPage: number) => {
     setPage(newPage);
   };
 
-  const handleLimitChange = (event) => {
+  const handleLimitChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLimit(parseInt(event.target.value));
   };
 
@@ -119,19 +129,19 @@ const RecentOrdersTable = ({ users }) => {
     setOpenUserDialog(false);
   };
 
-  const handleActivateUserClick = (id) => {
+  const handleActivateUserClick = (id: number) => {
     const filteredUser = users.filter((user) => user.id === id);
     setSelectedUser(filteredUser[0]);
     alert(id);
   };
 
-  const handleBlockUserClick = (id) => {
+  const handleBlockUserClick = (id: number) => {
     const filteredUser = users.filter((user) => user.id === id);
     setSelectedUser(filteredUser[0]);
     alert(id);
   };
 
-  const setUnitsToUpdate = () => {};
+  const updateUser = ({ units, status, fee }) => {};
 
   const filteredUsers = applyFilters(users, filters);
   const paginatedCryptoOrders = applyPagination(filteredUsers, page, limit);
@@ -143,8 +153,10 @@ const RecentOrdersTable = ({ users }) => {
       <UserDialog
         open={openUserDialog}
         onClose={() => handleClose(1)}
-        setUnitsToUpdate={setUnitsToUpdate}
+        updateUser={updateUser}
         selectedUser={selectedUser}
+        productionUnitPrice={productionUnitPrice}
+        calcUnitPrice={calcPrice}
       />
       <CardHeader
         action={

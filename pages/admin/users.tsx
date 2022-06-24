@@ -12,7 +12,11 @@ import { useUser, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import router from "next/router";
 import useSWR from "swr";
 
-const ApplicationsTransactions = ({ data }) => (
+const ApplicationsTransactions = ({
+  userData,
+  calcPrice,
+  productionUnitPrice,
+}) => (
   <>
     <Head>
       <title>Transactions - Applications</title>
@@ -29,7 +33,11 @@ const ApplicationsTransactions = ({ data }) => (
         spacing={3}
       >
         <Grid item xs={12}>
-          <Users users={data.users} />
+          <Users
+            userData={userData}
+            calcPrice={calcPrice}
+            productionUnitPrice={productionUnitPrice}
+          />
         </Grid>
       </Grid>
     </Container>
@@ -37,7 +45,7 @@ const ApplicationsTransactions = ({ data }) => (
   </>
 );
 
-const fetcher = async (uri: string) => {
+const fetcher = async (uri: string, bodyData: object) => {
   const response = await fetch(uri);
 
   if (response.status > 200) {
@@ -53,7 +61,11 @@ export default withPageAuthRequired(function (props) {
       "admin"
     );
 
-  const { data, error, isValidating } = useSWR(() => {
+  const {
+    data: userData,
+    error: uError,
+    isValidating: uIsValidating,
+  } = useSWR(() => {
     if (isAdmin) {
       return "/api/user";
     } else {
@@ -61,15 +73,33 @@ export default withPageAuthRequired(function (props) {
     }
   }, fetcher);
 
-  if (!isAdmin || data?.redirect) {
+  const {
+    data: productionUnitPrice,
+    error: pError,
+    isValidating: pIsValidating,
+  } = useSWR(`/api/sharePrice?latest=true`, fetcher);
+
+  const {
+    data: calcPrice,
+    error: cError,
+    isValidating: cIsValidating,
+  } = useSWR(`/api/calcPrice`, fetcher);
+
+  if (!isAdmin || userData?.redirect) {
     return <Custom401 />;
   }
 
-  if (data) {
-    return <ApplicationsTransactions data={data} />;
+  if (userData) {
+    return (
+      <ApplicationsTransactions
+        userData={userData}
+        productionUnitPrice={productionUnitPrice?.price}
+        calcPrice={calcPrice}
+      />
+    );
   }
 
-  if (!data && isValidating) {
+  if (!userData && uIsValidating) {
     return (
       <Container
         sx={{ height: "80vh", display: "flex", justifyContent: "center" }}

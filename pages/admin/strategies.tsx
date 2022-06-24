@@ -100,11 +100,14 @@ export default withPageAuthRequired(function (props) {
   let strategies;
 
   if (data) {
+    console.log(data);
     strategies = data.map((strat) => {
-      const time = strat.strategyTransactions[0].datetime;
-      strat.updateOn = format(new Date(time), "PPpp");
-      strat.balance = strat.strategyTransactions[0].balance;
-      return StrategyForm(strat, setStrategyBalances);
+      if (strat.strategyTransactions.length) {
+        const time = strat.strategyTransactions[0]?.datetime;
+        strat.updateOn = format(new Date(time), "PPpp");
+        strat.balance = strat.strategyTransactions[0]?.balance;
+        return StrategyForm(strat, setStrategyBalances);
+      }
     });
   }
   const currencyUSD = new Intl.NumberFormat("en-US", {

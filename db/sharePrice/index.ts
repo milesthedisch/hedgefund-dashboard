@@ -1,10 +1,13 @@
 import prisma from "../client";
 
 export default async function getSharePrice(
-  from: Date | undefined | null,
-  to: Date | undefined | null
+  from: Date | string | undefined | null,
+  to: Date | string | undefined | null
 ) {
+  console.log(from, to);
+
   if (from && to) {
+    console.log("???");
     return prisma.productionSharePrice.findMany({
       where: {
         datetime: {

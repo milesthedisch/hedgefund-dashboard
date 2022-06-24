@@ -53,23 +53,26 @@ export default withApiAuthRequired(async function handler(
     });
 
     try {
-      const auth0Users = await managmentClient.getUsers();
+      const [auth0Users, userTxs] = await Promise.all([
+        managmentClient.getUsers(),
+        getAllUsersWithTxs(),
+      ]);
 
-      const userTxs = await getAllUsersWithTxs();
-
-      const users = auth0Users.map((user) => {
-        const matchedTransactions = userTxs.filter((tx) => {
-          return tx.auth0UserId === user.user_id;
+      const users = auth0Users.map((auth0User) => {
+        const matchedTransactions = userTxs.filter((txs) => {
+          return txs.auth0UserId === auth0User.user_id;
         });
 
         if (matchedTransactions.length) {
           return {
-            ...user,
+            ...auth0User,
+            initalInvestment: matchedTransactions[0].initalInvestment,
             transactions: matchedTransactions[0].transactions,
           };
         } else {
           return {
-            ...user,
+            ...auth0User,
+            initalInvestment: 0,
             transactions: [],
           };
         }

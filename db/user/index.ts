@@ -8,6 +8,7 @@ export async function getAllUsersWithTxs() {
           units: true,
           type: true,
           datetime: true,
+          userId: true,
         },
         orderBy: {
           datetime: "desc",

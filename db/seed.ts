@@ -41,12 +41,12 @@ async function main() {
       {
         id: 1,
         initalInvestment: 20000,
-        auth0UserId: "auth0|62a8ef45baeb511b8f5584f8",
+        auth0UserId: "auth0|622de999c80965006a93c12c",
       },
       {
         id: 2,
         initalInvestment: 20000,
-        auth0UserId: "auth0|62a8f016a3f6713dbe05582b",
+        auth0UserId: "auth0|62a7ca074a840f1492a48fd7",
       },
     ],
   });
@@ -54,7 +54,7 @@ async function main() {
   await prisma.userTransactions.createMany({
     data: [
       {
-        type: TransactionType.PURCHASE,
+        type: "PURCHASE",
         units: 9900,
         unitPrice: 1.0,
         audInvestment: 9900,
@@ -63,7 +63,7 @@ async function main() {
         userId: 1,
       },
       {
-        type: TransactionType.PURCHASE,
+        type: "PURCHASE",
         units: 9900,
         unitPrice: 1.0,
         audInvestment: 9900,
@@ -72,7 +72,7 @@ async function main() {
         userId: 1,
       },
       {
-        type: TransactionType.PURCHASE,
+        type: "PURCHASE",
         units: 9425.7562,
         unitPrice: 1.05031,
         audInvestment: 9900,

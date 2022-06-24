@@ -83,7 +83,8 @@ function DashboardCrypto() {
     refreshInterval: refreshInterval(),
   });
 
-  const userHasError = (!userData && !userIsValidating) || !!userError;
+  const userHasError =
+    (userData !== 0 && !userData && !userIsValidating) || !!userError;
 
   const sharePriceHasError =
     (!sharePriceData && !sharePriceIsValidating) ||

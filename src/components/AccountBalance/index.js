@@ -5,29 +5,22 @@ import {
   Box,
   Grid,
   Typography,
-  Hidden,
   Avatar,
-  Divider,
-  ListItem,
-  ListItemText,
-  List,
-  ListItemAvatar,
   CircularProgress,
 } from "@mui/material";
 
-import { useTheme } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import TrendingUp from "@mui/icons-material/TrendingUp";
 import TrendingDown from "@mui/icons-material/TrendingDown";
 
 import AccountBalanceChart from "../AccountBalanceChart";
-import Text from "../Text";
-import SuspenseLoader from "../SuspenseLoader";
 
-const AccountBalanceChartWrapper = styled(AccountBalanceChart)(
-  () => `
+const AccountBalanceChartWrapper = styled(Grid)(
+  ({ theme }) => `
       width: 100%;
-      height: 100%;
+      display: flex;
+      justify-content: center;
+      padding: ${theme.spacing(4)};
 `
 );
 
@@ -145,13 +138,13 @@ function AccountBalance({
           md={6}
           lg={7}
         >
-          <Box p={4} width="100%" justifyContent="center">
+          <AccountBalanceChartWrapper height="300px">
             {isValidating ? (
-              <CircularProgress size={100} />
+              <CircularProgress sx={{ alignSelf: "center" }} />
             ) : (
               <AccountBalanceChart sharePrices={sharePriceData} />
             )}
-          </Box>
+          </AccountBalanceChartWrapper>
         </Grid>
       </Grid>
     </Card>

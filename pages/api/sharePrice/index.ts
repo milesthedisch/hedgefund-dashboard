@@ -4,15 +4,22 @@ import getSharePrice, { getLatestSharePrice } from "../../../db/sharePrice";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
-    const { from, to, latest } = req.body;
+    const { from, to, latest } = req.query;
 
     let sharePrice;
+
+    console.log(req.query);
 
     try {
       if (latest) {
         sharePrice = await getLatestSharePrice();
+      } else if (from && to) {
+        sharePrice = await getSharePrice(
+          (from as any) || new Date(from as string),
+          (to as any) || new Date(to as string)
+        );
       } else {
-        sharePrice = await getSharePrice(from, to);
+        sharePrice = await getSharePrice(undefined, undefined);
       }
     } catch (e) {
       console.error(e);
@@ -27,4 +34,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default handler;
+export default withApiAuthRequired(handler);

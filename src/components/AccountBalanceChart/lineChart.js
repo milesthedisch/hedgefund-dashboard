@@ -15,18 +15,14 @@ import SuspenseLoader from "../../components/SuspenseLoader";
 import "chartjs-adapter-date-fns";
 
 export default function line({ data, options, ...props }) {
-  if (data && options) {
-    ChartJS.register(
-      TimeScale,
-      LineElement,
-      PointElement,
-      LinearScale,
-      Title,
-      Tooltip
-    );
+  ChartJS.register(
+    TimeScale,
+    LineElement,
+    PointElement,
+    LinearScale,
+    Title,
+    Tooltip
+  );
 
-    return <Line data={data} options={options} {...props} />;
-  }
-
-  return <SuspenseLoader />;
+  return <Line data={data} options={options} {...props} />;
 }

@@ -58,7 +58,7 @@ export default withApiAuthRequired(async function handler(
         return !user.user_metadata.notifiedAdmin;
       });
 
-      return res.status(200).json({ users, success: false });
+      return res.status(200).json({ users, success: true });
     } catch (e) {
       console.error(e);
       return res.status(500).json({ message: "Server error", success: true });

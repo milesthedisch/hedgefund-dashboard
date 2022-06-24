@@ -1,17 +1,9 @@
-import { useEffect, useState } from "react";
-
-import { Button, Box } from "@mui/material";
-import { styled } from "@mui/material/styles";
 import { useTheme } from "@mui/material";
 import Line from "./lineChart";
 
-const ChartButton = styled(Button)({
-  minWidth: "1rem",
-  margin: "0 0.5rem",
-});
-
 const _options = (theme, range) => ({
-  responsive: true,
+  maintainAspectRatio: false,
+  resposive: true,
   plugins: {
     tooltip: {
       enabled: true,
@@ -30,7 +22,6 @@ const _options = (theme, range) => ({
       beginAtZero: true,
     },
   },
-  maintainAspectRation: false,
 });
 
 const _data = (theme, range) => {
@@ -54,11 +45,7 @@ const AccountBalanceChart = ({ sharePrices }) => {
     y: parseFloat(s.price),
   })));
 
-  return (
-    <>
-      <Line data={_data(theme, data)} options={_options(theme)} height="75px" />
-    </>
-  );
+  return <Line data={_data(theme, data)} options={_options(theme)} />;
 };
 
 export default AccountBalanceChart;

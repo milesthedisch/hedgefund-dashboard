@@ -64,20 +64,12 @@ export default protectRoute(async function handler(
         user_metadata: {
           invitationAccepted: false,
           address: req.body.address,
+          balmoralId: 0,
           notifiedAdmin: false,
-          balmoralId: "",
         },
         connection: "Username-Password-Authentication",
         password: nanoid(),
       });
-
-      const netApplication =
-        req.body.initalInvestment -
-        req.body.initalInvestment * (req.body?.fee || 0.01);
-
-      const unitPrice = await getLatestSharePrice();
-
-      const totalUnits = netApplication / Number(unitPrice.price);
 
       balmoralUser = await createUser({
         auth0UserId: authUser.user_id,
@@ -87,7 +79,7 @@ export default protectRoute(async function handler(
       // Back reference in our db
       await managmentClient.updateUserMetadata(
         { id: authUser.user_id },
-        { balmoralId: balmoralUser.id }
+        { balmoralId: ~~balmoralUser.id }
       );
 
       changeTicket = await managmentClient.createPasswordChangeTicket({
