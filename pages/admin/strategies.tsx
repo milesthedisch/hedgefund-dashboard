@@ -100,7 +100,6 @@ export default withPageAuthRequired(function (props) {
   let strategies;
 
   if (data) {
-    console.log(data);
     strategies = data.map((strat) => {
       if (strat.strategyTransactions.length) {
         const time = strat.strategyTransactions[0]?.datetime;

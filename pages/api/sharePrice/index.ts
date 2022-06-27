@@ -8,8 +8,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     let sharePrice;
 
-    console.log(req.query);
-
     try {
       if (latest) {
         sharePrice = await getLatestSharePrice();

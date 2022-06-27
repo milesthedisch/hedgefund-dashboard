@@ -7,7 +7,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import { useRef, useState } from "react";
-import Link from "../../../components/Link";
+import LinkButton from "../../../components/Link";
 import { styled } from "@mui/material/styles";
 import ExpandMoreTwoToneIcon from "@mui/icons-material/ExpandMoreTwoTone";
 
@@ -26,10 +26,12 @@ const ListWrapper = styled(Box)(
                 padding: ${theme.spacing(1, 2)};
             
                 .MuiListItemText-root {
+
                     .MuiTypography-root {
+                    font-weight: bold;
                         &:before{
                             height: 4px;
-                            width: 22px;
+                            width: 20%;
                             opacity: 0;
                             visibility: hidden;
                             display: block;
@@ -80,11 +82,11 @@ function HeaderMenu({ user }) {
             <ListItem
               classes={{ root: "MuiListItem-indicators" }}
               button
-              component={Link}
+              component={LinkButton}
               href="/dashboard"
             >
               <ListItemText
-                primaryTypographyProps={{ noWrap: true }}
+                primaryTypographyProps={{ display: "flex" }}
                 primary="Dashboard"
               />
             </ListItem>
@@ -96,24 +98,18 @@ function HeaderMenu({ user }) {
               <ListItem
                 classes={{ root: "MuiListItem-indicators" }}
                 button
-                component={Link}
+                component={LinkButton}
                 href="/admin/users"
               >
-                <ListItemText
-                  primaryTypographyProps={{ noWrap: true }}
-                  primary="Users"
-                />
+                <ListItemText sx={{ width: "20px" }} primary="Users" />
               </ListItem>
               <ListItem
                 classes={{ root: "MuiListItem-indicators" }}
                 button
-                component={Link}
+                component={LinkButton}
                 href="/admin/strategies"
               >
-                <ListItemText
-                  primaryTypographyProps={{ noWrap: true }}
-                  primary="Strategies"
-                />
+                <ListItemText sx={{ minWidth: "20px" }} primary="Strategies" />
               </ListItem>
             </>
           ) : (

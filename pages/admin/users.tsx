@@ -89,11 +89,11 @@ export default withPageAuthRequired(function (props) {
     return <Custom401 />;
   }
 
-  if (userData) {
+  if (userData && productionUnitPrice && calcPrice) {
     return (
       <ApplicationsTransactions
         userData={userData}
-        productionUnitPrice={productionUnitPrice?.price}
+        productionUnitPrice={productionUnitPrice.price}
         calcPrice={calcPrice}
       />
     );
@@ -102,7 +102,7 @@ export default withPageAuthRequired(function (props) {
   if (!userData && uIsValidating) {
     return (
       <Container
-        sx={{ height: "80vh", display: "flex", justifyContent: "center" }}
+        sx={{ height: "0vh", display: "flex", justifyContent: "center" }}
       >
         {/* The default value size is 64 */}
         <SuspenseLoader size={64 * 1.5} />

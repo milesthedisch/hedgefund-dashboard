@@ -37,7 +37,10 @@ const getStatusLabel = (userStatus = false) => {
   return <Label color={props.color}>{props.text}</Label>;
 };
 
-const applyFilters = (users: BalmoralUser[], filters: { value: string }) => {
+const applyFilters = (
+  users: BalmoralUser[],
+  filters: { value: string }
+): BalmoralUser[] => {
   if (filters.value === "ALL") {
     return users;
   }
@@ -200,7 +203,7 @@ const RecentOrdersTable = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {paginatedCryptoOrders.map((user) => {
+            {paginatedCryptoOrders.map((user: BalmoralUser) => {
               return (
                 <TableRow hover key={user.user_id}>
                   <TableCell>
