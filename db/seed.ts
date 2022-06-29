@@ -25,6 +25,7 @@ const sharePrices = [
   "1.10466394994662",
   "1.10554916591794",
   "1.10294482403191",
+  "1.10668218919123",
 ].map((x, i) => {
   gensis.setDate(gensis.getDate() + 7);
 
@@ -47,6 +48,11 @@ async function main() {
         id: 2,
         initalInvestment: 20000,
         auth0UserId: "auth0|62a7ca074a840f1492a48fd7",
+      },
+      {
+        id: 3,
+        initalInvestment: 20000,
+        auth0UserId: "auth0|62bbe66a8a25563770197180",
       },
     ],
   });
@@ -79,6 +85,33 @@ async function main() {
         fee: 0.01,
         datetime: new Date(2022, 2, 23, 0, 0),
         userId: 1,
+      },
+      {
+        type: "PURCHASE",
+        units: 9900,
+        unitPrice: 1.0,
+        audInvestment: 9900,
+        fee: 0.01,
+        datetime: new Date(2022, 0, 1, 0, 0),
+        userId: 3,
+      },
+      {
+        type: "PURCHASE",
+        units: 9900,
+        unitPrice: 1.0,
+        audInvestment: 9900,
+        fee: 0.01,
+        datetime: new Date(2021, 11, 16, 0, 0),
+        userId: 3,
+      },
+      {
+        type: "PURCHASE",
+        units: 9425.7562,
+        unitPrice: 1.05031,
+        audInvestment: 9900,
+        fee: 0.01,
+        datetime: new Date(2022, 2, 23, 0, 0),
+        userId: 3,
       },
     ],
   });

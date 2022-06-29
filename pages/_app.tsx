@@ -3,10 +3,11 @@ import PropTypes from "prop-types";
 import Head from "next/head";
 import { UserProvider } from "@auth0/nextjs-auth0";
 
+import type { AppProps } from "next/app";
 import createEmotionCache from "../src/utility/createEmotionCache";
 import CustomThemeProvider from "../src/theme/ThemeProvider";
 import CssBaseline from "@mui/material/CssBaseline";
-import { CacheProvider } from "@emotion/react";
+import { CacheProvider, EmotionCache } from "@emotion/react";
 import { LightTheme } from "../src/theme/schemes/LightTheme";
 import Layout from "../src/layouts";
 import { SWRConfigurationProvider } from "../src/utility/SWRConfigurationProvider";
@@ -14,7 +15,7 @@ import { SWRConfigurationProvider } from "../src/utility/SWRConfigurationProvide
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
 
-export default function MyApp(props) {
+const MyApp: React.FunctionComponent<MyAppProps> = (props) => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
 
   return (
@@ -35,10 +36,10 @@ export default function MyApp(props) {
       </CustomThemeProvider>
     </CacheProvider>
   );
+};
+
+interface MyAppProps extends AppProps {
+  emotionCache?: EmotionCache;
 }
 
-MyApp.propTypes = {
-  Component: PropTypes.elementType.isRequired,
-  emotionCache: PropTypes.object,
-  pageProps: PropTypes.object.isRequired,
-};
+export default MyApp;

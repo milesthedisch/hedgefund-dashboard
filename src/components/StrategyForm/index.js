@@ -1,5 +1,3 @@
-import { useRef } from "react";
-import Head from "next/head";
 import {
   Grid,
   CardHeader,
@@ -8,7 +6,6 @@ import {
   Box,
   TextField,
   Divider,
-  Button,
   Typography,
 } from "@mui/material";
 
@@ -41,7 +38,6 @@ export default function StrategyForm(
                 InputLabelProps={{
                   shrink: true,
                 }}
-                // ref={inputEl}
                 variant="standard"
                 pattern={["0-9*"]}
                 onChange={({ target: { value } }) => {

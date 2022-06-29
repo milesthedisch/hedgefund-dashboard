@@ -64,6 +64,17 @@ const applyPagination = (
   return users.slice(page * limit, page * limit + limit);
 };
 
+const fetcher = async ({ url, args }) => {
+  let data = await fetch(url, {
+    headers: {
+      method: "application/json",
+    },
+    body: JSON.stringify(args),
+  });
+
+  console.log(data);
+};
+
 const RecentOrdersTable = ({
   users,
   calcPrice,
@@ -144,8 +155,6 @@ const RecentOrdersTable = ({
     alert(id);
   };
 
-  const updateUser = ({ units, status, fee }) => {};
-
   const filteredUsers = applyFilters(users, filters);
   const paginatedCryptoOrders = applyPagination(filteredUsers, page, limit);
 
@@ -156,7 +165,6 @@ const RecentOrdersTable = ({
       <UserDialog
         open={openUserDialog}
         onClose={() => handleClose(1)}
-        updateUser={updateUser}
         selectedUser={selectedUser}
         productionUnitPrice={productionUnitPrice}
         calcUnitPrice={calcPrice}
@@ -218,7 +226,7 @@ const RecentOrdersTable = ({
                   </TableCell>
                   <TableCell>
                     <Typography variant="body2" color="text.primary" noWrap>
-                      {user.transactions[0]?.units || 0}
+                      {user.totalUnits || 0}
                     </Typography>
                   </TableCell>
                   <TableCell align="right">

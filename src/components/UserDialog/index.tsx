@@ -21,19 +21,16 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogAction from "@mui/material/DialogActions";
 
+import SuspenseLoader from "../../components/SuspenseLoader";
+import { useUpdateUser } from "../../hooks/index";
+
 export interface SimpleDialogProps {
   open: boolean;
   onClose: any;
   selectedUser: any;
   calcUnitPrice: number;
   productionUnitPrice: number;
-  updateUser: Function;
 }
-
-const handleActivateUserClick = (number) => {};
-const handleBlockUserClick = (number) => {};
-const handleClickOpen = (number) => {};
-const handleChange = () => {};
 
 enum EUnitAction {
   "DEPOSIT",
@@ -55,6 +52,17 @@ const UserDialogInfo = ({ children, number }) => {
     </Box>
   );
 };
+
+type Block = { block: boolean };
+type Activate = { activate: boolean };
+type UserInfo = {
+  fee: number;
+  unitAction: EUnitAction;
+  units: number;
+  status: boolean;
+  statusAction: "block" | "activate";
+};
+
 function UserDialog(props: SimpleDialogProps) {
   const {
     onClose,
@@ -62,7 +70,6 @@ function UserDialog(props: SimpleDialogProps) {
     selectedUser = {},
     calcUnitPrice,
     productionUnitPrice,
-    updateUser,
   } = props;
 
   const theme = useTheme();
@@ -71,21 +78,60 @@ function UserDialog(props: SimpleDialogProps) {
   const [unitAction, setUnitAction] = useState<EUnitAction>(
     EUnitAction.DEPOSIT
   );
+  const [units, setUnits] = useState<number>(0);
+  const [userShouldUpdate, setUserShouldUpdate] = useState(false);
+  const [userInfo, setUserInfo] = useState((prevState) => ({
+    ...prevState,
+    fee,
+    unitAction,
+    statusAction: selectedUser?.blocked ? "activate" : "block",
+    status,
+    units,
+  }));
+
+  const [errorToast, setErrorToast] = useState();
+
+  const { data, error, isValidating } = useUpdateUser(
+    userInfo,
+    userShouldUpdate
+  );
+
+  console.log(data, error, isValidating, userInfo);
 
   const handleClose = () => {
+    if (isValidating) return;
+
+    setUnits(0);
+    setFee(0.01);
+    setUnitAction(EUnitAction.DEPOSIT);
+    setStatus(false);
+    setUserShouldUpdate(false);
     onClose(() => {});
   };
 
   const handleSubmit = () => {
-    updateUser();
+    setUserInfo({
+      fee,
+      unitAction,
+      statusAction: selectedUser?.blocked ? "activate" : "block",
+      status,
+      units,
+      unitPrice: productionUnitPrice,
+      audInvestment: productionUnitPrice * units,
+    });
+    setUserShouldUpdate(true);
   };
 
   const handleStatusToggle = () => {
     setStatus((prevState) => !prevState);
   };
 
-  const handleFee = (e) => {
-    setFee(e.target.value);
+  const handleFee = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFee(~~e.target.value / 100 || 0);
+  };
+
+  const handleUnits = (e) => {
+    setUnits(~~e.target.value as number);
   };
 
   return (
@@ -93,9 +139,26 @@ function UserDialog(props: SimpleDialogProps) {
       maxWidth={"xs"}
       fullWidth={true}
       onClose={handleClose}
-      open={open}
+      open={isValidating ? true : open}
       sx={{ height: "auto" }}
     >
+      {isValidating ? (
+        <Box
+          sx={{
+            zIndex: 2,
+            position: "absolute",
+            height: "100%",
+            top: 0,
+            left: 0,
+            background: "white",
+            width: "100%",
+          }}
+        >
+          <SuspenseLoader size={64} />
+        </Box>
+      ) : (
+        ""
+      )}
       <Grid container alignItems="center" sx={{ p: 3 }}>
         <Grid item xs={6}>
           <UserDialogInfo
@@ -117,9 +180,16 @@ function UserDialog(props: SimpleDialogProps) {
             Initial Investment
           </UserDialogInfo>
         </Grid>
-        <Grid item>
+        <Grid item xs={6}>
           <UserDialogInfo number={`$${productionUnitPrice || 0}`}>
             Live Unit Price
+          </UserDialogInfo>
+        </Grid>
+        <Grid item xs={6}>
+          <UserDialogInfo
+            number={`$${(units * productionUnitPrice).toFixed(3)}`}
+          >
+            Aud Investment
           </UserDialogInfo>
         </Grid>
       </Grid>
@@ -162,6 +232,7 @@ function UserDialog(props: SimpleDialogProps) {
               defaultValue={0}
               inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
               variant="filled"
+              onChange={handleUnits}
               onKeyPress={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault();
@@ -190,7 +261,8 @@ function UserDialog(props: SimpleDialogProps) {
                 }
               />
               <FormHelperText>
-                Do you want to activate this user {selectedUser?.name}?
+                Do you want to {selectedUser?.blocked ? "activate" : "block"}{" "}
+                this user {selectedUser?.name}?
               </FormHelperText>
             </FormGroup>
           </FormControl>

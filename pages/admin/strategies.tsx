@@ -1,5 +1,4 @@
 import { useState, useEffect, forwardRef } from "react";
-
 import {
   Divider,
   CardContent,
@@ -9,7 +8,7 @@ import {
   Container,
   Grid,
   Snackbar,
-  Typography,
+  TextField,
 } from "@mui/material";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import type { AlertColor } from "@mui/lab";
@@ -45,7 +44,14 @@ const fetcher = async (uri: string) => {
   return response.json();
 };
 
-const updateStrategies = async (mutate, strategyBalances = {}, setSnackbar) => {
+const updateStrategies = async (
+  mutate,
+  strategyBalances = {},
+  setSnackbar,
+  setUpdateButtonLoading
+) => {
+  setUpdateButtonLoading(true);
+
   const uri = "/api/strategyTransactions/createMany";
 
   let response;
@@ -71,8 +77,9 @@ const updateStrategies = async (mutate, strategyBalances = {}, setSnackbar) => {
     message: `${count} Strategies updated successfully`,
   });
 
-  mutate("/api/strategies");
-  mutate("/api/calcPrice");
+  await mutate("/api/strategies");
+  await mutate("/api/calcPrice");
+  return setUpdateButtonLoading(false);
 };
 
 export default withPageAuthRequired(function (props) {
@@ -86,10 +93,15 @@ export default withPageAuthRequired(function (props) {
 
   const [strategyBalances, setStrategyBalances] = useState([]);
   const [snackbar, setSnackbar] = useState(snackbarInital);
+  const [updateButtonLoading, setUpdateButtonLoading] = useState(false);
 
   const { data, error, isValidating } = useSWR("/api/strategies", fetcher);
   const { data: unitPriceData, error: unitPriceError } = useSWR(
     "/api/calcPrice",
+    fetcher
+  );
+  const { data: pPriceData, error: pPriceError } = useSWR(
+    "/api/sharePrice?latest=true",
     fetcher
   );
 
@@ -127,16 +139,31 @@ export default withPageAuthRequired(function (props) {
             subHeading="Balances for each strategy"
             noDoc={true}
           />
-          <Card>
-            <CardHeader
-              title="Unit Price"
-              subheader={
-                unitPriceError
-                  ? "Unavailable"
-                  : `${currencyUSD.format(unitPriceData || 0)}`
-              }
-            ></CardHeader>
-          </Card>
+          <Box
+            display="flex"
+            sx={{ flexGrow: 0.05, justifyContent: "space-between" }}
+          >
+            <Card>
+              <CardHeader
+                title="Calculated Unit Price"
+                subheader={
+                  unitPriceError
+                    ? "Unavailable"
+                    : `${currencyUSD.format(unitPriceData || 0)}`
+                }
+              ></CardHeader>
+            </Card>
+            <Card>
+              <CardHeader
+                title="Live Unit Price"
+                subheader={
+                  unitPriceError
+                    ? "Unavailable"
+                    : `${currencyUSD.format(pPriceData?.price || 0)}`
+                }
+              ></CardHeader>
+            </Card>
+          </Box>
         </Box>
       </PageTitleWrapper>
       <Container
@@ -155,7 +182,25 @@ export default withPageAuthRequired(function (props) {
           spacing={3}
         >
           {!isValidating ? (
-            strategies
+            <>
+              {strategies}
+              <Grid
+                item
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                xs={12}
+              >
+                <Grid item xs={6}>
+                  <Card>
+                    <CardHeader title="Live Share Price" />
+                    <CardContent>
+                      <TextField label="Update Share Price" value={1.201} />
+                    </CardContent>
+                  </Card>
+                </Grid>
+              </Grid>
+            </>
           ) : (
             <Box>
               <SuspenseLoader size={64} />
@@ -163,11 +208,16 @@ export default withPageAuthRequired(function (props) {
           )}
         </Grid>
         <LoadingButton
-          loading={false}
+          loading={updateButtonLoading}
           sx={{ width: "10rem", my: 3 }}
           variant="contained"
           onClick={() =>
-            updateStrategies(mutate, strategyBalances, setSnackbar)
+            updateStrategies(
+              mutate,
+              strategyBalances,
+              setSnackbar,
+              setUpdateButtonLoading
+            )
           }
         >
           UPDATE

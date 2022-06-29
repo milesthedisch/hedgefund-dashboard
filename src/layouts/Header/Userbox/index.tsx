@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 
-import { Link } from "../../../components/Link";
+import Link from "../../../components/Link";
 
 import {
   Avatar,
@@ -122,10 +122,10 @@ function HeaderUserbox(props) {
         </MenuUserBox>
         <Divider sx={{ mb: 0 }} />
         <List sx={{ p: 1 }} component="nav">
-          <ListItem button to="/management/profile/settings" component={Link}>
+          <Link href="/management/profile/settings">
             <AccountTreeTwoToneIcon fontSize="small" />
             <ListItemText primary="Account Settings" />
-          </ListItem>
+          </Link>
         </List>
         <Divider />
         <Box sx={{ m: 1 }}>

@@ -89,6 +89,17 @@ export default withPageAuthRequired(function (props) {
     return <Custom401 />;
   }
 
+  if ((!userData && uIsValidating) || cIsValidating || pIsValidating) {
+    return (
+      <Container
+        sx={{ height: "80vh", display: "flex", justifyContent: "center" }}
+      >
+        {/* The default value size is 64 */}
+        <SuspenseLoader size={64 * 1.5} />
+      </Container>
+    );
+  }
+
   if (userData && productionUnitPrice && calcPrice) {
     return (
       <ApplicationsTransactions
@@ -96,17 +107,6 @@ export default withPageAuthRequired(function (props) {
         productionUnitPrice={productionUnitPrice.price}
         calcPrice={calcPrice}
       />
-    );
-  }
-
-  if (!userData && uIsValidating) {
-    return (
-      <Container
-        sx={{ height: "0vh", display: "flex", justifyContent: "center" }}
-      >
-        {/* The default value size is 64 */}
-        <SuspenseLoader size={64 * 1.5} />
-      </Container>
     );
   }
 

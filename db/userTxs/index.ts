@@ -25,7 +25,7 @@ export default async function getTxs(sub: string): Promise<number> {
     },
   });
 
-  return (purchased._sum.units as any) - (redeemed._sum.units as any);
+  return (purchased._sum.units as any) - (redeemed._sum.units || (0 as any));
 }
 
 export async function getTotalUnits(): Promise<number> {

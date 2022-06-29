@@ -34,6 +34,7 @@
     "chartjs-adapter-date-fns": "^2.0.0",
     "date-fns": "^2.28.0",
     "formik": "^2.2.9",
+    "ftx-api": "^1.1.11",
     "googleapis": "^95.0.0",
     "next": "latest",
     "node-auth0": "^1.0.0",

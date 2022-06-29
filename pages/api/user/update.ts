@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { AuthenticationClient, ManagementClient } from "auth0";
 import { withApiAuthRequired, getSession } from "@auth0/nextjs-auth0";
-import { getAllUsersWithTxs } from "../../../db/user";
+import { updateUser } from "../../../db/user/update";
+import { TransactionType } from "@prisma/client";
 
 export default withApiAuthRequired(async function handler(
   req: NextApiRequest,
@@ -10,6 +11,9 @@ export default withApiAuthRequired(async function handler(
   const session = getSession(req, res);
   const user = session.user;
   const roles = user["https://balmoral-dashboard.vercel.com/roles"];
+  const body = req.body;
+
+  console.log(body);
 
   if (!user || !roles.includes("admin")) {
     return res
@@ -17,11 +21,21 @@ export default withApiAuthRequired(async function handler(
       .json({ redirect: "401", message: "Unauthorized", success: false });
   }
 
-  if (req.method !== "GET") {
+  if (req.method !== "PATCH") {
     return res
       .status(405)
       .json({ redirect: "405", message: "Method Not Allowed", success: false });
   }
+
+  const {
+    units,
+    fee,
+    status,
+    statusAction,
+    unitAction,
+    audInvestment,
+    unitPrice,
+  } = body;
 
   const auth0host = new URL(`${process.env.AUTH0_ISSUER_BASE_URL}`).host;
 
@@ -52,13 +66,36 @@ export default withApiAuthRequired(async function handler(
     });
 
     try {
-      const auth0Users = await managmentClient.getUsers();
+      let updatedAuth0User;
+      if (statusAction !== undefined) {
+        updatedAuth0User = await managmentClient.updateUser(
+          { id: user.sub },
+          {
+            blocked: statusAction === "block" ? status : !status, //TODO this logic is suss maybe change how the front end is capturing the data
+          }
+        );
+      }
 
-      const users = auth0Users.filter((user) => {
-        return !user.user_metadata.notifiedAdmin;
+      const unitActionMapping = {
+        DEPOSIT: TransactionType.PURCHASE,
+        WITHDRAW: TransactionType.REDEMPTION,
+      };
+
+      const updateBalmoralUser = await updateUser({
+        userId: user.sub,
+        units,
+        fee,
+        unitAction: unitActionMapping[unitAction],
+        unitPrice,
+        audInvestment,
       });
 
-      return res.status(200).json({ users, success: true });
+      return res
+        .status(200)
+        .json({
+          updatedUser: { updateBalmoralUser, updatedAuth0User },
+          success: true,
+        });
     } catch (e) {
       console.error(e);
       return res.status(500).json({ message: "Server error", success: true });

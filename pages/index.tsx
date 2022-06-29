@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Container, Box, Card, Button } from "@mui/material";
 import Head from "next/head";
-import SignInOther from "../src/components/SignIn/auth0";
+import SignIn from "../src/components/SignIn";
 import LinkButton from "../src/components/Link";
 import { useUser } from "@auth0/nextjs-auth0";
 import { useRouter } from "next/router";
@@ -27,7 +27,7 @@ export default function Index() {
       <Card sx={{ my: 10 }}>
         <Container>
           <Box sx={{ my: 10 }}>
-            <SignInOther />
+            <SignIn />
           </Box>
         </Container>
       </Card>

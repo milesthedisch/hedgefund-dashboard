@@ -8,14 +8,6 @@ export default withApiAuthRequired(async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const auth0host = new URL(`${process.env.AUTH0_ISSUER_BASE_URL}`).host;
-
-  const auth0Client = new AuthenticationClient({
-    domain: auth0host,
-    clientId: `${process.env.AUTH0_CLIENT_ID}`,
-    clientSecret: `${process.env.AUTH0_CLIENT_SECRET}`,
-  });
-
   const session = getSession(req, res);
   const user = session.user;
   const roles = user["https://balmoral-dashboard.vercel.com/roles"];
@@ -31,6 +23,14 @@ export default withApiAuthRequired(async function handler(
       .status(405)
       .json({ redirect: "405", message: "Method Not Allowed", success: false });
   }
+
+  const auth0host = new URL(`${process.env.AUTH0_ISSUER_BASE_URL}`).host;
+
+  const auth0Client = new AuthenticationClient({
+    domain: auth0host,
+    clientId: `${process.env.AUTH0_CLIENT_ID}`,
+    clientSecret: `${process.env.AUTH0_CLIENT_SECRET}`,
+  });
 
   let bearerToken: { access_token: string };
 
@@ -58,7 +58,11 @@ export default withApiAuthRequired(async function handler(
         getAllUsersWithTxs(),
       ]);
 
-      const users = auth0Users.map((auth0User) => {
+      const userTotalUnits = await Promise.all(
+        auth0Users.map((u) => getTxs(u.user_id))
+      );
+
+      const users = auth0Users.map((auth0User, id) => {
         const matchedTransactions = userTxs.filter((txs) => {
           return txs.auth0UserId === auth0User.user_id;
         });
@@ -68,6 +72,7 @@ export default withApiAuthRequired(async function handler(
             ...auth0User,
             initalInvestment: matchedTransactions[0].initalInvestment,
             transactions: matchedTransactions[0].transactions,
+            totalUnits: userTotalUnits[id],
           };
         } else {
           return {
