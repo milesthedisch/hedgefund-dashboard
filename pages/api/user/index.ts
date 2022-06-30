@@ -58,10 +58,6 @@ export default withApiAuthRequired(async function handler(
         getAllUsersWithTxs(),
       ]);
 
-      const userTotalUnits = await Promise.all(
-        auth0Users.map((u) => getTxs(u.user_id))
-      );
-
       const users = auth0Users.map((auth0User, id) => {
         const matchedTransactions = userTxs.filter((txs) => {
           return txs.auth0UserId === auth0User.user_id;
@@ -72,7 +68,6 @@ export default withApiAuthRequired(async function handler(
             ...auth0User,
             initalInvestment: matchedTransactions[0].initalInvestment,
             transactions: matchedTransactions[0].transactions,
-            totalUnits: userTotalUnits[id],
           };
         } else {
           return {

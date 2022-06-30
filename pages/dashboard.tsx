@@ -84,7 +84,10 @@ function DashboardCrypto() {
   });
 
   const userHasError =
-    (userData !== 0 && !userData && !userIsValidating) || !!userError;
+    (userData?.result !== 0 && !userData?.result && !userIsValidating) ||
+    !!userError;
+
+  console.log(userHasError);
 
   const sharePriceHasError =
     (!sharePriceData && !sharePriceIsValidating) ||
@@ -105,7 +108,7 @@ function DashboardCrypto() {
 
   return (
     <Dashboard
-      userTotalUnits={userData}
+      userTotalUnits={userData?.result}
       sharePriceData={sharePriceData}
       isValidating={userIsValidating || sharePriceIsValidating}
     />

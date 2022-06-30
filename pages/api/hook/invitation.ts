@@ -85,7 +85,7 @@ export default protectRoute(async function handler(
       changeTicket = await managmentClient.createPasswordChangeTicket({
         user_id: authUser.user_id,
         mark_email_as_verified: true,
-        result_url: "http://localhost:3000/api/auth/login",
+        result_url: "https://auth.balmoral.digital/api/auth/login",
       });
 
       changeTicket.ticket = changeTicket.ticket.slice(0, -1);

@@ -101,6 +101,35 @@ export default withPageAuthRequired(function (props) {
   }
 
   if (userData && productionUnitPrice && calcPrice) {
+    if (userData.users.length) {
+      userData.users.forEach((u) => {
+        if (u.transactions.length) {
+          const purchased = u.transactions
+            .filter((tx) => {
+              return tx.type === "PURCHASE";
+            })
+            .map((tx) => tx.units)
+            .map(parseFloat)
+            .reduce((a, b) => a + b);
+
+          let redeemed = u.transactions.filter((tx) => {
+            return tx.type === "REDEMPTION";
+          });
+
+          if (!redeemed.length) {
+            redeemed = 0;
+          } else {
+            redeemed = redeemed
+              .map((tx) => tx.units)
+              .map(parseFloat)
+              .reduce((a, b) => a + b);
+          }
+
+          u.totalUnits = purchased - redeemed;
+        }
+      });
+    }
+
     return (
       <ApplicationsTransactions
         userData={userData}
