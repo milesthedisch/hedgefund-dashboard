@@ -1,5 +1,4 @@
 import * as React from "react";
-import PropTypes from "prop-types";
 import Head from "next/head";
 import { UserProvider } from "@auth0/nextjs-auth0";
 
@@ -8,7 +7,6 @@ import createEmotionCache from "../src/utility/createEmotionCache";
 import CustomThemeProvider from "../src/theme/ThemeProvider";
 import CssBaseline from "@mui/material/CssBaseline";
 import { CacheProvider, EmotionCache } from "@emotion/react";
-import { LightTheme } from "../src/theme/schemes/LightTheme";
 import Layout from "../src/layouts";
 import { SWRConfigurationProvider } from "../src/utility/SWRConfigurationProvider";
 

@@ -1,4 +1,6 @@
-import { Box, Container, Grid } from "@mui/material";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
 
 import PageTitle from "../../src/components/PageTitle";
 import PageTitleWrapper from "../../src/components/PageTitleWrapper";

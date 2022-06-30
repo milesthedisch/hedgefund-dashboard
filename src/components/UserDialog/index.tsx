@@ -96,8 +96,6 @@ function UserDialog(props: SimpleDialogProps) {
     userShouldUpdate
   );
 
-  console.log(data, error, isValidating, userInfo);
-
   const handleClose = () => {
     if (isValidating) return;
 
@@ -119,6 +117,7 @@ function UserDialog(props: SimpleDialogProps) {
       unitPrice: productionUnitPrice,
       audInvestment: productionUnitPrice * units,
     });
+
     setUserShouldUpdate(true);
   };
 

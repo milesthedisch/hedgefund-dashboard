@@ -55,7 +55,7 @@ export default withApiAuthRequired(async function handler(
       const auth0Users = await managmentClient.getUsers();
 
       const users = auth0Users.filter((user) => {
-        return !user.user_metadata.notifiedAdmin;
+        return !user.user_metadata?.notifiedAdmin;
       });
 
       return res.status(200).json({ users, success: true });

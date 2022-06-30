@@ -13,8 +13,6 @@ export default withApiAuthRequired(async function handler(
   const roles = user["https://balmoral-dashboard.vercel.com/roles"];
   const body = req.body;
 
-  console.log(body);
-
   if (!user || !roles.includes("admin")) {
     return res
       .status(401)
@@ -90,12 +88,10 @@ export default withApiAuthRequired(async function handler(
         audInvestment,
       });
 
-      return res
-        .status(200)
-        .json({
-          updatedUser: { updateBalmoralUser, updatedAuth0User },
-          success: true,
-        });
+      return res.status(200).json({
+        updatedUser: { updateBalmoralUser, updatedAuth0User },
+        success: true,
+      });
     } catch (e) {
       console.error(e);
       return res.status(500).json({ message: "Server error", success: true });

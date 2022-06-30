@@ -38,6 +38,7 @@ const updateFetch = async ({ url, args }) => {
 export type BalmoralUser = User &
   Auth0User<{ balmoralId: number }> & { blocked: boolean } & {
     transactions: UserTransactions[];
+    totalUnits: number;
   };
 
 export const useUsers = (): BalmoralUser[] => {

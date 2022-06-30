@@ -39,7 +39,6 @@ export default function StrategyForm(
                   shrink: true,
                 }}
                 variant="standard"
-                pattern={["0-9*"]}
                 onChange={({ target: { value } }) => {
                   setStrategyBalances((prevValue) => {
                     const currentValue = {

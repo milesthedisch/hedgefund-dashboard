@@ -10,13 +10,11 @@ import {
   Popover,
   Tooltip,
   Typography,
-  Icon,
 } from "@mui/material";
 import { useRef, useState } from "react";
 import NotificationsActiveTwoToneIcon from "@mui/icons-material/NotificationsActiveTwoTone";
 import { styled } from "@mui/material/styles";
-
-import { formatDistance, subDays } from "date-fns";
+import Link from "next/link";
 
 const NotificationsBadge = styled(Badge)(
   ({ theme }) => `
@@ -126,15 +124,17 @@ function HeaderNotifications({ data = { users: [] }, isValidating, error }) {
               </Box>
               {data.users.map((user) => {
                 return (
-                  <NotificationsItem key={user.user_id}>
-                    <Typography
-                      component="span"
-                      variant="body2"
-                      color="text.secondary"
-                    >
-                      {user.email}
-                    </Typography>
-                  </NotificationsItem>
+                  <Link key={user.user_id} href="/admin/strategies">
+                    <NotificationsItem key={user.user_id}>
+                      <Typography
+                        component="span"
+                        variant="body2"
+                        color="text.secondary"
+                      >
+                        {user.email}
+                      </Typography>
+                    </NotificationsItem>
+                  </Link>
                 );
               })}
             </Box>

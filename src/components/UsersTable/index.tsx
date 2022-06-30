@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, forwardRef } from "react";
 import PropTypes from "prop-types";
 import {
   Divider,
@@ -19,11 +19,33 @@ import {
   useTheme,
   CardHeader,
   IconButton,
+  Snackbar,
 } from "@mui/material";
 import Label from "../Label";
 import UserDialog from "../UserDialog";
 import EditIcon from "@mui/icons-material/Edit";
 import type { BalmoralUser } from "../../hooks";
+import MuiAlert, { AlertProps } from "@mui/material/Alert";
+import type { AlertColor } from "@mui/lab";
+
+const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
+  props,
+  ref
+) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
+interface Snackbar {
+  open: boolean;
+  severity: AlertColor;
+  message?: string;
+}
+
+const snackbarInital: Snackbar = {
+  open: false,
+  severity: "success",
+  message: "Successful Update",
+};
 
 const getStatusLabel = (userStatus = false) => {
   let props: { text: string; color: string };
@@ -91,6 +113,7 @@ const RecentOrdersTable = ({
   const [filters, setFilters] = useState({
     value: "ALL",
   });
+  const [snackbar, setSnackbar] = useState(snackbarInital);
 
   const statusOptions = [
     {
@@ -162,6 +185,19 @@ const RecentOrdersTable = ({
 
   return (
     <Card>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        message="Note archived"
+      >
+        <Alert
+          severity={snackbar?.severity || "success"}
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
       <UserDialog
         open={openUserDialog}
         onClose={() => handleClose(1)}
