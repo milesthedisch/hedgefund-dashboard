@@ -24,7 +24,7 @@ export default withApiAuthRequired(async function handler(
       .json({ redirect: "405", message: "Method Not Allowed", success: false });
   }
 
-  const auth0host = new URL(`${process.env.AUTH0_ISSUER_BASE_URL}`).host;
+  const auth0host = new URL(`${process.env.AUTH0_TENTANT_BASE_URL}`).host;
 
   const auth0Client = new AuthenticationClient({
     domain: auth0host,
@@ -36,7 +36,7 @@ export default withApiAuthRequired(async function handler(
 
   try {
     bearerToken = await auth0Client.clientCredentialsGrant({
-      audience: `${process.env.AUTH0_ISSUER_BASE_URL}/api/v2/`,
+      audience: `${process.env.AUTH0_TENTANT_BASE_URL}/api/v2/`,
       scope: `read:users`,
     });
   } catch (e) {

@@ -12,7 +12,7 @@ export default protectRoute(async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const auth0host = new URL(`${process.env.AUTH0_ISSUER_BASE_URL}`).host;
+  const auth0host = new URL(`${process.env.AUTH0_TENTANT_BASE_URL}`).host;
 
   const auth0Client = new AuthenticationClient({
     domain: auth0host,
@@ -34,7 +34,7 @@ export default protectRoute(async function handler(
 
   try {
     bearerToken = await auth0Client.clientCredentialsGrant({
-      audience: `${process.env.AUTH0_ISSUER_BASE_URL}/api/v2/`,
+      audience: `${process.env.AUTH0_TENTANT_BASE_URL}/api/v2/`,
       scope: `read:users create:users read:connections create:user_tickets`,
     });
   } catch (e) {
