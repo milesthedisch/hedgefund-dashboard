@@ -1,9 +1,11 @@
-import Card from "@mui/material/Card";
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-import Avatar from "@mui/material/Avatar";
-import CircularProgress from "@mui/material/CircularProgress";
+import {
+  Card,
+  Box,
+  Grid,
+  Typography,
+  Avatar,
+  CircularProgress,
+} from "@mui/material";
 
 import { styled } from "@mui/material/styles";
 import TrendingUp from "@mui/icons-material/TrendingUp";
@@ -26,7 +28,7 @@ const AvatarFailure = styled(Avatar)(
       color: ${theme.palette.error.contrastText};
       width: ${theme.spacing(8)};
       height: ${theme.spacing(8)};
-      box-shadow: ${theme.colors.error.main};
+      box-shadow: ${theme.colors.error.success};
 `
 );
 
@@ -42,23 +44,19 @@ const AvatarSuccess = styled(Avatar)(
 
 function AccountBalance({
   userTotalUnits,
-  sharePriceData = [{ price: 0 }],
+  sharePriceData = [0],
   isValidating,
-}: {
-  sharePriceData: any;
-  isValidating;
-  userTotalUnits;
 }) {
-  const latestPrice = parseFloat(sharePriceData?.slice(-1)[0]?.price);
-  const currentBalance: number = userTotalUnits * latestPrice;
+  const latestPrice = parseFloat(sharePriceData?.slice(-1)[0].price);
+  const currentBalance = userTotalUnits * latestPrice;
 
-  const weekPercentDelta = ((parseFloat(
-    sharePriceData?.slice(-1)[0].price
-  ) as any) - parseFloat(sharePriceData?.slice(-2)[0].price)) as any;
+  const weekPercentDelta =
+    parseFloat(sharePriceData?.slice(-1)[0].price) -
+    parseFloat(sharePriceData?.slice(-2)[0].price);
 
-  const roundedTwoDecimals = currentBalance.toFixed(2);
+  const roundedTwoDecimals = +(Math.round(currentBalance + "e+2") + "e-2"); // Round to two decimal places
 
-  const oneWeekDollarsDelta = weekPercentDelta * ~~roundedTwoDecimals;
+  const oneWeekDollarsDelta = weekPercentDelta * roundedTwoDecimals;
 
   const oneWeekDollarsDeltaFormatted = oneWeekDollarsDelta.toLocaleString(
     "en-AU",

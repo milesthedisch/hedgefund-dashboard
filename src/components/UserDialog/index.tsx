@@ -1,4 +1,4 @@
-import { useState, useReducer } from "react";
+import { useState, forwardRef } from "react";
 import {
   Box,
   Grid,
@@ -14,15 +14,31 @@ import {
   FormGroup,
   FormControlLabel,
   FormHelperText,
-  styled,
+  Snackbar,
 } from "@mui/material";
-import DialogTitle from "@mui/material/DialogTitle";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogAction from "@mui/material/DialogActions";
 
+import MuiAlert, { AlertProps } from "@mui/material/Alert";
+import type { AlertColor } from "@mui/lab";
+
 import SuspenseLoader from "../../components/SuspenseLoader";
+import { useSWRConfig } from "swr";
 import { useUpdateUser } from "../../hooks/index";
+
+const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
+  props,
+  ref
+) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
+interface Snackbar {
+  open: boolean;
+  severity?: AlertColor;
+  message?: string;
+}
 
 export interface SimpleDialogProps {
   open: boolean;
@@ -30,12 +46,23 @@ export interface SimpleDialogProps {
   selectedUser: any;
   calcUnitPrice: number;
   productionUnitPrice: number;
+  setShouldMutate: Function;
 }
 
 enum EUnitAction {
   "DEPOSIT",
   "WITHDRAW",
 }
+
+type Block = { block: boolean };
+type Activate = { activate: boolean };
+type UserInfo = {
+  fee: number;
+  unitAction: EUnitAction;
+  units: number;
+  status: boolean;
+  statusAction: "block" | "activate";
+};
 
 const UserDialogInfo = ({ children, number }) => {
   return (
@@ -53,16 +80,6 @@ const UserDialogInfo = ({ children, number }) => {
   );
 };
 
-type Block = { block: boolean };
-type Activate = { activate: boolean };
-type UserInfo = {
-  fee: number;
-  unitAction: EUnitAction;
-  units: number;
-  status: boolean;
-  statusAction: "block" | "activate";
-};
-
 function UserDialog(props: SimpleDialogProps) {
   const {
     onClose,
@@ -70,11 +87,19 @@ function UserDialog(props: SimpleDialogProps) {
     selectedUser = {},
     calcUnitPrice,
     productionUnitPrice,
+    setShouldMutate,
   } = props;
+
+  const snackbarInital: Snackbar = {
+    open: false,
+    severity: "success",
+    message: "Successful Update",
+  };
 
   const theme = useTheme();
   const [status, setStatus] = useState(false);
   const [fee, setFee] = useState(1);
+  const [snackbar, setSnackbar] = useState(snackbarInital);
   const [unitAction, setUnitAction] = useState<EUnitAction>(
     EUnitAction.DEPOSIT
   );
@@ -89,8 +114,6 @@ function UserDialog(props: SimpleDialogProps) {
     units,
   }));
 
-  const [errorToast, setErrorToast] = useState();
-
   const { data, error, isValidating } = useUpdateUser(
     userInfo,
     userShouldUpdate
@@ -104,8 +127,29 @@ function UserDialog(props: SimpleDialogProps) {
     setUnitAction(EUnitAction.DEPOSIT);
     setStatus(false);
     setUserShouldUpdate(false);
-    onClose(() => {});
+    setSnackbar({ open: false });
+    onClose();
   };
+
+  if (data || error) {
+    setUserShouldUpdate(false);
+  }
+
+  if (error) {
+    setSnackbar({
+      open: true,
+      severity: "error",
+      message: error.message,
+    });
+  }
+
+  if (data) {
+    setSnackbar({
+      open: true,
+      severity: "success",
+      message: `${selectedUser.name} updated successfully`,
+    });
+  }
 
   const handleSubmit = () => {
     setUserInfo({
@@ -130,7 +174,7 @@ function UserDialog(props: SimpleDialogProps) {
   };
 
   const handleUnits = (e) => {
-    setUnits(~~e.target.value as number);
+    setUnits(parseFloat(e.target.value) as number);
   };
 
   return (
@@ -141,6 +185,21 @@ function UserDialog(props: SimpleDialogProps) {
       open={isValidating ? true : open}
       sx={{ height: "auto" }}
     >
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({ open: false, severity: "success" })}
+        message="Note archived"
+      >
+        <Alert
+          onClose={() => setSnackbar({ open: false, severity: "success" })}
+          severity={snackbar?.severity || "success"}
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
       {isValidating ? (
         <Box
           sx={{
@@ -160,9 +219,7 @@ function UserDialog(props: SimpleDialogProps) {
       )}
       <Grid container alignItems="center" sx={{ p: 3 }}>
         <Grid item xs={6}>
-          <UserDialogInfo
-            number={props.selectedUser?.transactions[0]?.units || 0}
-          >
+          <UserDialogInfo number={props.selectedUser?.totalUnits || 0}>
             Current Units
           </UserDialogInfo>
         </Grid>
@@ -229,7 +286,6 @@ function UserDialog(props: SimpleDialogProps) {
               sx={{ width: "100%" }}
               label={"Amount Of Units"}
               defaultValue={0}
-              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
               variant="filled"
               onChange={handleUnits}
               onKeyPress={(e) => {

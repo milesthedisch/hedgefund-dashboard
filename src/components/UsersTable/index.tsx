@@ -19,33 +19,12 @@ import {
   useTheme,
   CardHeader,
   IconButton,
-  Snackbar,
 } from "@mui/material";
 import Label from "../Label";
 import UserDialog from "../UserDialog";
 import EditIcon from "@mui/icons-material/Edit";
 import type { BalmoralUser } from "../../hooks";
-import MuiAlert, { AlertProps } from "@mui/material/Alert";
-import type { AlertColor } from "@mui/lab";
-
-const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
-  props,
-  ref
-) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
-
-interface Snackbar {
-  open: boolean;
-  severity: AlertColor;
-  message?: string;
-}
-
-const snackbarInital: Snackbar = {
-  open: false,
-  severity: "success",
-  message: "Successful Update",
-};
+import { useSWRConfig } from "swr";
 
 const getStatusLabel = (userStatus = false) => {
   let props: { text: string; color: string };
@@ -86,17 +65,6 @@ const applyPagination = (
   return users.slice(page * limit, page * limit + limit);
 };
 
-const fetcher = async ({ url, args }) => {
-  let data = await fetch(url, {
-    headers: {
-      method: "application/json",
-    },
-    body: JSON.stringify(args),
-  });
-
-  console.log(data);
-};
-
 const RecentOrdersTable = ({
   users,
   calcPrice,
@@ -106,14 +74,15 @@ const RecentOrdersTable = ({
   calcPrice: number;
   productionUnitPrice: number;
 }) => {
+  const { mutate } = useSWRConfig();
   const [page, setPage] = useState<number>(0);
   const [limit, setLimit] = useState(5);
   const [selectedUser, setSelectedUser] = useState(null);
   const [openUserDialog, setOpenUserDialog] = useState(false);
+  const [shouldMutate, setShouldMutate] = useState(false);
   const [filters, setFilters] = useState({
     value: "ALL",
   });
-  const [snackbar, setSnackbar] = useState(snackbarInital);
 
   const statusOptions = [
     {
@@ -162,20 +131,8 @@ const RecentOrdersTable = ({
     setOpenUserDialog(true);
   };
 
-  const handleClose = (value: number) => {
+  const handleClose = () => {
     setOpenUserDialog(false);
-  };
-
-  const handleActivateUserClick = (id: number) => {
-    const filteredUser = users.filter((user) => user.id === id);
-    setSelectedUser(filteredUser[0]);
-    alert(id);
-  };
-
-  const handleBlockUserClick = (id: number) => {
-    const filteredUser = users.filter((user) => user.id === id);
-    setSelectedUser(filteredUser[0]);
-    alert(id);
   };
 
   const filteredUsers = applyFilters(users, filters);
@@ -185,25 +142,15 @@ const RecentOrdersTable = ({
 
   return (
     <Card>
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        message="Note archived"
-      >
-        <Alert
-          severity={snackbar?.severity || "success"}
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
       <UserDialog
         open={openUserDialog}
-        onClose={() => handleClose(1)}
+        onClose={() => {
+          handleClose();
+        }}
         selectedUser={selectedUser}
         productionUnitPrice={productionUnitPrice}
         calcUnitPrice={calcPrice}
+        setShouldMutate={setShouldMutate}
       />
       <CardHeader
         action={

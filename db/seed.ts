@@ -54,6 +54,11 @@ async function main() {
         initalInvestment: 20000,
         auth0UserId: "auth0|62bbe66a8a25563770197180",
       },
+      {
+        id: 5,
+        initalInvestment: 20000,
+        auth0UserId: "auth0|62bd36f5dad8b06d95b04054",
+      },
     ],
   });
 
@@ -112,6 +117,15 @@ async function main() {
         fee: 0.01,
         datetime: new Date(2022, 2, 23, 0, 0),
         userId: 3,
+      },
+      {
+        type: "PURCHASE",
+        units: 9425.7562,
+        unitPrice: 1.05031,
+        audInvestment: 9900,
+        fee: 0.01,
+        datetime: new Date(2022, 2, 23, 0, 0),
+        userId: 5,
       },
     ],
   });

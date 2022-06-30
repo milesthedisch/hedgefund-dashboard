@@ -7,12 +7,12 @@
     "schema": "db/schema.prisma"
   },
   "scripts": {
-    "dev": "pscale connect balmoral-digital development --execute='npx next dev' --execute-protocol='mysql'",
+    "dev": "pscale connect balmoral-digital revert-price-change --execute='npx next dev' --execute-protocol='mysql'",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "post-update": "echo \"codesandbox preview only, need an update\" && yarn upgrade --latest",
-    "dev:db": "pscale connect balmoral-digital development --port 3309",
+    "dev:db": "pscale connect balmoral-digital revert-price-change --port 3309",
     "dev:dbstudio": "prisma studio",
     "test": "jest"
   },
