@@ -82,6 +82,7 @@ function AccountSecurity() {
             color="primary"
             onChange={handleToggle("2fa")}
             checked={checked.indexOf("2fa") !== -1}
+            disabled={true}
           />
         </ListItem>
         <Divider />
@@ -104,6 +105,7 @@ function AccountSecurity() {
             secondaryTypographyProps={{ variant: "body2", noWrap: true }}
           />
           <Switch
+            disabled={true}
             edge="end"
             color="primary"
             onChange={handleToggle("phone_verification")}
@@ -130,6 +132,7 @@ function AccountSecurity() {
             secondaryTypographyProps={{ variant: "body2", noWrap: true }}
           />
           <Switch
+            disabled={true}
             edge="end"
             color="primary"
             onChange={handleToggle("recovery_email")}
