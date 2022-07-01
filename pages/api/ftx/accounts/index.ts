@@ -8,8 +8,6 @@ const secret = "ILNvroZ6SUDuvTg9mzc2-u-JnTTX9S1wMjDLwaES";
 const client = new RestClient(key, secret);
 
 export default async function ftx(req: NextApiRequest, res: NextApiResponse) {
-  let data;
-
   try {
     const subAccounts = await client.getSubaccounts();
 
@@ -23,11 +21,9 @@ export default async function ftx(req: NextApiRequest, res: NextApiResponse) {
         .send({ success: false, message: "No subaccounts available" });
     }
 
-    data = subAccounts;
+    return res.status(200).send(subAccounts);
   } catch (e) {
     console.log(e);
     return res.status(500).send({ success: false, message: e.message });
   }
-
-  return res.send(data);
 }

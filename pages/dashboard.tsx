@@ -87,8 +87,6 @@ function DashboardCrypto() {
     (userData?.result !== 0 && !userData?.result && !userIsValidating) ||
     !!userError;
 
-  console.log(userHasError);
-
   const sharePriceHasError =
     (!sharePriceData && !sharePriceIsValidating) ||
     (!sharePriceData?.length && !sharePriceIsValidating) ||
