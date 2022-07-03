@@ -37,6 +37,7 @@ function Header(props) {
   const { user }: { user?: User } = useUser();
 
   let isAdmin: Boolean;
+  let isAudit: Boolean;
 
   if (user) {
     const role: any = user["https://balmoral-dashboard.vercel.com/roles"];

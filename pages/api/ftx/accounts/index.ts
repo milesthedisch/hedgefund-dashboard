@@ -7,12 +7,15 @@ const secret = "ILNvroZ6SUDuvTg9mzc2-u-JnTTX9S1wMjDLwaES";
 
 const client = new RestClient(key, secret);
 
-export default async function ftx(req: NextApiRequest, res: NextApiResponse) {
+export default withApiAuthRequired(async function ftx(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   try {
     const subAccounts = await client.getSubaccounts();
 
     if (!subAccounts.success) {
-      throw data;
+      throw subAccounts;
     }
 
     if (!subAccounts?.result?.length) {
@@ -26,4 +29,4 @@ export default async function ftx(req: NextApiRequest, res: NextApiResponse) {
     console.log(e);
     return res.status(500).send({ success: false, message: e.message });
   }
-}
+});

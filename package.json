@@ -36,6 +36,7 @@
     "formik": "^2.2.9",
     "ftx-api": "^1.1.11",
     "googleapis": "^95.0.0",
+    "lodash.groupby": "^4.6.0",
     "next": "latest",
     "node-auth0": "^1.0.0",
     "nprogress": "^0.2.0",

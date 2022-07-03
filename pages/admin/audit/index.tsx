@@ -9,32 +9,19 @@ import Button from "@mui/material/Button";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import type { AlertColor } from "@mui/lab";
 
-import PageTitle from "../../src/components/PageTitle";
-import PageTitleWrapper from "../../src/components/PageTitleWrapper";
-import Footer from "../../src/components/Footer";
-import SuspenseLoader from "../../src/components/SuspenseLoader";
-import Link from "../../src/components/Link";
+import PageTitle from "../../../src/components/PageTitle";
+import PageTitleWrapper from "../../../src/components/PageTitleWrapper";
+import Footer from "../../../src/components/Footer";
+import SuspenseLoader from "../../../src/components/SuspenseLoader";
+import Link from "../../../src/components/Link";
 
 import Head from "next/head";
 import useSWR from "swr";
 
-const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
-  props,
-  ref
-) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
-
-interface Snackbar {
-  open: boolean;
-  severity?: AlertColor;
-  message?: string;
-}
-
 const SubAccount = (props: { href?; account: { nickname: string } }) => {
   return (
     <Card>
-      <Link size="medium" href={`/account/${props.account.nickname}`}>
+      <Link size="medium" href={`/admin/audit/${props.account.nickname}`}>
         {props.account.nickname}
       </Link>
     </Card>
@@ -42,10 +29,6 @@ const SubAccount = (props: { href?; account: { nickname: string } }) => {
 };
 
 const Audit = () => {
-  const [snackbar, setSnackbar] = useState<Snackbar>({
-    open: false,
-  });
-
   const { data, error, isValidating } = useSWR(
     "/api/ftx/accounts",
     async (url) => {
@@ -92,21 +75,6 @@ const Audit = () => {
           )}
         </Grid>
       </Container>
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={() => setSnackbar({ open: false })}
-        message="Note archived"
-      >
-        <Alert
-          onClose={() => setSnackbar({ open: false })}
-          severity={snackbar?.severity || "success"}
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
       <Footer />
     </>
   );

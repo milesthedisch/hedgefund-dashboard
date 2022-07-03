@@ -1,5 +1,8 @@
 import * as React from "react";
-import { Container, Box, Card, Button } from "@mui/material";
+import Container from "@mui/material/Container";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import Button from "@mui/material/Button";
 import Head from "next/head";
 import SignIn from "../src/components/SignIn";
 import LinkButton from "../src/components/Link";
@@ -16,7 +19,16 @@ export default function Index() {
   }
 
   if (user) {
-    router.push("/dashboard");
+    const roles: any = user["https://balmoral-dashboard.vercel.com/roles"];
+
+    console.log(roles);
+    if (roles?.includes("admin")) {
+      router.push("/admin/strategies");
+    } else if (roles?.includes("audit")) {
+      router.push("/admin/audit");
+    } else {
+      router.push("/dashboard");
+    }
   }
 
   return (
