@@ -4,11 +4,9 @@ import TableRow from "@mui/material/TableRow";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import { useTheme } from "@mui/material/styles";
+const TradeTableCell = (props) => {};
 
-const TradesTable = (props) => {
-  const theme = useTheme();
-  // TODO Make trades table ordered by time descending
-
+const formatData = (props) => {
   const a = new Set(
     props.data.results.map((r) => r.result.map((x) => x.createdAt)).flat()
   );
@@ -33,34 +31,55 @@ const TradesTable = (props) => {
 
   const d = c.map((x) => getTradeFromUniqueDate(props.data, x));
 
-  console.log(d.filter((y) => y.remainingSize > 0));
+  const f = d.sort((a, b) => {
+    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+  });
+
+  return f;
+};
+
+const TradesTable = (props) => {
+  const theme = useTheme();
+
+  const formattedData = formatData(props);
+  const tradesA =
+    props.data.results[0].result.length > 0
+      ? props.data.results[0].result
+      : undefined;
+
+  const tradesB =
+    props.data.results[1].result.length > 0
+      ? props.data.results[1].result
+      : undefined;
 
   return (
-    <Table>
+    <Table sx={{ marginTop: "auto" }}>
       <TableHead>
         <TableRow>
           <TableCell>Date</TableCell>
-          <TableCell>{props.data.results[0].result[0].market}</TableCell>
-          <TableCell>{props.data.results[1].result[1].market}</TableCell>
+          <TableCell>{tradesA ? tradesA[0].market : ""}</TableCell>
+          <TableCell>{tradesB ? tradesB[0].market : ""}</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
-        {d.map((x) => {
+        {formattedData.map((x) => {
           return (
             <TableRow key={x.createdAt}>
-              <TableCell>{new Date(x.createdAt).toLocaleString()}</TableCell>
+              <TableCell>
+                {new Date(x.createdAt).toLocaleString("en-AU")}
+              </TableCell>
               <TableCell>
                 {props.data.results[0].result[0].market === x.market
                   ? x.side === "sell"
-                    ? x.size + " sell "
-                    : x.size + " buy"
+                    ? "-" + x.size
+                    : x.size
                   : ""}
               </TableCell>
               <TableCell>
                 {props.data.results[1].result[1].market === x.market
                   ? x.side === "sell"
-                    ? x.size + " sell "
-                    : x.size + " buy"
+                    ? "-" + x.size
+                    : x.size
                   : ""}
               </TableCell>
             </TableRow>

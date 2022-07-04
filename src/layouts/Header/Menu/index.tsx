@@ -1,18 +1,10 @@
-import {
-  Box,
-  List,
-  ListItem,
-  ListItemText,
-  Menu,
-  MenuItem,
-} from "@mui/material";
-import { useRef, useState } from "react";
+import Box from "@mui/material/Box";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
 import LinkButton from "../../../components/Link";
 import { styled } from "@mui/material/styles";
-import ExpandMoreTwoToneIcon from "@mui/icons-material/ExpandMoreTwoTone";
 import type { User } from "auth0";
-
-import { useUser } from "@auth0/nextjs-auth0";
 
 const ListWrapper = styled(Box)(
   ({ theme }) => `
@@ -120,7 +112,6 @@ const adminLinkList = () => {
 
 function HeaderMenu({ user }: { user: User }) {
   let isAdmin: boolean;
-  let isAudit: boolean;
 
   if (user) {
     isAdmin =
