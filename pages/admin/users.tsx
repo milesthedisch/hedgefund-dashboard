@@ -57,9 +57,7 @@ const fetcher = async (uri: string, bodyData: object) => {
 
 export default withPageAuthRequired(function (props) {
   const isAdmin =
-    props?.user["https://balmoral-dashboard.vercel.com/roles"].includes(
-      "admin"
-    );
+    props?.user["https://app.balmoral.digital/roles"].includes("admin");
 
   const {
     data: userData,

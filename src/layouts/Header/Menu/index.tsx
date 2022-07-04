@@ -114,8 +114,7 @@ function HeaderMenu({ user }: { user: User }) {
   let isAdmin: boolean;
 
   if (user) {
-    isAdmin =
-      user["https://balmoral-dashboard.vercel.com/roles"].includes("admin");
+    isAdmin = user["https://app.balmoral.digital/roles"].includes("admin");
   }
 
   return (

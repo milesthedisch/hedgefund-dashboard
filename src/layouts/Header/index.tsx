@@ -40,7 +40,7 @@ function Header(props) {
   let isAudit: Boolean;
 
   if (user) {
-    const role: any = user["https://balmoral-dashboard.vercel.com/roles"];
+    const role: any = user["https://app.balmoral.digital/roles"];
 
     isAdmin = role.includes("admin");
   }

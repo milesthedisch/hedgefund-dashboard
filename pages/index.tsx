@@ -19,7 +19,7 @@ export default function Index() {
   }
 
   if (user) {
-    const roles: any = user["https://balmoral-dashboard.vercel.com/roles"];
+    const roles: any = user["https://app.balmoral.digital/roles"];
 
     console.log(roles);
     if (roles?.includes("admin")) {

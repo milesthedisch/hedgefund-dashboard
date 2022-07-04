@@ -10,7 +10,7 @@ export default withApiAuthRequired(async function handler(
 ) {
   const session = getSession(req, res);
   const user = session.user;
-  const roles = user["https://balmoral-dashboard.vercel.com/roles"];
+  const roles = user["https://app.balmoral.digital/roles"];
   const body = req.body;
 
   if (!user || !roles.includes("admin")) {
