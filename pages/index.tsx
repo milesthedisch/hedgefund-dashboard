@@ -21,7 +21,6 @@ export default function Index() {
   if (user) {
     const roles: any = user["https://app.balmoral.digital/roles"];
 
-    console.log(roles);
     if (roles?.includes("admin")) {
       router.push("/admin/strategies");
     } else if (roles?.includes("audit")) {

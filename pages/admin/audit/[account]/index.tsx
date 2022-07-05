@@ -1,59 +1,24 @@
-import { forwardRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 
+import SuspenseLoader from "../../../../src/components/SuspenseLoader";
 import PageTitle from "../../../../src/components/PageTitle";
 import PageTitleWrapper from "../../../../src/components/PageTitleWrapper";
 import Footer from "../../../../src/components/Footer";
-import SuspenseLoader from "../../../../src/components/SuspenseLoader";
+import CurrentPositions from "../../../../src/components/CurrentPositions";
 import Link from "../../../../src/components/Link";
 
 import { useRouter } from "next/router";
 import Head from "next/head";
 import useSWR from "swr";
-import { useTheme } from "@mui/material/styles";
 
-const BasisTrade = (props) => {
-  const theme = useTheme();
-
-  return (
-    <Card sx={{ width: "auto" }}>
-      <Link
-        sx={{ width: "100%" }}
-        href={`/admin/audit/${props.account}/${
-          props.tradeName
-        }?tickers=${props.positions.map((p) => p.future).join(",")}`}
-      >
-        {props.tradeName}
-      </Link>
-      <Grid direction="row" container>
-        {props.positions.map((p, id) => {
-          return (
-            <Grid key={props.tradeName + "-trade-" + id} item>
-              <CardHeader subheader={p.future} />
-              <CardHeader title={p.size} subheader="Position size" />
-              <CardHeader
-                title={p.side === "buy" ? "long" : "short"}
-                sx={{
-                  color:
-                    p.side === "buy"
-                      ? theme.colors.success.main
-                      : theme.colors.error.main,
-                }}
-              />
-            </Grid>
-          );
-        })}
-      </Grid>
-      ;
-    </Card>
-  );
-};
-
-const Sub = (props) => {
+const Sub = () => {
   const router = useRouter();
   const { account } = router.query;
 
@@ -64,6 +29,16 @@ const Sub = (props) => {
       return await res.json();
     }
   );
+
+  const { data: bData, error: bError } = useSWR(
+    data ? `/api/ftx/${account}/balances` : null,
+    async (url) => {
+      const res = await fetch(url);
+      return await res.json();
+    }
+  );
+
+  const noPositions = data?.result?.length === 0;
 
   return (
     <>
@@ -81,32 +56,67 @@ const Sub = (props) => {
         </Box>
       </PageTitleWrapper>
       <Container>
-        <Grid
-          container
-          direction="row-reverse"
-          rowSpacing={{ xs: 3, lg: "auto" }}
-          columnSpacing={3}
-          justifyContent={"center"}
+        <Typography
+          textAlign="center"
+          justifyContent="center"
+          sx={{ p: 2, m: 2 }}
+          variant="h2"
         >
-          {isValidating || (!data && !error) ? (
-            <SuspenseLoader size={64} />
-          ) : data?.result ? (
-            Object.keys(data.result).map((key: string, id: number) => {
-              return (
-                <Grid item key={key + id} xs={12} md={6} lg={"auto"}>
-                  <BasisTrade
-                    account={account}
-                    tradeName={key}
-                    positions={data.result[key]}
-                  />
-                </Grid>
-              );
-            })
+          {data && noPositions ? "No Current Positions" : "Current Positions"}
+        </Typography>
+
+        <CurrentPositions
+          data={data}
+          error={error}
+          isValidating={isValidating}
+          account={account}
+        />
+        <Stack alignItems="center" justifyContent="center">
+          {noPositions && data ? (
+            <Link
+              variant="outlined"
+              href="/"
+              size="large"
+              sx={{ width: "200px" }}
+            >
+              Get All Orders
+            </Link>
           ) : (
             ""
           )}
-        </Grid>
+
+          <Typography
+            textAlign="center"
+            justifyContent="center"
+            sx={{ p: 2, m: 2 }}
+            variant="h2"
+          >
+            Current Balances
+          </Typography>
+
+          {!bData ? (
+            <SuspenseLoader size={64} />
+          ) : (
+            <Grid container spacing={3} justifyContent="space-between">
+              {bData?.balances?.result.map((balance) => {
+                return (
+                  <Grid sm={6} key={balance.coin} item>
+                    <Paper>
+                      <Card>
+                        <CardHeader
+                          title={balance.coin}
+                          subheader={balance.total}
+                        />
+                      </Card>
+                    </Paper>
+                  </Grid>
+                );
+              })}
+            </Grid>
+          )}
+        </Stack>
       </Container>
+
       <Footer />
     </>
   );

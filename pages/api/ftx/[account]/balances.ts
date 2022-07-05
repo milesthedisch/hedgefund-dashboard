@@ -19,25 +19,13 @@ export default withApiAuthRequired(async function ftx(
       subAccountName: `${account}`,
     });
 
-    const subAccounts = await client.getPositions();
+    const bal = await client.getBalances();
 
-    if (!subAccounts.success) {
+    if (!bal.success) {
       throw data;
     }
 
-    if (subAccounts.result.length === 0) {
-      return res.send({ result: [] });
-    }
-
-    const filteredPositions = subAccounts.result.filter((r) => {
-      return r.size > 0 || r.size < 0;
-    });
-
-    const groupedPositions = groupBy(filteredPositions, (r) => {
-      return r.future.split("-")[0];
-    });
-
-    return res.send({ result: groupedPositions });
+    return res.send({ balances: bal });
   } catch (e) {
     console.log(e);
     return res.status(500).send({ success: false, message: e.message });

@@ -1,16 +1,14 @@
 import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
 import Container from "@mui/material/Container";
-import LoadingButton from "@mui/lab/LoadingButton";
-import SearchIcon from "@mui/icons-material/Search";
-import { styled } from "@mui/material/styles";
 
 import PageTitle from "../../../../src/components/PageTitle";
 import PageTitleWrapper from "../../../../src/components/PageTitleWrapper";
 import Footer from "../../../../src/components/Footer";
 import SuspenseLoader from "../../../../src/components/SuspenseLoader";
 import TradesTable from "../../../../src/components/TradesTable";
-import DateAndTimePicker from "../../../../src/components/DateAndTimePicker";
+import DateTimeRangePicker from "../../../../src/components/DateTimeRangePicker";
 
 import { useRouter } from "next/router";
 import Head from "next/head";
@@ -25,41 +23,48 @@ const fetchOrders = async (account, trades, tickers, startTime, endTime) => {
   const res = await fetch(url);
   return res.json();
 };
-const StyledSearchIcon = styled(SearchIcon)(
-  ({ theme }) => `
-    margin-right: 0px;
-    margin-left: 0px;
-`
-);
 
-const SearchButton = styled(LoadingButton)(
-  ({ theme }) => `
-    .MuiButtonBase-root > span {
-      margin: 0;
-    }
-
-    .MuiButton-startIcon {
-      margin:0
-    }
-`
-);
+const TradeTableWrapper = (props) => {
+  if (props.isValidating || !props?.data) {
+    return <SuspenseLoader size={64} />;
+  } else if (props?.data?.results.length === 1) {
+    return (
+      <TradesTable
+        notHedged={true}
+        empty={props.empty}
+        sx={{ paddingTop: "auto", marginTop: "auto" }}
+        data={props.data}
+      />
+    );
+  }
+  return (
+    <TradesTable
+      empty={props.empty}
+      sx={{ paddingTop: "auto", marginTop: "auto" }}
+      data={props.data}
+    />
+  );
+};
 
 const Sub = (props) => {
   const router = useRouter();
 
-  const { account, trades, tickers } = router.query;
-  const [startTradeDateTime, setStartTradeDateTime] = useState("null");
-  const [endTradeDateTime, setEndDateTradeTime] = useState("null");
+  const { account, trades, tickers, future } = router.query;
   const [loading, setLoading] = useState(true);
   const [empty, setEmpty] = useState(false);
-  const [shouldUpdate, setShouldUpdate] = useState(true);
+  const [shouldUpdate, setShouldUpdate] = useState(false);
+  const [timeRange, setTimeRange] = useState({
+    startTime: null,
+    endTime: null,
+  });
 
   const { data, error, isValidating, mutate } = useSWR(
-    account && shouldUpdate
+    account
       ? `/api/ftx/${account}/${trades}` +
           `?tickers=${tickers}` +
-          `&startTime=${startTradeDateTime}&endTime=${endTradeDateTime}`
+          `&startTime=${timeRange.startTime}&endTime=${timeRange.endTime}`
       : null,
+
     async (url) => {
       const res = await fetch(url);
       return await res.json();
@@ -72,13 +77,7 @@ const Sub = (props) => {
         await router.push("/500");
       }
     })();
-
-    if (isValidating || !data) {
-      setLoading(true);
-    } else {
-      setLoading(false);
-    }
-  }, [error, router, data, loading, isValidating]);
+  }, [error, router]);
 
   return (
     <>
@@ -96,63 +95,26 @@ const Sub = (props) => {
         </Box>
       </PageTitleWrapper>
       <Container>
-        <Box
-          display="flex"
-          width="100%"
-          justifyContent="center"
-          alignItems="center"
-          sx={{ p: 2, marginBottom: 4 }}
-        >
-          <DateAndTimePicker
-            value={startTradeDateTime}
-            handleChange={setStartTradeDateTime}
-            label={"Start"}
-          />
-          <Box sx={{ p: 2 }} textAlign="center" width="50px">
-            to
+        <Paper>
+          <Box
+            display="flex"
+            width="100%"
+            justifyContent="center"
+            alignItems="center"
+            sx={{ p: 2, marginBottom: 4 }}
+          >
+            <DateTimeRangePicker
+              loading={isValidating || !data}
+              handleSubmit={(val: [string, string]) => {
+                setTimeRange({
+                  startTime: val[0],
+                  endTime: val[1],
+                });
+              }}
+            />
           </Box>
-          <DateAndTimePicker
-            value={endTradeDateTime}
-            handleChange={setEndDateTradeTime}
-            label={"End"}
-          />
-          <SearchButton
-            loading={loading}
-            size="large"
-            color="primary"
-            aria-label="upload picture"
-            sx={{
-              marginLeft: 2,
-              height: "100%",
-              display: "flex",
-              justifyContent: "center",
-            }}
-            startIcon={<StyledSearchIcon />}
-            onClick={async () => {
-              const newData = await fetchOrders(
-                account,
-                trades,
-                tickers,
-                startTradeDateTime,
-                endTradeDateTime
-              );
-
-              console.log(newData);
-              await mutate({ ...newData });
-            }}
-          ></SearchButton>
-        </Box>
-        {isValidating || !data ? (
-          <SuspenseLoader size={64} />
-        ) : data?.results ? (
-          <TradesTable
-            empty={empty}
-            sx={{ paddingTop: "auto", marginTop: "auto" }}
-            data={data}
-          />
-        ) : (
-          ""
-        )}
+        </Paper>
+        <TradeTableWrapper empty={empty} data={data} />
       </Container>
       <Footer />
     </>

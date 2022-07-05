@@ -6,15 +6,18 @@ import groupBy from "lodash/groupBy";
 const key = "vN0h2BlDFk2EBaHxglTtXtD4EB9_NRQYx0mVlPFU";
 const secret = "ILNvroZ6SUDuvTg9mzc2-u-JnTTX9S1wMjDLwaES";
 
-const getSeconds = (millis) => ~~((millis % 60000) / 1000).toFixed(0);
+const getSeconds = (millis) => ~~(millis / 1000).toFixed(0);
+
+const isFuture = (future: string) => {
+  return future.match(/\w+-PERP$/);
+};
 
 export default withApiAuthRequired(async function ftx(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { account, trade, tickers, startTime, endTime } = req.query as {
+  const { account, tickers, startTime, endTime } = req.query as {
     account: string;
-    trade;
     tickers: string;
     startTime: string;
     endTime: string;
@@ -27,9 +30,17 @@ export default withApiAuthRequired(async function ftx(
       subAccountName: `${account}`,
     });
 
-    let data;
+    const future = tickersArray.filter(isFuture)[0];
 
-    if (startTime !== "null" && endTime !== "null") {
+    let data;
+    let startTimeSec;
+    let endTimeSec;
+    let funding;
+
+    if (startTime !== "null" && endTime !== "null" && startTime && endTime) {
+      startTimeSec = getSeconds(new Date(startTime).getTime());
+      endTimeSec = getSeconds(new Date(endTime).getTime());
+
       data = await Promise.all(
         tickersArray.map((ticker) => {
           return client.getOrderHistory({
@@ -39,6 +50,12 @@ export default withApiAuthRequired(async function ftx(
           });
         })
       );
+
+      funding = await client.getFundingPayments({
+        future,
+        start_time: startTimeSec,
+        end_time: endTimeSec,
+      });
     } else {
       data = await Promise.all(
         tickersArray.map((ticker) => {
@@ -47,13 +64,22 @@ export default withApiAuthRequired(async function ftx(
           });
         })
       );
+
+      funding = await client.getFundingPayments({
+        future,
+      });
     }
 
     if (!data.length || data.some((d) => !d?.success)) {
       throw data;
     }
 
-    return res.send({ results: data });
+    funding.result = funding.result.map((x) => {
+      x.createdAt = x.time;
+      return x;
+    });
+
+    return res.send({ results: data, funding });
   } catch (e) {
     console.log(e);
     return res.status(500).send({ success: false, message: e.message });

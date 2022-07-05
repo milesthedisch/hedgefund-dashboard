@@ -6,21 +6,20 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import TextField from "@mui/material/TextField";
 
-export default function DateAndTimePicker(props: {
-  value;
-  handleChange;
-  label: string;
-}) {
+export default function DateAndTimePicker(props: { label; handleAccept }) {
   const [dateTime, setDateTime] = useState(new Date());
 
-  const { handleChange, label } = props;
+  const { handleAccept, label } = props;
+
+  const startOrEndTime =
+    label === "Start" ? { startTime: "" } : { endTime: "" };
 
   return (
     <LocalizationProvider adapterLocale={auLocale} dateAdapter={AdapterDateFns}>
       <DateTimePicker
         label={label}
         value={dateTime}
-        onAccept={(value) => handleChange(value)}
+        onAccept={() => handleAccept()}
         onChange={(value) => setDateTime(value)}
         renderInput={(params) => <TextField {...params} />}
       />
