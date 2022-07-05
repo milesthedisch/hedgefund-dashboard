@@ -99,6 +99,8 @@ const RecentOrdersTable = ({
     },
   ];
 
+  console.log(users);
+
   const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let value = "ALL";
 
@@ -124,7 +126,7 @@ const RecentOrdersTable = ({
 
   const handleClickOpen = (id: string) => {
     const filteredUser = users.filter(
-      (user) => user.user_metadata.balmoralId === id
+      (user) => user.user_metadata?.balmoralId === id
     );
 
     setSelectedUser(filteredUser[0]);
