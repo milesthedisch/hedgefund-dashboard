@@ -15,7 +15,7 @@ const CurrentPositions = (props: { isValidating; data; error; account }) => {
         sx={{ width: "100%" }}
         href={`/admin/audit/${props.account}/${
           props.tradeName
-        }?tickers=${props.positions.map((p) => p.future).join(",")}`}
+        }?tickers=${props.positions.map((p) => p.future || p.coin).join(",")}`}
       >
         {props.tradeName}
       </Link>
@@ -24,6 +24,23 @@ const CurrentPositions = (props: { isValidating; data; error; account }) => {
       />
       <Grid direction="row" container>
         {props.positions.map((p, id) => {
+          if (p.coin) {
+            return (
+              <Grid key={props.tradeName + "-trade-" + id} item>
+                <CardHeader subheader={p.coin + " Spot"} />
+                <CardHeader title={p.total} subheader="Position size" />
+                <CardHeader
+                  title={p.total > 0 ? "long" : "short"}
+                  sx={{
+                    color:
+                      p.total > 0
+                        ? theme.colors.success.main
+                        : theme.colors.error.main,
+                  }}
+                />
+              </Grid>
+            );
+          }
           return (
             <Grid key={props.tradeName + "-trade-" + id} item>
               <CardHeader subheader={p.future} />

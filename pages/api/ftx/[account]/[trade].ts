@@ -9,7 +9,11 @@ const secret = "ILNvroZ6SUDuvTg9mzc2-u-JnTTX9S1wMjDLwaES";
 const getSeconds = (millis) => ~~(millis / 1000).toFixed(0);
 
 const isFuture = (future: string) => {
-  return future.match(/\w+-PERP$/);
+  return future.match(/\w+-PERP$/) || future.match(/\w+-\d{4}$/);
+};
+
+const isSpot = (spot: string) => {
+  return !isFuture(spot);
 };
 
 export default withApiAuthRequired(async function ftx(
@@ -31,11 +35,13 @@ export default withApiAuthRequired(async function ftx(
     });
 
     const future = tickersArray.filter(isFuture)[0];
+    const spot = tickersArray.filter(isSpot)[0];
 
     let data;
     let startTimeSec;
     let endTimeSec;
     let funding;
+    let spotMargin;
 
     if (startTime !== "null" && endTime !== "null" && startTime && endTime) {
       startTimeSec = getSeconds(new Date(startTime).getTime());
@@ -44,7 +50,7 @@ export default withApiAuthRequired(async function ftx(
       data = await Promise.all(
         tickersArray.map((ticker) => {
           return client.getOrderHistory({
-            market: ticker,
+            market: isSpot(ticker) ? `${spot}/USD` : ticker,
             start_time: getSeconds(new Date(startTime).getTime()),
             end_time: getSeconds(new Date(endTime).getTime()),
           });
@@ -56,11 +62,19 @@ export default withApiAuthRequired(async function ftx(
         start_time: startTimeSec,
         end_time: endTimeSec,
       });
+
+      spotMargin = await client.getBorrowHistory({
+        start_time: startTimeSec,
+        end_time: endTimeSec,
+      });
+
+      spotMargin = await client.getBorrowHistory();
+      spotMargin.result = spotMargin.result.filter((s) => s.coin === spot);
     } else {
       data = await Promise.all(
         tickersArray.map((ticker) => {
           return client.getOrderHistory({
-            market: ticker,
+            market: isSpot(ticker) ? `${spot}/USD` : ticker,
           });
         })
       );
@@ -68,18 +82,16 @@ export default withApiAuthRequired(async function ftx(
       funding = await client.getFundingPayments({
         future,
       });
+
+      spotMargin = await client.getBorrowHistory();
+      spotMargin.result = spotMargin.result.filter((s) => s.coin === spot);
     }
 
     if (!data.length || data.some((d) => !d?.success)) {
       throw data;
     }
 
-    funding.result = funding.result.map((x) => {
-      x.createdAt = x.time;
-      return x;
-    });
-
-    return res.send({ results: data, funding });
+    return res.send({ results: data, funding, spotMargin });
   } catch (e) {
     console.log(e);
     return res.status(500).send({ success: false, message: e.message });

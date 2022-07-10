@@ -32,8 +32,8 @@ const SearchButton = styled(LoadingButton)(
 
 export default function DateTimeRangePicker(props) {
   const { handleSubmit } = props;
-  const [startDateTime, setStartDateTime] = useState(new Date());
-  const [endDateTime, setEndDateTime] = useState(new Date());
+  const [startDateTime, setStartDateTime] = useState(null);
+  const [endDateTime, setEndDateTime] = useState(null);
 
   return (
     <LocalizationProvider adapterLocale={auLocale} dateAdapter={AdapterDateFns}>

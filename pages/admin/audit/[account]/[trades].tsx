@@ -14,16 +14,6 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import useSWR from "swr";
 
-const fetchOrders = async (account, trades, tickers, startTime, endTime) => {
-  const url =
-    `/api/ftx/${account}/${trades}` +
-    `?tickers=${tickers}` +
-    `&startTime=${startTime}&endTime=${endTime}`;
-
-  const res = await fetch(url);
-  return res.json();
-};
-
 const TradeTableWrapper = (props) => {
   if (props.isValidating || !props?.data) {
     return <SuspenseLoader size={64} />;
@@ -42,6 +32,10 @@ const TradeTableWrapper = (props) => {
       empty={props.empty}
       sx={{ paddingTop: "auto", marginTop: "auto" }}
       data={props.data}
+      tickers={props.tickers}
+      summedBorrowing={props.summedBorrowing}
+      summedFunding={props.summedFunding}
+      summedPositions={props.summedPositions}
     />
   );
 };
@@ -50,9 +44,6 @@ const Sub = (props) => {
   const router = useRouter();
 
   const { account, trades, tickers, future } = router.query;
-  const [loading, setLoading] = useState(true);
-  const [empty, setEmpty] = useState(false);
-  const [shouldUpdate, setShouldUpdate] = useState(false);
   const [timeRange, setTimeRange] = useState({
     startTime: null,
     endTime: null,
@@ -70,6 +61,34 @@ const Sub = (props) => {
       return await res.json();
     }
   );
+
+  let summedPositions;
+  let summedFunding;
+  let summedBorrowing;
+
+  if (data) {
+    summedPositions = data.results.map((pos) => {
+      return pos.result.reduce((p, n, i) => {
+        if (i === 1) {
+          return p.size === "buy" ? p.size : p.size * -1;
+        }
+
+        return p + n.size === "buy" ? n.size : n.size * -1;
+      });
+    });
+
+    summedFunding = data.funding.result
+      .map((x) => x.payment)
+      .reduce((fp, fn) => {
+        return fp + fn;
+      });
+
+    summedBorrowing = data.spotMargin.result
+      .map((x) => x.cost)
+      .reduce((fp, fn) => {
+        return fp + fn;
+      });
+  }
 
   useEffect(() => {
     (async () => {
@@ -114,7 +133,13 @@ const Sub = (props) => {
             />
           </Box>
         </Paper>
-        <TradeTableWrapper empty={empty} data={data} />
+        <TradeTableWrapper
+          data={data}
+          summedBorrowing={summedBorrowing}
+          summedFunding={summedFunding}
+          summedPositions={summedPositions}
+          tickers={tickers}
+        />
       </Container>
       <Footer />
     </>

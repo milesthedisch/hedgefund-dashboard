@@ -56,22 +56,22 @@ const Sub = () => {
         </Box>
       </PageTitleWrapper>
       <Container>
-        <Typography
-          textAlign="center"
-          justifyContent="center"
-          sx={{ p: 2, m: 2 }}
-          variant="h2"
-        >
-          {data && noPositions ? "No Current Positions" : "Current Positions"}
-        </Typography>
-
-        <CurrentPositions
-          data={data}
-          error={error}
-          isValidating={isValidating}
-          account={account}
-        />
         <Stack alignItems="center" justifyContent="center">
+          <Typography
+            textAlign="center"
+            justifyContent="center"
+            sx={{ p: 2, m: 2 }}
+            variant="h2"
+          >
+            {data && noPositions ? "No Current Positions" : "Current Positions"}
+          </Typography>
+
+          <CurrentPositions
+            data={data}
+            error={error}
+            isValidating={isValidating}
+            account={account}
+          />
           {noPositions && data ? (
             <Link
               variant="outlined"
