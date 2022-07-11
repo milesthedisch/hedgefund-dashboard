@@ -3011,7 +3011,7 @@ fsevents@^2.3.2:
 
 "ftx-api@https://github.com/milesthedisch/ftx-api":
   version "1.1.13"
-  resolved "https://github.com/milesthedisch/ftx-api#2ebb425309c162f4fc3b17f2e7f0fb15c073a9b1"
+  resolved "https://github.com/milesthedisch/ftx-api#92c119228f97c74e7c15b1ef4ffb2b8254640405"
   dependencies:
     axios "^0.21.4"
     isomorphic-ws "^4.0.1"
