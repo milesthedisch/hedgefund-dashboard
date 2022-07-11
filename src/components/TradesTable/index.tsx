@@ -3,6 +3,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
+import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import { useTheme } from "@mui/material/styles";
@@ -69,7 +70,10 @@ const TradesTable = (props) => {
 
   return (
     <>
-      <Paper>
+      <Paper sx={{ my: 3 }}>
+        <Typography sx={{ p: 2 }}>
+          ** When funding payments that are negative are income
+        </Typography>
         <Table sx={{ marginTop: "auto" }}>
           <TableHead>
             <TableRow>
@@ -97,16 +101,16 @@ const TradesTable = (props) => {
               <TableCell>{props.summedPositions[0]}</TableCell>
               <TableCell>{props.summedPositions[1]}</TableCell>
               <TableCell>{props.summedFunding}</TableCell>
-              <TableCell>{props.summedBorrowing}</TableCell>
+              <TableCell>{props.summedBorrowing || 0}</TableCell>
               <TableCell>
-                {props.summedFunding - props.summedBorrowing}
+                {props.summedFunding - (props.summedBorrowing || 0)}
               </TableCell>
             </TableRow>
           </TableBody>
         </Table>
       </Paper>
       <Grid container>
-        <Grid item lg={props.data.spotMargin.result.length > 0 ? 4 : 6}>
+        <Grid item lg={props.data?.spotMargin?.result?.length > 0 ? 4 : 6}>
           <Paper>
             <Table sx={{ marginTop: "auto" }}>
               <TableHead>
@@ -164,29 +168,35 @@ const TradesTable = (props) => {
             </Table>
           </Paper>
         </Grid>
-        <Grid item lg={props.data.spotMargin.result.length > 0 ? 4 : 6}>
+        <Grid item lg={props.data?.spotMargin?.result?.length > 0 ? 4 : 6}>
           <Table sx={{ marginTop: "auto" }}>
             <TableHead>
               <TableRow>
-                <TableCell>Funding Payment Date</TableCell>
+                <TableCell>Funding Payment Date</TableCell>{" "}
                 <TableCell>Funding Payment</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {props.data.funding.result.map((x) => {
-                return (
-                  <TableRow key={new Date(x.time).toLocaleString("en-AU")}>
-                    <TableCell>
-                      {new Date(x.time).toLocaleString("en-AU")}
-                    </TableCell>
-                    <TableCell>{x.payment}</TableCell>
-                  </TableRow>
-                );
-              })}
+              {props.data.funding.result
+                .sort((a, b) => {
+                  return (
+                    new Date(a.time).getTime() - new Date(b.time).getTime()
+                  );
+                })
+                .map((x) => {
+                  return (
+                    <TableRow key={new Date(x.time).toLocaleString("en-AU")}>
+                      <TableCell>
+                        {new Date(x.time).toLocaleString("en-AU")}
+                      </TableCell>
+                      <TableCell>{x.payment}</TableCell>
+                    </TableRow>
+                  );
+                })}
             </TableBody>
           </Table>
         </Grid>
-        {props.data?.spotMargin?.result.length > 0 ? (
+        {props.data?.spotMargin?.result?.length > 0 ? (
           <Grid item lg={4}>
             <Table sx={{ marginTop: "auto" }}>
               <TableHead>

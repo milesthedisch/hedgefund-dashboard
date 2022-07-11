@@ -63,13 +63,14 @@ export default withApiAuthRequired(async function ftx(
         end_time: endTimeSec,
       });
 
-      spotMargin = await client.getBorrowHistory({
-        start_time: startTimeSec,
-        end_time: endTimeSec,
-      });
+      if (spot) {
+        spotMargin = await client.getBorrowHistory({
+          start_time: startTimeSec,
+          end_time: endTimeSec,
+        });
 
-      spotMargin = await client.getBorrowHistory();
-      spotMargin.result = spotMargin.result.filter((s) => s.coin === spot);
+        spotMargin.result = spotMargin.result.filter((s) => s.coin === spot);
+      }
     } else {
       data = await Promise.all(
         tickersArray.map((ticker) => {
@@ -83,8 +84,10 @@ export default withApiAuthRequired(async function ftx(
         future,
       });
 
-      spotMargin = await client.getBorrowHistory();
-      spotMargin.result = spotMargin.result.filter((s) => s.coin === spot);
+      if (spot) {
+        spotMargin = await client.getBorrowHistory();
+        spotMargin.result = spotMargin.result.filter((s) => s.coin === spot);
+      }
     }
 
     if (!data.length || data.some((d) => !d?.success)) {

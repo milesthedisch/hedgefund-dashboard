@@ -83,11 +83,13 @@ const Sub = (props) => {
         return fp + fn;
       });
 
-    summedBorrowing = data.spotMargin.result
-      .map((x) => x.cost)
-      .reduce((fp, fn) => {
-        return fp + fn;
-      });
+    summedBorrowing = data.spotMargin
+      ? data.spotMargin.result
+          .map((x) => x.cost)
+          .reduce((fp, fn) => {
+            return fp + fn;
+          })
+      : undefined;
   }
 
   useEffect(() => {
