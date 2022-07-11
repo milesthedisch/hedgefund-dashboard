@@ -11,20 +11,24 @@ export default withApiAuthRequired(async function ftx(
 ) {
   let data;
 
-  const { account } = req.query as { account: string };
+  const { account, all } = req.query as { account: string; all: string };
 
   try {
     const client = new RestClient(key, secret, {
       subAccountName: `${account}`,
     });
 
-    const bal = await client.getBalances();
+    const json = await client.getAllHistoricalBalances();
 
-    if (!bal.success) {
-      throw data;
-    }
+    const filter = json.result.filter((r) => {
+      return (
+        r.results.filter((t) => {
+          return t.ticker === "LINK-PERP";
+        }).length > 0
+      );
+    });
 
-    return res.send({ balances: bal });
+    return res.send({ filter });
   } catch (e) {
     console.log(e);
     return res.status(500).send({ success: false, message: e.message });

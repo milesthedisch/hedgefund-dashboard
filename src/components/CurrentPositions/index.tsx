@@ -74,6 +74,23 @@ const CurrentPositions = (props: { isValidating; data; error; account }) => {
         <SuspenseLoader size={64} />
       ) : props.data?.result ? (
         Object.keys(props.data.result).map((key: string, id: number) => {
+          if (
+            props.data.result[key].some(
+              (pos) => pos.size === 0 || pos.total === 0
+            )
+          ) {
+            const a = props.data.result[key][0].future
+              ? props.data.result[key][0].size === 0
+              : props.data.result[key][0].total === 0;
+
+            const b = props.data.result[key][1].future
+              ? props.data.result[key][1].size === 0
+              : props.data.result[key][1].total === 0;
+
+            if (!a || !b) {
+              return "";
+            }
+          }
           return (
             <Grid item key={key + id} xs={12} md={6} lg={"auto"}>
               <PositionCard

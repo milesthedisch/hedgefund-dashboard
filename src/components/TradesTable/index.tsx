@@ -13,6 +13,9 @@ const formatData = (props) => {
     return props.data.results[0].result;
   }
 
+  if (props.data.results.some((r) => !r.result)) {
+    return [];
+  }
   const a = new Set(
     props.data.results.map((r) => r.result.map((x) => x.createdAt)).flat()
   );
@@ -126,7 +129,7 @@ const TradesTable = (props) => {
                 </TableCell>
               ) : (
                 <TableCell>
-                  {props.summedFunding - (props.summedBorrowing || 0)}
+                  {props.summedFunding * -1 - (props.summedBorrowing || 0)}
                 </TableCell>
               )}
             </TableRow>
@@ -200,10 +203,10 @@ const TradesTable = (props) => {
                 {props.data.fundingA && props.data.fundingB ? (
                   <>
                     <TableCell>
-                      {props.data.fundingA.result[0].future}
+                      {props.data.fundingA.result[0]?.future}
                     </TableCell>
                     <TableCell>
-                      {props.data.fundingB.result[0].future}
+                      {props.data.fundingB.result[0]?.future}
                     </TableCell>
                   </>
                 ) : (

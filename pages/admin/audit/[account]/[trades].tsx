@@ -64,35 +64,43 @@ const Sub = (props) => {
     }
   );
 
-  let summedFundingA;
-  let summedFundingB;
-  let summedPositions;
-  let summedFunding;
-  let summedBorrowing;
+  let summedFundingA = 0;
+  let summedFundingB = 0;
+  let summedPositions = 0;
+  let summedFunding = 0;
+  let summedBorrowing = 0;
 
   if (data) {
     summedPositions = data.results.map((pos) => {
-      return pos.result.reduce((p, n, i) => {
-        if (i === 1) {
-          return p.size === "buy" ? p.size : p.size * -1;
-        }
+      if (pos.result.length > 0) {
+        return pos.result.reduce((p, n, i) => {
+          if (i === 1) {
+            return p.size === "buy" ? p.size : p.size * -1;
+          }
 
-        return p + n.size === "buy" ? n.size : n.size * -1;
-      });
+          return p + n.size === "buy" ? n.size : n.size * -1;
+        });
+      }
+
+      return 0;
     });
 
     if (data.fundingA && data.fundingB) {
-      summedFundingA = data.fundingA.result
-        .map((x) => x.payment)
-        .reduce((fp, fn) => {
-          return fp + fn;
-        });
+      if (data.fundingA.result.length > 0) {
+        summedFundingA = data.fundingA.result
+          .map((x) => x.payment)
+          .reduce((fp, fn) => {
+            return fp + fn;
+          });
+      }
 
-      summedFundingB = data.fundingB.result
-        .map((x) => x.payment)
-        .reduce((fp, fn) => {
-          return fp + fn;
-        });
+      if (data.fundingB.result.length > 0) {
+        summedFundingB = data.fundingB.result
+          .map((x) => x.payment)
+          .reduce((fp, fn) => {
+            return fp + fn;
+          });
+      }
     } else {
       summedFunding = data.funding.result
         .map((x) => x.payment)
@@ -101,13 +109,17 @@ const Sub = (props) => {
         });
     }
 
-    summedBorrowing = data.spotMargin
-      ? data.spotMargin.result
-          .map((x) => x.cost)
-          .reduce((fp, fn) => {
-            return fp + fn;
-          })
-      : undefined;
+    if (data.spotMargin && data.spotMargin.result.length > 0) {
+      summedBorrowing = data.spotMargin
+        ? data.spotMargin?.result
+            .map((x) => x.cost)
+            .reduce((fp, fn) => {
+              return fp + fn;
+            })
+        : undefined;
+    } else {
+      summedBorrowing = 0;
+    }
   }
 
   useEffect(() => {

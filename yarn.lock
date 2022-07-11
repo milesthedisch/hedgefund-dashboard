@@ -2948,7 +2948,12 @@ flatted@^3.1.0:
   resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.2.5.tgz#76c8584f4fc843db64702a6bd04ab7a8bd666da3"
   integrity sha512-WIWGi2L3DyTUvUrwRKgGi9TwxQMUEqPOPQBVi71R96jZXJdFskXEmf54BoZaS1kknGODoIGASGEzBUYdyMCBJg==
 
-follow-redirects@^1.14.0, follow-redirects@^1.14.7, follow-redirects@^1.14.8, follow-redirects@^1.14.9:
+follow-redirects@^1.14.0:
+  version "1.15.1"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.1.tgz#0ca6a452306c9b276e4d3127483e29575e207ad5"
+  integrity sha512-yLAMQs+k0b2m7cVxpS1VKJVvoz7SS9Td1zss3XRwXj+ZDH00RJgnuLx7E44wx02kQLrdM3aOOy+FpzS7+8OizA==
+
+follow-redirects@^1.14.7, follow-redirects@^1.14.8, follow-redirects@^1.14.9:
   version "1.15.0"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.0.tgz#06441868281c86d0dda4ad8bdaead2d02dca89d4"
   integrity sha512-aExlJShTV4qOUOL7yF1U5tvLCB0xQuudbf6toyYA0E/acBNw71mvjFTnLaRp50aQaYocMR0a/RMMBIHeZnGyjQ==
@@ -3005,9 +3010,9 @@ fsevents@^2.3.2:
   integrity sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==
 
 ftx-api@^1.1.11:
-  version "1.1.11"
-  resolved "https://registry.yarnpkg.com/ftx-api/-/ftx-api-1.1.11.tgz#a60450c0e8a0cb8d58ccc02ce17cf0b1fca57625"
-  integrity sha512-SO1DEqlXK6U3rk/LKWhw1lWEGNJSCCn00eEhppslDa8xTwrb1A8jMpIaZT3Wb4H1vz+cUN6BR2ECp51TjXv1tA==
+  version "1.1.13"
+  resolved "https://registry.yarnpkg.com/ftx-api/-/ftx-api-1.1.13.tgz#89ced81182020c80bcf5a97082fd3b2b62d1fea3"
+  integrity sha512-YZdiU4QN2H8wId4Bglb/Yj6hJrLImKv/yEIj3jw1pHMb1Bv/kdM25mlr+t+TqGPWy2prX/ywsh1+OVVI6G5jhA==
   dependencies:
     axios "^0.21.4"
     isomorphic-ws "^4.0.1"

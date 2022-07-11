@@ -23,10 +23,10 @@ export default withApiAuthRequired(async function ftx(
       subAccountName: `${account}`,
     });
 
-    const subAccounts = await client.getPositions();
+    const positions = await client.getPositions();
     const balances = await client.getBalances();
 
-    if (!subAccounts.success) {
+    if (!positions.success) {
       console.error("Could not fetch positions");
       throw data;
     }
@@ -36,21 +36,13 @@ export default withApiAuthRequired(async function ftx(
       throw data;
     }
 
-    if (subAccounts.result.length === 0) {
+    if (positions.result.length === 0) {
       return res.send({ result: [] });
     }
 
-    const filteredPositions = subAccounts.result.filter((r) => {
-      return r.size > 0 || r.size < 0;
-    });
-
-    const filteredBalances = balances.result.filter((r) => {
-      return r.usdValue > 1 || r.usdValue < -1;
-    });
-
     const groupedPos = {};
 
-    filteredPositions.forEach((r) => {
+    positions.result.forEach((r) => {
       const tickerA = r.future.split("-")[0];
 
       // Check if the position has already been matched
@@ -62,11 +54,11 @@ export default withApiAuthRequired(async function ftx(
         if (alreadyMatched) return;
       }
 
-      const matchBalance = filteredBalances.find((bal) => {
+      const matchBalance = balances.result.find((bal) => {
         return bal.coin === tickerA;
       });
 
-      const match = filteredPositions.find((pos) => {
+      const match = positions.result.find((pos) => {
         if (pos.future === r.future) return false;
         const tickerB = pos.future.split("-")[0];
         return isInsideString(tickerB, tickerA);
