@@ -3009,10 +3009,9 @@ fsevents@^2.3.2:
   resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.3.2.tgz#8a526f78b8fdf4623b709e0b975c52c24c02fd1a"
   integrity sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==
 
-ftx-api@^1.1.11:
+"ftx-api@https://github.com/milesthedisch/ftx-api":
   version "1.1.13"
-  resolved "https://registry.yarnpkg.com/ftx-api/-/ftx-api-1.1.13.tgz#89ced81182020c80bcf5a97082fd3b2b62d1fea3"
-  integrity sha512-YZdiU4QN2H8wId4Bglb/Yj6hJrLImKv/yEIj3jw1pHMb1Bv/kdM25mlr+t+TqGPWy2prX/ywsh1+OVVI6G5jhA==
+  resolved "https://github.com/milesthedisch/ftx-api#2ebb425309c162f4fc3b17f2e7f0fb15c073a9b1"
   dependencies:
     axios "^0.21.4"
     isomorphic-ws "^4.0.1"
