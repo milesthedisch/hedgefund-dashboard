@@ -36,6 +36,8 @@ const TradeTableWrapper = (props) => {
       summedBorrowing={props.summedBorrowing}
       summedFunding={props.summedFunding}
       summedPositions={props.summedPositions}
+      summedFundingA={props.summedFundingA}
+      summedFundingB={props.summedFundingB}
     />
   );
 };
@@ -62,6 +64,8 @@ const Sub = (props) => {
     }
   );
 
+  let summedFundingA;
+  let summedFundingB;
   let summedPositions;
   let summedFunding;
   let summedBorrowing;
@@ -77,11 +81,25 @@ const Sub = (props) => {
       });
     });
 
-    summedFunding = data.funding.result
-      .map((x) => x.payment)
-      .reduce((fp, fn) => {
-        return fp + fn;
-      });
+    if (data.fundingA && data.fundingB) {
+      summedFundingA = data.fundingA.result
+        .map((x) => x.payment)
+        .reduce((fp, fn) => {
+          return fp + fn;
+        });
+
+      summedFundingB = data.fundingB.result
+        .map((x) => x.payment)
+        .reduce((fp, fn) => {
+          return fp + fn;
+        });
+    } else {
+      summedFunding = data.funding.result
+        .map((x) => x.payment)
+        .reduce((fp, fn) => {
+          return fp + fn;
+        });
+    }
 
     summedBorrowing = data.spotMargin
       ? data.spotMargin.result
@@ -140,6 +158,8 @@ const Sub = (props) => {
           summedBorrowing={summedBorrowing}
           summedFunding={summedFunding}
           summedPositions={summedPositions}
+          summedFundingA={summedFundingA}
+          summedFundingB={summedFundingB}
           tickers={tickers}
         />
       </Container>

@@ -88,7 +88,18 @@ const TradesTable = (props) => {
                 <>
                   <TableCell>{props.tickers.split(",")[0]}</TableCell>
                   <TableCell>{props.tickers.split(",")[1]}</TableCell>
-                  <TableCell>Funding</TableCell>
+                  {props.summedFundingA && props.summedFundingB ? (
+                    <>
+                      <TableCell>
+                        {props.tickers.split(",")[0]} Funding
+                      </TableCell>
+                      <TableCell>
+                        {props.tickers.split(",")[1]} Funding
+                      </TableCell>
+                    </>
+                  ) : (
+                    <TableCell>Funding</TableCell>
+                  )}
                   <TableCell>Borrow</TableCell>
                   <TableCell>PnL</TableCell>
                 </>
@@ -100,11 +111,24 @@ const TradesTable = (props) => {
               <TableCell></TableCell>
               <TableCell>{props.summedPositions[0]}</TableCell>
               <TableCell>{props.summedPositions[1]}</TableCell>
-              <TableCell>{props.summedFunding}</TableCell>
+              {props.data.groupedFunding ? (
+                <>
+                  <TableCell>{props.summedFundingA}</TableCell>
+                  <TableCell>{props.summedFundingB}</TableCell>
+                </>
+              ) : (
+                <TableCell>{props.summedFunding}</TableCell>
+              )}
               <TableCell>{props.summedBorrowing || 0}</TableCell>
-              <TableCell>
-                {props.summedFunding - (props.summedBorrowing || 0)}
-              </TableCell>
+              {props.data.groupedFunding ? (
+                <TableCell>
+                  {props.summedFundingA + props.summedFundingB}
+                </TableCell>
+              ) : (
+                <TableCell>
+                  {props.summedFunding - (props.summedBorrowing || 0)}
+                </TableCell>
+              )}
             </TableRow>
           </TableBody>
         </Table>
@@ -172,27 +196,52 @@ const TradesTable = (props) => {
           <Table sx={{ marginTop: "auto" }}>
             <TableHead>
               <TableRow>
-                <TableCell>Funding Payment Date</TableCell>{" "}
-                <TableCell>Funding Payment</TableCell>
+                <TableCell>Funding Payment Date</TableCell>
+                {props.data.fundingA && props.data.fundingB ? (
+                  <>
+                    <TableCell>
+                      {props.data.fundingA.result[0].future}
+                    </TableCell>
+                    <TableCell>
+                      {props.data.fundingB.result[0].future}
+                    </TableCell>
+                  </>
+                ) : (
+                  <TableCell>Funding Payment</TableCell>
+                )}
               </TableRow>
             </TableHead>
             <TableBody>
-              {props.data.funding.result
-                .sort((a, b) => {
-                  return (
-                    new Date(a.time).getTime() - new Date(b.time).getTime()
-                  );
-                })
-                .map((x) => {
-                  return (
-                    <TableRow key={new Date(x.time).toLocaleString("en-AU")}>
-                      <TableCell>
-                        {new Date(x.time).toLocaleString("en-AU")}
-                      </TableCell>
-                      <TableCell>{x.payment}</TableCell>
-                    </TableRow>
-                  );
-                })}
+              {props.data.fundingA && props.data.fundingB
+                ? Object.entries(props.data.groupedFunding).map((x) => {
+                    return (
+                      <TableRow key={new Date(x[0]).toLocaleString("en-AU")}>
+                        <TableCell>
+                          {new Date(x[0]).toLocaleString("en-AU")}
+                        </TableCell>
+                        <TableCell>{x[1][0].payment}</TableCell>
+                        <TableCell>{x[1][1].payment}</TableCell>
+                      </TableRow>
+                    );
+                  })
+                : props.data.funding?.result
+                    .sort((a, b) => {
+                      return (
+                        new Date(a.time).getTime() - new Date(b.time).getTime()
+                      );
+                    })
+                    .map((x) => {
+                      return (
+                        <TableRow
+                          key={new Date(x.time).toLocaleString("en-AU")}
+                        >
+                          <TableCell>
+                            {new Date(x.time).toLocaleString("en-AU")}
+                          </TableCell>
+                          <TableCell>{x.payment}</TableCell>
+                        </TableRow>
+                      );
+                    })}
             </TableBody>
           </Table>
         </Grid>

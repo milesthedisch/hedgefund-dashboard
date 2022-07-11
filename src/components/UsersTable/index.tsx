@@ -99,8 +99,6 @@ const RecentOrdersTable = ({
     },
   ];
 
-  console.log(users);
-
   const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let value = "ALL";
 

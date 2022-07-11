@@ -8,6 +8,10 @@ const secret = "ILNvroZ6SUDuvTg9mzc2-u-JnTTX9S1wMjDLwaES";
 
 const getSeconds = (millis) => ~~(millis / 1000).toFixed(0);
 
+const isPerp = (future: string) => {
+  return future.match(/\w+-PERP$/);
+};
+
 const isFuture = (future: string) => {
   return future.match(/\w+-PERP$/) || future.match(/\w+-\d{4}$/);
 };
@@ -34,6 +38,9 @@ export default withApiAuthRequired(async function ftx(
       subAccountName: `${account}`,
     });
 
+    const perps = tickersArray.filter(isPerp);
+    const perpA = perps[0];
+    const perpB = perps[1];
     const future = tickersArray.filter(isFuture)[0];
     const spot = tickersArray.filter(isSpot)[0];
 
@@ -42,6 +49,9 @@ export default withApiAuthRequired(async function ftx(
     let endTimeSec;
     let funding;
     let spotMargin;
+    let fundingA;
+    let fundingB;
+    let groupedFunding;
 
     if (startTime !== "null" && endTime !== "null" && startTime && endTime) {
       startTimeSec = getSeconds(new Date(startTime).getTime());
@@ -57,11 +67,32 @@ export default withApiAuthRequired(async function ftx(
         })
       );
 
-      funding = await client.getFundingPayments({
-        future,
-        start_time: startTimeSec,
-        end_time: endTimeSec,
-      });
+      if (perps.length > 1) {
+        fundingA = await client.getFundingPayments({
+          future: perpA,
+          start_time: startTimeSec,
+          end_time: endTimeSec,
+        });
+
+        fundingB = await client.getFundingPayments({
+          future: perpB,
+          start_time: startTimeSec,
+          end_time: endTimeSec,
+        });
+
+        groupedFunding = groupBy(
+          [...fundingA.result, ...fundingB.result],
+          (payment) => {
+            payment.time;
+          }
+        );
+      } else {
+        funding = await client.getFundingPayments({
+          future,
+          start_time: startTimeSec,
+          end_time: endTimeSec,
+        });
+      }
 
       if (spot) {
         spotMargin = await client.getBorrowHistory({
@@ -80,9 +111,26 @@ export default withApiAuthRequired(async function ftx(
         })
       );
 
-      funding = await client.getFundingPayments({
-        future,
-      });
+      if (perps.length > 1) {
+        fundingA = await client.getFundingPayments({
+          future: perpA,
+        });
+
+        fundingB = await client.getFundingPayments({
+          future: perpB,
+        });
+
+        groupedFunding = groupBy(
+          [...fundingA.result, ...fundingB.result],
+          (payment) => {
+            return payment.time;
+          }
+        );
+      } else {
+        funding = await client.getFundingPayments({
+          future,
+        });
+      }
 
       if (spot) {
         spotMargin = await client.getBorrowHistory();
@@ -94,7 +142,14 @@ export default withApiAuthRequired(async function ftx(
       throw data;
     }
 
-    return res.send({ results: data, funding, spotMargin });
+    return res.send({
+      results: data,
+      funding,
+      spotMargin,
+      fundingA,
+      fundingB,
+      groupedFunding,
+    });
   } catch (e) {
     console.log(e);
     return res.status(500).send({ success: false, message: e.message });

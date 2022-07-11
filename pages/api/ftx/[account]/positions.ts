@@ -48,8 +48,6 @@ export default withApiAuthRequired(async function ftx(
       return r.usdValue > 1 || r.usdValue < -1;
     });
 
-    console.log(filteredPositions);
-
     const groupedPos = {};
 
     filteredPositions.forEach((r) => {
@@ -78,12 +76,8 @@ export default withApiAuthRequired(async function ftx(
         groupedPos[tickerA] = [r, match];
       } else if (matchBalance) {
         groupedPos[tickerA] = [r, matchBalance];
-      } else {
-        groupedPos[tickerA] = [r];
       }
     });
-
-    console.log(groupedPos);
 
     return res.send({ result: groupedPos });
   } catch (e) {
