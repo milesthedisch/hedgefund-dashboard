@@ -38,7 +38,6 @@ const Sub = () => {
     }
   );
 
-  console.log(data);
   const noPositions = data?.result?.length === 0;
 
   return (

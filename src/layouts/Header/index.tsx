@@ -43,6 +43,7 @@ function Header(props) {
     const role: any = user["https://app.balmoral.digital/roles"];
 
     isAdmin = role.includes("admin");
+    isAudit = role.includes("audit");
   }
 
   return (

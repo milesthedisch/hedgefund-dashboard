@@ -72,13 +72,19 @@ const Sub = (props) => {
 
   if (data) {
     summedPositions = data.results.map((pos) => {
+      if (pos.result.length === 1) {
+        return pos.result[0].side === "buy"
+          ? pos.result[0].size
+          : pos.result[0].size * -1;
+      }
+
       if (pos.result.length > 0) {
         return pos.result.reduce((p, n, i) => {
           if (i === 1) {
-            return p.size === "buy" ? p.size : p.size * -1;
+            return p.side === "buy" ? p.size : p.size * -1;
           }
 
-          return p + n.size === "buy" ? n.size : n.size * -1;
+          return n.side === "buy" ? n.size : n.size * -1;
         });
       }
 
@@ -102,11 +108,14 @@ const Sub = (props) => {
           });
       }
     } else {
-      summedFunding = data.funding.result
-        .map((x) => x.payment)
-        .reduce((fp, fn) => {
-          return fp + fn;
-        });
+      summedFunding =
+        data.funding.result.length > 0
+          ? data.funding.result
+              .map((x) => x.payment)
+              .reduce((fp, fn) => {
+                return fp + fn;
+              })
+          : 0;
     }
 
     if (data.spotMargin && data.spotMargin.result.length > 0) {

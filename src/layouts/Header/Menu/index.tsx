@@ -59,6 +59,24 @@ const ListWrapper = styled(Box)(
 `
 );
 
+const auditLinkList = () => {
+  return (
+    <Box sx={{ display: "flex", paddingLeft: 3 }}>
+      <ListItem
+        classes={{ root: "MuiListItem-indicators" }}
+        button
+        component={LinkButton}
+        href="/admin/audit"
+      >
+        <ListItemText
+          sx={{ width: "70px", justifyContent: "center", display: "flex" }}
+          primary="Audit"
+        />
+      </ListItem>
+    </Box>
+  );
+};
+
 const adminLinkList = () => {
   return (
     <Box sx={{ display: "flex", paddingLeft: 3 }}>
@@ -112,9 +130,11 @@ const adminLinkList = () => {
 
 function HeaderMenu({ user }: { user: User }) {
   let isAdmin: boolean;
+  let isAudit: boolean;
 
   if (user) {
     isAdmin = user["https://app.balmoral.digital/roles"].includes("admin");
+    isAudit = user["https://app.balmoral.digital/roles"].includes("audit");
   }
 
   return (
@@ -122,6 +142,7 @@ function HeaderMenu({ user }: { user: User }) {
       <ListWrapper>
         <List disablePadding component={Box} display="flex">
           {isAdmin ? adminLinkList() : ""}
+          {isAudit ? auditLinkList() : ""}
         </List>
       </ListWrapper>
     </>
