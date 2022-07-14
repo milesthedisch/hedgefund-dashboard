@@ -84,7 +84,8 @@ const Sub = (props) => {
             return p.side === "buy" ? p.size : p.size * -1;
           }
 
-          return n.side === "buy" ? n.size : n.size * -1;
+          let nextTrade = n.side === "buy" ? n.size : n.size * -1;
+          return p + nextTrade;
         });
       }
 

@@ -258,16 +258,18 @@ const TradesTable = (props) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {props.data.spotMargin.result.map((x) => {
-                  return (
-                    <TableRow key={new Date(x.time).toLocaleString("en-AU")}>
-                      <TableCell>
-                        {new Date(x.time).toLocaleString("en-AU")}
-                      </TableCell>
-                      <TableCell>{x.cost}</TableCell>
-                    </TableRow>
-                  );
-                })}
+                {props.data.spotMargin.result
+                  .map((x) => {
+                    return (
+                      <TableRow key={new Date(x.time).toLocaleString("en-AU")}>
+                        <TableCell>
+                          {new Date(x.time).toLocaleString("en-AU")}
+                        </TableCell>
+                        <TableCell>{x.cost}</TableCell>
+                      </TableRow>
+                    );
+                  })
+                  .reverse()}
               </TableBody>
             </Table>
           </Grid>
