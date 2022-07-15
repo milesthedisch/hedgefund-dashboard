@@ -15,9 +15,9 @@ export const getAllOfResource = async (condition, getFirst, getRest) => {
 
     let oldestDate;
 
-    if (Object.hasOwn(oldestEntry, "time")) {
+    if (oldestEntry.hasOwnProperty("time")) {
       oldestDate = new Date(oldestEntry.time);
-    } else if (Object.hasOwn(oldestEntry, "createdAt")) {
+    } else if (oldestEntry.hasOwnProperty("createdAt")) {
       oldestDate = new Date(oldestEntry.createdAt);
     } else {
       throw new Error("Property not found on result");
