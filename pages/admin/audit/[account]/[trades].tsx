@@ -17,7 +17,7 @@ import useSWR from "swr";
 const TradeTableWrapper = (props) => {
   if (props.isValidating || !props?.data) {
     return <SuspenseLoader size={64} />;
-  } else if (props?.data?.results.length === 1) {
+  } else if (props?.data?.orders?.length === 1) {
     return (
       <TradesTable
         notHedged={true}
@@ -35,7 +35,7 @@ const TradeTableWrapper = (props) => {
       tickers={props.tickers}
       summedBorrowing={props.summedBorrowing}
       summedFunding={props.summedFunding}
-      summedPositions={props.summedPositions}
+      summedOrders={props.summedOrders}
       summedFundingA={props.summedFundingA}
       summedFundingB={props.summedFundingB}
     />
@@ -57,7 +57,6 @@ const Sub = (props) => {
           `?tickers=${tickers}` +
           `&startTime=${timeRange.startTime}&endTime=${timeRange.endTime}`
       : null,
-
     async (url) => {
       const res = await fetch(url);
       return await res.json();
@@ -66,20 +65,18 @@ const Sub = (props) => {
 
   let summedFundingA = 0;
   let summedFundingB = 0;
-  let summedPositions = 0;
+  let summedOrders = 0;
   let summedFunding = 0;
   let summedBorrowing = 0;
 
   if (data) {
-    summedPositions = data.results.map((pos) => {
-      if (pos.result.length === 1) {
-        return pos.result[0].side === "buy"
-          ? pos.result[0].size
-          : pos.result[0].size * -1;
+    summedOrders = data.orders.map((ord) => {
+      if (ord.length === 1) {
+        return ord[0].side === "buy" ? ord[0].size : ord[0].size * -1;
       }
 
-      if (pos.result.length > 0) {
-        return pos.result.reduce((p, n, i) => {
+      if (ord.length > 0) {
+        return ord.reduce((p, n, i) => {
           if (i === 1) {
             return p.side === "buy" ? p.size : p.size * -1;
           }
@@ -110,8 +107,8 @@ const Sub = (props) => {
       }
     } else {
       summedFunding =
-        data.funding.result.length > 0
-          ? data.funding.result
+        data.funding.length > 0
+          ? data.funding
               .map((x) => x.payment)
               .reduce((fp, fn) => {
                 return fp + fn;
@@ -179,7 +176,7 @@ const Sub = (props) => {
           data={data}
           summedBorrowing={summedBorrowing}
           summedFunding={summedFunding}
-          summedPositions={summedPositions}
+          summedOrders={summedOrders}
           summedFundingA={summedFundingA}
           summedFundingB={summedFundingB}
           tickers={tickers}

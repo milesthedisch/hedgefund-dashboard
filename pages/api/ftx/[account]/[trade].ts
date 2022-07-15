@@ -2,6 +2,11 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { withApiAuthRequired } from "@auth0/nextjs-auth0";
 import { RestClient } from "ftx-api";
 import groupBy from "lodash/groupBy";
+import {
+  getAllOfResource,
+  getAllFunding,
+  getAllOrdersHistory,
+} from "../../../../util/ftx";
 
 const key = "vN0h2BlDFk2EBaHxglTtXtD4EB9_NRQYx0mVlPFU";
 const secret = "ILNvroZ6SUDuvTg9mzc2-u-JnTTX9S1wMjDLwaES";
@@ -59,39 +64,24 @@ export default withApiAuthRequired(async function ftx(
 
       data = await Promise.all(
         tickersArray.map((ticker) => {
-          return client.getOrderHistory({
-            market: isSpot(ticker) ? `${spot}/USD` : ticker,
-            start_time: getSeconds(new Date(startTime).getTime()),
-            end_time: getSeconds(new Date(endTime).getTime()),
-          });
+          const market = isSpot(ticker) ? `${spot}/USD` : ticker;
+          return getAllOrdersHistory(client, market, startTimeSec, endTimeSec);
         })
       );
 
       if (perps.length > 1) {
-        fundingA = await client.getFundingPayments({
-          future: perpA,
-          start_time: startTimeSec,
-          end_time: endTimeSec,
-        });
+        fundingA = await getAllFunding(client, perpA, startTimeSec, endTimeSec);
 
-        fundingB = await client.getFundingPayments({
-          future: perpB,
-          start_time: startTimeSec,
-          end_time: endTimeSec,
-        });
+        fundingB = await getAllFunding(client, perpB, startTimeSec, endTimeSec);
 
         groupedFunding = groupBy(
           [...fundingA.result, ...fundingB.result],
           (payment) => {
-            payment.time;
+            return payment.time;
           }
         );
       } else {
-        funding = await client.getFundingPayments({
-          future,
-          start_time: startTimeSec,
-          end_time: endTimeSec,
-        });
+        funding = await getAllFunding(client, future, startTimeSec, endTimeSec);
       }
 
       if (spot) {
@@ -103,13 +93,15 @@ export default withApiAuthRequired(async function ftx(
         spotMargin.result = spotMargin.result.filter((s) => s.coin === spot);
       }
     } else {
-      data = await Promise.all(
+      const resource = await Promise.all(
         tickersArray.map((ticker) => {
           return client.getOrderHistory({
             market: isSpot(ticker) ? `${spot}/USD` : ticker,
           });
         })
       );
+
+      data = [[...resource[0].result], [...resource[1].result]];
 
       if (perps.length > 1) {
         fundingA = await client.getFundingPayments({
@@ -127,9 +119,11 @@ export default withApiAuthRequired(async function ftx(
           }
         );
       } else {
-        funding = await client.getFundingPayments({
+        const res = await client.getFundingPayments({
           future,
         });
+
+        funding = [...res.result];
       }
 
       if (spot) {
@@ -138,12 +132,12 @@ export default withApiAuthRequired(async function ftx(
       }
     }
 
-    if (!data.length || data.some((d) => !d?.success)) {
+    if (!data.length || data.some((d) => d?.success === false)) {
       throw data;
     }
 
     return res.send({
-      results: data,
+      orders: data,
       funding,
       spotMargin,
       fundingA,
@@ -151,7 +145,6 @@ export default withApiAuthRequired(async function ftx(
       groupedFunding,
     });
   } catch (e) {
-    console.log(e);
     return res.status(500).send({ success: false, message: e.message });
   }
 });

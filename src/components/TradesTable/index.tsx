@@ -13,11 +13,11 @@ const formatData = (props) => {
     return props.data.results[0].result;
   }
 
-  if (props.data.results.some((r) => !r.result)) {
+  if (props.data.orders.some((r) => r.length === 0)) {
     return [];
   }
   const a = new Set(
-    props.data.results.map((r) => r.result.map((x) => x.createdAt)).flat()
+    props.data.orders.map((r) => r.map((x) => x.createdAt)).flat()
   );
 
   const b = Array.from(a);
@@ -27,13 +27,13 @@ const formatData = (props) => {
   });
 
   const getTradeFromUniqueDate = (data, date) => {
-    const tradeInFirst = data.results[1].result.filter((r) => {
+    const tradeInFirst = data.orders[1].filter((r) => {
       return r.createdAt === date;
     })[0];
 
     if (tradeInFirst) return tradeInFirst;
 
-    const tradeInSecond = data.results[0].result.filter((r) => {
+    const tradeInSecond = data.orders[0].filter((r) => {
       return r.createdAt === date;
     })[0];
 
@@ -61,14 +61,10 @@ const TradesTable = (props) => {
 
   if (!props.notHedged) {
     tradesA =
-      props.data.results[0].result.length > 0
-        ? props.data.results[0].result
-        : undefined;
+      props.data.orders[0].length > 0 ? props.data.orders[0] : undefined;
 
     tradesB =
-      props.data.results[1].result.length > 0
-        ? props.data.results[1].result
-        : undefined;
+      props.data.orders[1].length > 0 ? props.data.orders[1] : undefined;
   }
 
   return (
@@ -83,8 +79,8 @@ const TradesTable = (props) => {
               <TableCell>Total</TableCell>
               {props.notHedged ? (
                 <TableCell>
-                  {props.data.results[0].result[0]
-                    ? props.data.results[0].result[0]?.market
+                  {props.data.orders[0][0]
+                    ? props.data.orders[0][0]?.market
                     : ""}
                 </TableCell>
               ) : (
@@ -112,8 +108,8 @@ const TradesTable = (props) => {
           <TableBody>
             <TableRow>
               <TableCell></TableCell>
-              <TableCell>{props.summedPositions[0]}</TableCell>
-              <TableCell>{props.summedPositions[1]}</TableCell>
+              <TableCell>{props.summedOrders[0]}</TableCell>
+              <TableCell>{props.summedOrders[1]}</TableCell>
               {props.data.groupedFunding ? (
                 <>
                   <TableCell>{props.summedFundingA}</TableCell>
@@ -227,7 +223,8 @@ const TradesTable = (props) => {
                       </TableRow>
                     );
                   })
-                : props.data.funding?.result
+                : props.data?.funding
+                ? props.data.funding
                     .sort((a, b) => {
                       return (
                         new Date(a.time).getTime() - new Date(b.time).getTime()
@@ -236,7 +233,10 @@ const TradesTable = (props) => {
                     .map((x) => {
                       return (
                         <TableRow
-                          key={new Date(x.time).toLocaleString("en-AU")}
+                          key={
+                            "funding-" +
+                            new Date(x.time).toLocaleString("en-AU")
+                          }
                         >
                           <TableCell>
                             {new Date(x.time).toLocaleString("en-AU")}
@@ -244,7 +244,8 @@ const TradesTable = (props) => {
                           <TableCell>{x.payment}</TableCell>
                         </TableRow>
                       );
-                    })}
+                    })
+                : ""}
             </TableBody>
           </Table>
         </Grid>
@@ -261,7 +262,11 @@ const TradesTable = (props) => {
                 {props.data.spotMargin.result
                   .map((x) => {
                     return (
-                      <TableRow key={new Date(x.time).toLocaleString("en-AU")}>
+                      <TableRow
+                        key={
+                          "borrow-" + new Date(x.time).toLocaleString("en-AU")
+                        }
+                      >
                         <TableCell>
                           {new Date(x.time).toLocaleString("en-AU")}
                         </TableCell>
