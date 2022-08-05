@@ -270,7 +270,7 @@ const TradesTable = (props) => {
                         <TableCell>
                           {new Date(x.time).toLocaleString("en-AU")}
                         </TableCell>
-                        <TableCell>{x.cost}</TableCell>
+                        <TableCell>{x.feeUsd}</TableCell>
                       </TableRow>
                     );
                   })

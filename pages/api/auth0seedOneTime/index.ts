@@ -46,43 +46,39 @@ export default async function handler(
       domain: auth0host,
     });
 
+    const authUsers = await managmentClient.getUsers();
+
     try {
       const newUsers = [];
 
-      for (const user of json.users) {
-        const authUser = await managmentClient.createUser({
-          email: user.email,
-          given_name: user.given_name,
-          family_name: user.family_name,
-          name: `${user.given_name} ${user.family_name}`,
-          user_metadata: {
-            invitationAccepted: user.user_metadata.invitationAccepted,
-            address: user.user_metadata.address,
-            balmoralId: 0,
-            notifiedAdmin: user.user_metadata.notifiedAdmin,
-          },
-          connection: "Username-Password-Authentication",
-          password: "admin123@",
-        });
+      console.log(json.users.length);
+      console.log(authUsers.length);
 
-        const balmoralUser = await prisma.user.create({
-          data: {
-            auth0UserId: authUser.user_id,
-            initalInvestment: user.initalInvestment,
-            transactions: {
-              create: user.transactions.map((t) => {
-                t.datetime = new Date(t.datetime);
-                return t;
-              }),
-            },
-          },
-        });
+      for (const user of authUsers) {
+        const currentAuthUser = json.users.filter((bUser) => {
+          return bUser.email === user.email;
+        })[0];
+
+        // const authUser = await managmentClient.createUser({
+        //   email: user.email,
+        //   given_name: user.given_name,
+        //   family_name: user.family_name,
+        //   name: `${user.given_name} ${user.family_name}`,
+        //   user_metadata: {
+        //     invitationAccepted: user.user_metadata.invitationAccepted,
+        //     address: user.user_metadata.address,
+        //     balmoralId: 0,
+        //     notifiedAdmin: user.user_metadata.notifiedAdmin,
+        //   },
+        //   connection: "Username-Password-Authentication",
+        //   password: "admin123@",
+        // });
 
         // Back reference in our db
-        await managmentClient.updateUserMetadata(
-          { id: authUser.user_id },
-          { balmoralId: ~~balmoralUser.id }
-        );
+        // await managmentClient.updateUserMetadata(
+        //   { id: currentAuthUser.user_id },
+        //   { balmoralId: ~~balmoralUser.id }
+        // );
 
         // const changeTicket = await managmentClient.createPasswordChangeTicket({
         //   user_id: authUser.user_id,
@@ -92,7 +88,24 @@ export default async function handler(
 
         // changeTicket.ticket = changeTicket.ticket.slice(0, -1);
 
-        newUsers.push({ balmoralUser, authUser });
+        // newUsers.push({ balmoralUser, authUser });
+
+        if (currentAuthUser) {
+          const balmoralUser = await prisma.user.create({
+            data: {
+              auth0UserId: user.user_id,
+              initalInvestment: currentAuthUser.initalInvestment,
+              transactions: {
+                create: currentAuthUser.transactions.map((t) => {
+                  t.datetime = new Date(t.datetime);
+                  return t;
+                }),
+              },
+            },
+          });
+
+          newUsers.push(balmoralUser);
+        }
 
         // try {
         //   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -122,7 +135,9 @@ export default async function handler(
         // }
       }
 
-      return res.status(200).json({ newUsers, success: true });
+      return res
+        .status(200)
+        .json({ data: newUsers.map((u) => u.email), success: true });
     } catch (e) {
       console.error(e);
       return res.status(500).json({ message: "Server error", success: true });

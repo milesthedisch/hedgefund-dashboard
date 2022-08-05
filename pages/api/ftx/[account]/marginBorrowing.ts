@@ -22,7 +22,7 @@ export default withApiAuthRequired(async function ftx(
       subAccountName: `${account}`,
     });
 
-    const subAccounts = await client.getBorrowRates();
+    const subAccounts = await client.getBorrowHistory();
 
     if (!subAccounts.success) {
       throw data;

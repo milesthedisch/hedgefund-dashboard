@@ -119,7 +119,7 @@ const Sub = (props) => {
     if (data.spotMargin && data.spotMargin.result.length > 0) {
       summedBorrowing = data.spotMargin
         ? data.spotMargin?.result
-            .map((x) => x.cost)
+            .map((x) => x.feeUsd)
             .reduce((fp, fn) => {
               return fp + fn;
             })

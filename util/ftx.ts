@@ -37,38 +37,39 @@ export const getAllOfResource = async (condition, getFirst, getRest) => {
   return results;
 };
 
-export const getAllFunding = async (client, future, beginingDate, endDate) => {
-  const isEndOfResource = (resource) => {
-    return (
-      resource.result.length < 100 ||
-      resource.result.some((r) => {
-        return (
-          getSeconds(new Date(r.time).getTime()) <
-          new Date(beginingDate).getTime()
-        );
-      })
+export const getAllFunding =
+  (client) => async (future, beginingDate, endDate) => {
+    const isEndOfResource = (resource) => {
+      return (
+        resource.result.length < 100 ||
+        resource.result.some((r) => {
+          return (
+            getSeconds(new Date(r.time).getTime()) <
+            new Date(beginingDate).getTime()
+          );
+        })
+      );
+    };
+
+    const getLatestPayments = () => {
+      return client.getFundingPayments({
+        end_time: endDate,
+        future,
+      });
+    };
+
+    const getNextPayments = (oldestNextDate) => {
+      return client.getFundingPayments({ end_time: oldestNextDate, future });
+    };
+
+    const results = await getAllOfResource(
+      isEndOfResource,
+      getLatestPayments,
+      getNextPayments
     );
+
+    return results;
   };
-
-  const getLatestPayments = () => {
-    return client.getFundingPayments({
-      end_time: endDate,
-      future,
-    });
-  };
-
-  const getNextPayments = (oldestNextDate) => {
-    return client.getFundingPayments({ end_time: oldestNextDate, future });
-  };
-
-  const results = await getAllOfResource(
-    isEndOfResource,
-    getLatestPayments,
-    getNextPayments
-  );
-
-  return results;
-};
 
 export const getAllOrdersHistory = async (
   client,
@@ -95,6 +96,44 @@ export const getAllOrdersHistory = async (
     isEndOfResource,
     getLatestOrders,
     getNextOrders
+  );
+
+  return results;
+};
+
+export const getAllBorrowHistory = async (
+  client,
+  market,
+  beginingDate,
+  endDate
+) => {
+  const isEndOfResource = (resource) => {
+    return (
+      resource.result.length < 100 ||
+      resource.result.some((r) => {
+        return (
+          getSeconds(new Date(r.time).getTime()) <
+          new Date(beginingDate).getTime()
+        );
+      })
+    );
+  };
+
+  const getLatestPayments = () => {
+    return client.getFundingPayments({
+      end_time: endDate,
+      market,
+    });
+  };
+
+  const getNextPayments = (oldestNextDate) => {
+    return client.getFundingPayments({ end_time: oldestNextDate, market });
+  };
+
+  const results = await getAllOfResource(
+    isEndOfResource,
+    getLatestPayments,
+    getNextPayments
   );
 
   return results;

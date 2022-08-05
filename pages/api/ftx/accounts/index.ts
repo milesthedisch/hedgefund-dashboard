@@ -24,17 +24,6 @@ export default withApiAuthRequired(async function ftx(
         .send({ success: false, message: "No subaccounts available" });
     }
 
-    const margins = subAccounts.result.map(({ nickname }) => {
-      const c = new RestClient(key, secret, { subAccountName: nickname });
-      return c.getBorrowHistory();
-    });
-
-    const marginResults = await Promise.all(margins);
-    subAccounts.result.forEach((acc, idx) => {
-      if (marginResults[idx].result.length === 0) return;
-      acc.margins = marginResults[idx];
-    });
-
     return res.status(200).send(subAccounts);
   } catch (e) {
     console.log(e);

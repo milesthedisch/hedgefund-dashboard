@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { withApiAuthRequired } from "@auth0/nextjs-auth0";
 import { RestClient } from "ftx-api";
+import matchPositionsWithBalanes from "../../../../util/matchPositions";
 import groupBy from "lodash/groupBy";
 
 const key = "vN0h2BlDFk2EBaHxglTtXtD4EB9_NRQYx0mVlPFU";
@@ -10,12 +11,24 @@ const isInsideString = (string, match) => {
   return string.indexOf(match) > -1;
 };
 
+const getSeconds = (millis) => ~~(millis / 1000).toFixed(0);
+
+const isPerp = (future: string) => {
+  return future.match(/\w+-PERP$/);
+};
+
+const isFuture = (future: string) => {
+  return future.match(/\w+-PERP$/) || future.match(/\w+-\d{4}$/);
+};
+
+const isSpot = (spot: string) => {
+  return !isFuture(spot);
+};
+
 export default withApiAuthRequired(async function ftx(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  let data;
-
   const { account } = req.query as { account: string };
 
   try {
@@ -26,52 +39,9 @@ export default withApiAuthRequired(async function ftx(
     const positions = await client.getPositions();
     const balances = await client.getBalances();
 
-    if (!positions.success) {
-      console.error("Could not fetch positions");
-      throw data;
-    }
+    const groupedPos = matchPositionsWithBalanes(positions, balances);
 
-    if (!balances.success) {
-      console.error("Could not fetch balances");
-      throw data;
-    }
-
-    if (positions.result.length === 0) {
-      return res.send({ result: [] });
-    }
-
-    const groupedPos = {};
-
-    positions.result.forEach((r) => {
-      const tickerA = r.future.split("-")[0];
-
-      // Check if the position has already been matched
-      if (Object.keys(groupedPos).length > 0) {
-        const alreadyMatched = Object.entries(groupedPos).some((pos: any) => {
-          return pos[1].some((p) => p.future === r.future);
-        });
-
-        if (alreadyMatched) return;
-      }
-
-      const matchBalance = balances.result.find((bal) => {
-        return bal.coin === tickerA;
-      });
-
-      const match = positions.result.find((pos) => {
-        if (pos.future === r.future) return false;
-        const tickerB = pos.future.split("-")[0];
-        return isInsideString(tickerB, tickerA);
-      });
-
-      if (match) {
-        groupedPos[tickerA] = [r, match];
-      } else if (matchBalance) {
-        groupedPos[tickerA] = [r, matchBalance];
-      }
-    });
-
-    return res.send({ result: groupedPos });
+    return res.status(200).json({ result: groupedPos });
   } catch (e) {
     console.log(e);
     return res.status(500).send({ success: false, message: e.message });

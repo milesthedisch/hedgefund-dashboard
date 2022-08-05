@@ -70,9 +70,9 @@ export default withApiAuthRequired(async function ftx(
       );
 
       if (perps.length > 1) {
-        fundingA = await getAllFunding(client, perpA, startTimeSec, endTimeSec);
+        fundingA = await getAllFunding(client)(perpA, startTimeSec, endTimeSec);
 
-        fundingB = await getAllFunding(client, perpB, startTimeSec, endTimeSec);
+        fundingB = await getAllFunding(client)(perpB, startTimeSec, endTimeSec);
 
         groupedFunding = groupBy(
           [...fundingA.result, ...fundingB.result],
@@ -81,7 +81,7 @@ export default withApiAuthRequired(async function ftx(
           }
         );
       } else {
-        funding = await getAllFunding(client, future, startTimeSec, endTimeSec);
+        funding = await getAllFunding(client)(future, startTimeSec, endTimeSec);
       }
 
       if (spot) {

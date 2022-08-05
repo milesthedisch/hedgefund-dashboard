@@ -9,58 +9,60 @@ import { useTheme } from "@mui/material/styles";
 const CurrentPositions = (props: { isValidating; data; error; account }) => {
   const theme = useTheme();
 
-  const PositionCard = (props) => (
-    <Card sx={{ width: "auto" }}>
-      <Link
-        sx={{ width: "100%" }}
-        href={`/admin/audit/${props.account}/${
-          props.tradeName
-        }?tickers=${props.positions.map((p) => p.future || p.coin).join(",")}`}
-      >
-        {props.tradeName}
-      </Link>
-      <CardHeader
-        title={props.positions.length === 1 ? "Regular" : "Basis Trade"}
-      />
-      <Grid direction="row" container>
-        {props.positions.map((p, id) => {
-          if (p.coin) {
+  const PositionCard = (props) => {
+    return (
+      <Card sx={{ width: "auto" }}>
+        <Link
+          sx={{ width: "100%" }}
+          href={`/admin/audit/${props.account}/trade/?tickers=${props.positions
+            .map((p) => p.future || p.coin)
+            .join(",")}`}
+        >
+          {props.tradeName}
+        </Link>
+        <CardHeader
+          title={props.positions.length === 1 ? "Regular" : "Basis Trade"}
+        />
+        <Grid direction="row" container>
+          {props.positions.map((p, id) => {
+            if (p.coin) {
+              return (
+                <Grid key={props.tradeName + "-trade-" + id} item>
+                  <CardHeader subheader={p.coin + " Spot"} />
+                  <CardHeader title={p.total} subheader="Position size" />
+                  <CardHeader
+                    title={p.total > 0 ? "long" : "short"}
+                    sx={{
+                      color:
+                        p.total > 0
+                          ? theme.colors.success.main
+                          : theme.colors.error.main,
+                    }}
+                  />
+                </Grid>
+              );
+            }
             return (
               <Grid key={props.tradeName + "-trade-" + id} item>
-                <CardHeader subheader={p.coin + " Spot"} />
-                <CardHeader title={p.total} subheader="Position size" />
+                <CardHeader subheader={p.future} />
+                <CardHeader title={p.size} subheader="Position size" />
                 <CardHeader
-                  title={p.total > 0 ? "long" : "short"}
+                  title={p.side === "buy" ? "long" : "short"}
                   sx={{
                     color:
-                      p.total > 0
+                      p.side === "buy"
                         ? theme.colors.success.main
                         : theme.colors.error.main,
                   }}
                 />
               </Grid>
             );
-          }
-          return (
-            <Grid key={props.tradeName + "-trade-" + id} item>
-              <CardHeader subheader={p.future} />
-              <CardHeader title={p.size} subheader="Position size" />
-              <CardHeader
-                title={p.side === "buy" ? "long" : "short"}
-                sx={{
-                  color:
-                    p.side === "buy"
-                      ? theme.colors.success.main
-                      : theme.colors.error.main,
-                }}
-              />
-            </Grid>
-          );
-        })}
-      </Grid>
-      ;
-    </Card>
-  );
+          })}
+        </Grid>
+        ;
+      </Card>
+    );
+  };
 
   return (
     <Grid
@@ -74,23 +76,6 @@ const CurrentPositions = (props: { isValidating; data; error; account }) => {
         <SuspenseLoader size={64} />
       ) : props.data?.result ? (
         Object.keys(props.data.result).map((key: string, id: number) => {
-          if (
-            props.data.result[key].some(
-              (pos) => pos.size === 0 || pos.total === 0
-            )
-          ) {
-            const a = props.data.result[key][0].future
-              ? props.data.result[key][0].size === 0
-              : props.data.result[key][0].total === 0;
-
-            const b = props.data.result[key][1].future
-              ? props.data.result[key][1].size === 0
-              : props.data.result[key][1].total === 0;
-
-            if (!a || !b) {
-              return "";
-            }
-          }
           return (
             <Grid item key={key + id} xs={12} md={6} lg={"auto"}>
               <PositionCard
