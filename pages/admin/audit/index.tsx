@@ -5,6 +5,9 @@ import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import LoadingButton from "@mui/lab/LoadingButton";
 import Typography from "@mui/material/Typography";
+import CardHeader from "@mui/material/CardHeader";
+import CardContent from "@mui/material/CardContent";
+import { useTheme } from "@mui/system";
 
 import PageTitle from "../../../src/components/PageTitle";
 import PageTitleWrapper from "../../../src/components/PageTitleWrapper";
@@ -27,6 +30,7 @@ const SubAccount = (props: { href?; account: { nickname: string } }) => {
 
 const Audit = () => {
   const [loading, setLoading] = useState(false);
+  const theme = useTheme();
   const { mutate } = useSWRConfig();
 
   const { data, error, isValidating } = useSWR(
@@ -120,19 +124,29 @@ const Audit = () => {
         >
           {!aggrIsValidating && aggrData
             ? aggrData.results.map((aggr) => {
+                const profit = aggr.summedFundings * -1 - aggr.borrows;
+
                 return (
                   <Grid item key={aggr.subAccount} xs={12} md={6} lg={"auto"}>
                     <Card>
-                      <Typography sx={{ p: 1 }}>{aggr.subAccount}</Typography>
-                      <Typography sx={{ p: 1 }}>
-                        Funding: {aggr.summedFundings}
-                      </Typography>
-                      <Typography sx={{ p: 1 }}>
-                        Borrowed: {aggr.borrows}
-                      </Typography>
-                      <Typography sx={{ p: 1 }}>
-                        PnL {aggr.summedFundings - aggr.borrows}
-                      </Typography>
+                      <CardHeader title={aggr.subAccount}></CardHeader>
+                      <CardContent>
+                        <Typography sx={{ p: 1 }}>
+                          Funding: {aggr.summedFundings * -1}
+                        </Typography>
+                        <Typography sx={{ p: 1 }}>
+                          Borrowed: {aggr.borrows}
+                        </Typography>
+                        {profit > 0 ? (
+                          <Typography sx={{ color: "green" }}>
+                            PnL: {profit}
+                          </Typography>
+                        ) : (
+                          <Typography sx={{ color: "red" }}>
+                            PnL: {profit}
+                          </Typography>
+                        )}
+                      </CardContent>
                     </Card>
                   </Grid>
                 );
