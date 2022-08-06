@@ -138,11 +138,11 @@ const Audit = () => {
                           Borrowed: {aggr.borrows}
                         </Typography>
                         {profit > 0 ? (
-                          <Typography sx={{ color: "green" }}>
+                          <Typography sx={{ color: "green", p: 1 }}>
                             PnL: {profit}
                           </Typography>
                         ) : (
-                          <Typography sx={{ color: "red" }}>
+                          <Typography sx={{ color: "red", p: 1 }}>
                             PnL: {profit}
                           </Typography>
                         )}
