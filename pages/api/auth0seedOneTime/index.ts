@@ -51,9 +51,6 @@ export default async function handler(
     try {
       const newUsers = [];
 
-      console.log(json.users.length);
-      console.log(authUsers.length);
-
       for (const user of authUsers) {
         const currentAuthUser = json.users.filter((bUser) => {
           return bUser.email === user.email;
@@ -73,24 +70,16 @@ export default async function handler(
         //   connection: "Username-Password-Authentication",
         //   password: "admin123@",
         // });
-
-        // Back reference in our db
-        // await managmentClient.updateUserMetadata(
-        //   { id: currentAuthUser.user_id },
-        //   { balmoralId: ~~balmoralUser.id }
-        // );
-
         // const changeTicket = await managmentClient.createPasswordChangeTicket({
         //   user_id: authUser.user_id,
         //   mark_email_as_verified: true,
         //   result_url: "https://app.balmoral.digital/api/auth/login",
         // });
-
         // changeTicket.ticket = changeTicket.ticket.slice(0, -1);
-
         // newUsers.push({ balmoralUser, authUser });
 
         if (currentAuthUser) {
+          // Back reference in our db
           const balmoralUser = await prisma.user.create({
             data: {
               auth0UserId: user.user_id,
@@ -104,40 +93,23 @@ export default async function handler(
             },
           });
 
+          const newCreatedUser = await prisma.user.findFirst({
+            where: {
+              auth0UserId: balmoralUser.auth0UserId,
+            },
+          });
+
+          // Back ref
+          await managmentClient.updateUserMetadata(
+            { id: user.user_id },
+            { balmoralId: ~~newCreatedUser.id }
+          );
+
           newUsers.push(balmoralUser);
         }
-
-        // try {
-        //   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
-        //   const msg = {
-        //     to: `${authUser.email}`, // Change to your recipient
-        //     from: "miles@balmoral.digital", // Change to your verified sender
-        //     templateId: "d-3022e8d9421d45e090c159945290fc5a",
-        //     dynamicTemplateData: {
-        //       subject: `Hey ${authUser.email}, you've been invited.`,
-        //       name: `${authUser.given_name}`,
-        //       changeTicket: changeTicket.ticket + `&invitation=true`,
-        //     },
-        //   };
-
-        //   const data = await sgMail.send(msg);
-
-        //   if (data[0].statusCode === 202) {
-        //     return res.status(202).json({ newUsers, success: true });
-        //   } else {
-        //     return res
-        //       .status(400)
-        //       .json({ success: false, message: "Sendgrid mail failed" });
-        //   }
-        // } catch (error) {
-        //   return res.status(400).json({ message: `${error}`, success: false });
-        // }
       }
 
-      return res
-        .status(200)
-        .json({ data: newUsers.map((u) => u.email), success: true });
+      return res.status(200).json({ newUsers, success: true });
     } catch (e) {
       console.error(e);
       return res.status(500).json({ message: "Server error", success: true });

@@ -1114,6 +1114,41 @@ async function main() {
         balance: 890288.93,
         datetime: new Date(2022, 6, 31),
       },
+      {
+        strategyId: 11,
+        balance: 0,
+        datetime: new Date(2022, 6, 31),
+      },
+      {
+        strategyId: 17,
+        balance: 0,
+        datetime: new Date(2022, 6, 31),
+      },
+      {
+        strategyId: 4,
+        balance: 0,
+        datetime: new Date(2022, 6, 31),
+      },
+      {
+        strategyId: 1,
+        balance: 0,
+        datetime: new Date(2022, 6, 31),
+      },
+      {
+        strategyId: 18,
+        balance: 0,
+        datetime: new Date(2022, 6, 31),
+      },
+      {
+        strategyId: 16,
+        balance: 0,
+        datetime: new Date(2022, 6, 31),
+      },
+      {
+        strategyId: 12,
+        balance: 0,
+        datetime: new Date(2022, 6, 31),
+      },
     ],
   });
 
