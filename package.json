@@ -7,7 +7,7 @@
     "schema": "db/schema.prisma"
   },
   "scripts": {
-    "dev": "pscale connect balmoral-digital main --execute='npx next dev' --execute-protocol='mysql'",
+    "dev": "pscale connect balmoral-digital staging --execute='npx next dev' --execute-protocol='mysql'",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
