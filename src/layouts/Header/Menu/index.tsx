@@ -3,6 +3,7 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import LinkButton from "../../../components/Link";
+import { useTheme } from "@mui/material/styles";
 import { styled } from "@mui/material/styles";
 import type { User } from "auth0";
 
@@ -33,7 +34,7 @@ const ListWrapper = styled(Box)(
                             transition: all .2s;
                             border-radius: ${theme.general.borderRadiusLg};
                             content: "";
-                            background: ${theme.colors.primary.main};
+                            background: ${theme.colors.primary.balmoral};
                         }
                     }
                 }
@@ -60,16 +61,26 @@ const ListWrapper = styled(Box)(
 );
 
 const auditLinkList = () => {
+  const theme = useTheme();
+
   return (
     <Box sx={{ display: "flex", paddingLeft: 3 }}>
       <ListItem
         classes={{ root: "MuiListItem-indicators" }}
+        sx={{
+          color: theme.colors.primary.balmoral,
+        }}
         button
         component={LinkButton}
         href="/admin/audit"
       >
         <ListItemText
-          sx={{ width: "70px", justifyContent: "center", display: "flex" }}
+          sx={{
+            color: theme.colors.primary.balmoral,
+            width: "70px",
+            justifyContent: "center",
+            display: "flex",
+          }}
           primary="Audit"
         />
       </ListItem>

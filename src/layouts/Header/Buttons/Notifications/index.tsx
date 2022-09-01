@@ -20,8 +20,8 @@ const NotificationsBadge = styled(Badge)(
   ({ theme }) => `
     
     .MuiBadge-badge {
-        background-color: ${alpha(theme.colors.primary.balmoral, 0.1)};
-        color: ${theme.colors.primary.balmoral};
+        background-color: ${alpha(theme.colors.error.main, 0.1)};
+        color: ${theme.colors.error.main};
         min-width: 16px; 
         height: 16px;
         padding: 0;
@@ -51,7 +51,7 @@ const NotificationsItem = styled(Button)(
     color: ${theme.colors.primary.balmoral};
     
     :hover {
-      background: ${theme.colors.primary.balmoral};
+      background: ${theme.colors.secondary.lighter};
       transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
     }
 `
@@ -127,11 +127,7 @@ function HeaderNotifications({ data = { users: [] }, isValidating, error }) {
                 return (
                   <Link key={user.user_id} href="/admin/strategies">
                     <NotificationsItem key={user.user_id}>
-                      <Typography
-                        component="span"
-                        variant="body2"
-                        color="text.secondary"
-                      >
+                      <Typography component="span" variant="body2">
                         {user.email}
                       </Typography>
                     </NotificationsItem>
