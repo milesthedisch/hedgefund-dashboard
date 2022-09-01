@@ -22,21 +22,21 @@ const AccountBalanceChartWrapper = styled(Grid)(
 
 const AvatarFailure = styled(Avatar)(
   ({ theme }) => `
-      background-color: ${theme.colors.error.main};
+      background-color: ${theme.colors.error.balmoral};
       color: ${theme.palette.error.contrastText};
       width: ${theme.spacing(8)};
       height: ${theme.spacing(8)};
-      box-shadow: ${theme.colors.error.main};
+      box-shadow: ${theme.colors.shadows.balmoral};
 `
 );
 
 const AvatarSuccess = styled(Avatar)(
   ({ theme }) => `
-      background-color: ${theme.colors.success.main};
+      background-color: ${theme.colors.error.balmoral};
       color: ${theme.palette.success.contrastText};
       width: ${theme.spacing(8)};
       height: ${theme.spacing(8)};
-      box-shadow: ${theme.colors.shadows.success};
+      box-shadow: ${theme.colors.shadows.balmoral};
 `
 );
 
@@ -46,8 +46,8 @@ function AccountBalance({
   isValidating,
 }: {
   sharePriceData: any;
-  isValidating;
-  userTotalUnits;
+  isValidating: any;
+  userTotalUnits: any;
 }) {
   const latestPrice = parseFloat(sharePriceData?.slice(-1)[0]?.price);
   const currentBalance: number = userTotalUnits * latestPrice;

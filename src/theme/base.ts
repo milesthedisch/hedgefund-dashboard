@@ -15,6 +15,11 @@ export function themeCreator(theme: string): Theme {
 
 declare module "@mui/material/styles" {
   interface Theme {
+    graphs: {
+      line: {
+        border: string;
+      };
+    };
     colors: {
       gradients: {
         blue1: string;
@@ -40,6 +45,7 @@ declare module "@mui/material/styles" {
         primary: string;
         warning: string;
         info: string;
+        balmoral?: string;
       };
       alpha: {
         white: {
@@ -78,6 +84,7 @@ declare module "@mui/material/styles" {
         light: string;
         main: string;
         dark: string;
+        balmoral?: string;
       };
       success: {
         lighter: string;
@@ -95,6 +102,7 @@ declare module "@mui/material/styles" {
         lighter: string;
         light: string;
         main: string;
+        balmoral: string;
         dark: string;
       };
       info: {
@@ -134,6 +142,11 @@ declare module "@mui/material/styles" {
   }
 
   interface ThemeOptions {
+    graphs?: {
+      line: {
+        border: string;
+      };
+    };
     colors: {
       gradients: {
         blue1: string;
@@ -159,6 +172,7 @@ declare module "@mui/material/styles" {
         primary: string;
         warning: string;
         info: string;
+        balmoral?: string;
       };
       alpha: {
         white: {
@@ -197,6 +211,7 @@ declare module "@mui/material/styles" {
         light: string;
         main: string;
         dark: string;
+        balmoral?: string;
       };
       success: {
         lighter: string;
@@ -215,6 +230,7 @@ declare module "@mui/material/styles" {
         light: string;
         main: string;
         dark: string;
+        balmoral?: string;
       };
       info: {
         lighter: string;

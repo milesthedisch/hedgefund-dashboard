@@ -10,9 +10,16 @@ const themeColors = {
   black: "#223354",
   white: "#ffffff",
   primaryAlt: "#000C57",
+  balmoralError: "#D8E69E",
+  balmoral: "#15394F",
 };
 
 const colors = {
+  graphs: {
+    line: {
+      border: "#4B9F26",
+    },
+  },
   gradients: {
     blue1: "linear-gradient(135deg, #6B73FF 0%, #000DFF 100%)",
     blue2: "linear-gradient(135deg, #ABDCFF 0%, #0396FF 100%)",
@@ -26,6 +33,8 @@ const colors = {
     black1: "linear-gradient(100.66deg, #434343 6.56%, #000000 93.57%)",
   },
   shadows: {
+    balmoral:
+      "0px 1px 4px rgba(216, 230, 158, 0.25), 0px 3px 12px 2px rgba(216, 230, 158, 0.35)",
     success:
       "0px 1px 4px rgba(68, 214, 0, 0.25), 0px 3px 12px 2px rgba(68, 214, 0, 0.35)",
     error:
@@ -95,6 +104,7 @@ const colors = {
     light: lighten(themeColors.primary, 0.3),
     main: themeColors.primary,
     dark: darken(themeColors.primary, 0.2),
+    balmoral: themeColors.primary,
   },
   success: {
     lighter: lighten(themeColors.success, 0.85),
@@ -124,6 +134,11 @@ const colors = {
 
 export const LightTheme = createTheme({
   // direction: i18n.dir(),
+  graphs: {
+    line: {
+      border: colors.graphs.line.border,
+    },
+  },
   colors: {
     gradients: {
       blue1: colors.gradients.blue1,
@@ -143,6 +158,7 @@ export const LightTheme = createTheme({
       primary: colors.shadows.primary,
       warning: colors.shadows.warning,
       info: colors.shadows.info,
+      balmoral: colors.shadows.balmoral,
     },
     alpha: {
       white: {
@@ -181,6 +197,7 @@ export const LightTheme = createTheme({
       light: lighten(themeColors.primary, 0.3),
       main: themeColors.primary,
       dark: darken(themeColors.primary, 0.2),
+      balmoral: themeColors.balmoral,
     },
     success: {
       lighter: alpha(themeColors.success, 0.1),
@@ -198,6 +215,7 @@ export const LightTheme = createTheme({
       lighter: alpha(themeColors.error, 0.1),
       light: lighten(themeColors.error, 0.3),
       main: themeColors.error,
+      balmoral: themeColors.balmoralError,
       dark: darken(themeColors.error, 0.2),
     },
     info: {

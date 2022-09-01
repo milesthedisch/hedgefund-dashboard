@@ -10,8 +10,6 @@ import {
   Tooltip,
 } from "chart.js";
 
-import SuspenseLoader from "../../components/SuspenseLoader";
-
 import "chartjs-adapter-date-fns";
 
 export default function line({ data, options, ...props }) {

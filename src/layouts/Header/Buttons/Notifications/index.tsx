@@ -20,8 +20,8 @@ const NotificationsBadge = styled(Badge)(
   ({ theme }) => `
     
     .MuiBadge-badge {
-        background-color: ${alpha(theme.palette.error.main, 0.1)};
-        color: ${theme.palette.error.main};
+        background-color: ${alpha(theme.colors.primary.balmoral, 0.1)};
+        color: ${theme.colors.primary.balmoral};
         min-width: 16px; 
         height: 16px;
         padding: 0;
@@ -46,12 +46,12 @@ const NotificationsItem = styled(Button)(
     width: 100%;
     margin-top: 0.75rem;
     padding: 0.75rem;
-    border: 1px solid ${theme.colors.primary.lighter};
+    border: 1px solid ${theme.colors.primary.balmoral};
     border-radius: 6px;
-    color: ${theme.colors.alpha.trueWhite};
+    color: ${theme.colors.primary.balmoral};
     
     :hover {
-      background: ${theme.colors.secondary.lighter};
+      background: ${theme.colors.primary.balmoral};
       transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
     }
 `
@@ -82,6 +82,7 @@ function HeaderNotifications({ data = { users: [] }, isValidating, error }) {
       <Tooltip arrow title="Notifications">
         <IconButton color="primary" ref={ref} onClick={handleOpen} size="large">
           <NotificationsBadge
+            sx={{ color: "#15494F" }}
             badgeContent={amountOfNewUsers}
             anchorOrigin={{
               vertical: "top",

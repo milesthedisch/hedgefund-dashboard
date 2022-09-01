@@ -1,4 +1,4 @@
-import useSWR, { useSWRConfig } from "swr";
+import useSWR from "swr";
 import { UserTransactions, User } from "@prisma/client";
 import { User as Auth0User } from "auth0";
 

@@ -25,7 +25,7 @@ function stringAvatar(name = "User User", opts = {}) {
 
   return {
     sx: {
-      bgcolor: stringToColor(name),
+      bgcolor: "#15494F",
       ...opts,
     },
     children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,

@@ -1,7 +1,8 @@
 import { useTheme } from "@mui/material";
 import Line from "./lineChart";
+import type { Theme } from "@mui/material/styles";
 
-const _options = (theme, range) => ({
+const _options = (theme: Theme, range?: any) => ({
   maintainAspectRatio: false,
   resposive: true,
   plugins: {
@@ -24,14 +25,14 @@ const _options = (theme, range) => ({
   },
 });
 
-const _data = (theme, range) => {
+const _data = (theme: Theme, range) => {
   return {
     datasets: [
       {
         label: "Price Per Unit",
         data: range,
         tension: 0.4,
-        borderColor: theme.colors.primary.main,
+        borderColor: theme.graphs.line.border,
       },
     ],
   };
