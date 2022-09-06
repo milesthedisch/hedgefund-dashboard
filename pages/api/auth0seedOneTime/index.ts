@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import createUser from "../../../db/user/create";
 import { AuthenticationClient, ManagementClient } from "auth0";
 import { nanoid } from "nanoid/non-secure";
-import prisma from "../../../db/client";
+import { prisma } from "../../../db/client";
 import type { User } from "auth0";
 import sgMail from "@sendgrid/mail";
 

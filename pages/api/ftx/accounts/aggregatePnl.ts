@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { withApiAuthRequired } from "@auth0/nextjs-auth0";
+import { withApiAuthRequired, getSession } from "@auth0/nextjs-auth0";
 import { RestClient } from "ftx-api";
-import matchPositionsWithBalanes from "../../../../util/matchPositions";
 import { getAllFunding } from "../../../../util/ftx";
 
 const getSeconds = (millis) => ~~(millis / 1000).toFixed(0);
@@ -15,6 +14,16 @@ export default withApiAuthRequired(async function ftx(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const session = getSession(req, res);
+  const user = session.user;
+  const roles = user["https://app.balmoral.digital/roles"];
+
+  if (!user || !roles.includes("admin")) {
+    return res
+      .status(401)
+      .json({ redirect: "401", message: "Unauthorized", success: false });
+  }
+
   try {
     const subAccounts = await client.getSubaccounts();
 

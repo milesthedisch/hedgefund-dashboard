@@ -19,7 +19,7 @@ const ApplicationsTransactions = ({
 }) => (
   <>
     <Head>
-      <title>Transactions - Applications</title>
+      <title>Users</title>
     </Head>
     <PageTitleWrapper>
       <PageHeader />

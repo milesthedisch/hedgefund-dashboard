@@ -1,4 +1,4 @@
-import prisma from "../../../db/client";
+import { prisma } from "../../../db/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { withApiAuthRequired, getSession } from "@auth0/nextjs-auth0";
 import protectRoute from "../../../util/protectRoute";

@@ -194,7 +194,7 @@ export default withPageAuthRequired(function (props) {
   return (
     <>
       <Head>
-        <title>Transactions - Applications</title>
+        <title>Strategies</title>
       </Head>
       <PageTitleWrapper>
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>

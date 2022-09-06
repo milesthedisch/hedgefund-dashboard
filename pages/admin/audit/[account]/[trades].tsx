@@ -140,7 +140,7 @@ const Sub = (props) => {
   return (
     <>
       <Head>
-        <title>Sub Account {`${account}`}</title>
+        <title>Sub Account / Trades {`${account}`}</title>
       </Head>
       <PageTitleWrapper>
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>

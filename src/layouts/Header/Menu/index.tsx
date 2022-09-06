@@ -135,6 +135,17 @@ const adminLinkList = () => {
           primary="Audit"
         />
       </ListItem>
+      <ListItem
+        classes={{ root: "MuiListItem-indicators" }}
+        button
+        component={LinkButton}
+        href="/admin/apiKeys"
+      >
+        <ListItemText
+          sx={{ width: "70px", justifyContent: "center", display: "flex" }}
+          primary="API Keys"
+        />
+      </ListItem>
     </Box>
   );
 };

@@ -1,11 +1,21 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import createStrategy from "../../../db/strategies/create";
-import { withApiAuthRequired } from "@auth0/nextjs-auth0";
+import { withApiAuthRequired, getSession } from "@auth0/nextjs-auth0";
 
 export default withApiAuthRequired(async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const session = getSession(req, res);
+  const user = session.user;
+  const roles = user["https://app.balmoral.digital/roles"];
+
+  if (!user || !roles.includes("admin")) {
+    return res
+      .status(401)
+      .json({ redirect: "401", message: "Unauthorized", success: false });
+  }
+
   if (req.method === "POST") {
     const data = req.body;
 
