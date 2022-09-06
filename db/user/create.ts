@@ -1,4 +1,4 @@
-import prisma from "../client";
+import { prisma } from "../client";
 
 export default async function createUser({ auth0UserId, initalInvestment }) {
   const newEntry = await prisma.user.create({

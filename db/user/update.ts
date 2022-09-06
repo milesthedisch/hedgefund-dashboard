@@ -1,4 +1,4 @@
-import prisma from "../client";
+import { prisma } from "../client";
 import { TransactionType } from "@prisma/client";
 
 export async function updateUser({

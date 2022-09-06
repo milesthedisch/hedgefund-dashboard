@@ -1,4 +1,4 @@
-import prisma from "../client";
+import { prisma } from "../client";
 
 export default async function getSharePrice(
   from: Date | string | undefined | null,

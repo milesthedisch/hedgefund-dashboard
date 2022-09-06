@@ -1,4 +1,4 @@
-import prisma from "../client";
+import { prisma } from "../client";
 
 export default async function getTxs(sub: string): Promise<number> {
   const purchased = await prisma.userTransactions.aggregate({

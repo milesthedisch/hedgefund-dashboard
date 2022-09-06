@@ -1,4 +1,4 @@
-import prisma from "./client";
+import { prisma } from "./client";
 import { TransactionType } from "@prisma/client";
 
 const gensis = new Date(2022, 0, 0);

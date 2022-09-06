@@ -4,7 +4,7 @@
 
 import type { NextApiRequest, NextApiResponse } from "next";
 import { withApiAuthRequired } from "@auth0/nextjs-auth0";
-import prisma from "../../../db/client";
+import { prisma } from "../../../db/client";
 import { getTotalUnits } from "../../../db/userTxs";
 
 const sum = (a: number, b: number): number => a + b;

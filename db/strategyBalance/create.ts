@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import prisma from "../client";
+import { prisma } from "../client";
 
 export default async function createStrategyBalance({ strategyName, balance }) {
   const userId = Prisma.validator<Prisma.UserSelect>()({

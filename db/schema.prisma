@@ -49,6 +49,11 @@ model ProductionSharePrice {
   price    Decimal  @default(0.000000) @db.Decimal(9, 6)
 }
 
+model ApiKey {
+  apiKeyID String @unique @default(uuid())
+  user     String
+}
+
 enum TransactionType {
   REDEMPTION
   PURCHASE
