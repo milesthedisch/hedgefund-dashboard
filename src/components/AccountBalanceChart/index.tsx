@@ -71,11 +71,20 @@ const _data = ({ historicalBalances }: any, theme: Theme, selectedFund: string) 
 
 
     if (!Array.isArray(historicalBalances[0])) {
+      const data = historicalBalances.map(b => {
+        return {
+          x: b.dateTime,
+          y: b.accountBalance
+        }
+      });
+
       return {
-        datasets: [{
-          data: [{ x: 0, y: 0 }],
-          borderColor: sharePriceLineColors[0],
-        }]
+        datasets: [
+          {
+            data,
+            borderColor: sharePriceLineColors[0]
+          }
+        ]
       }
     }
 
