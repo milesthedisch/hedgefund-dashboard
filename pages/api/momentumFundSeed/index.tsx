@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../db/client";
+import { withApiAuthRequired } from "@auth0/nextjs-auth0";
 // add new users that are in momentum fund
 // which are new users that only are in momentum fund
 // user fairview green is not in ontraport
@@ -8,7 +9,7 @@ import { prisma } from "../../../db/client";
 // add user txs that are in the momentum fund
 // add live share price that are in the momentum fund
 
-const seed = async (req: NextApiResponse, res: NextApiResponse) => {
+const seed = withApiAuthRequired(async function(req: NextApiRequest, res: NextApiResponse) {
   try {
     await prisma.productionSharePrice.createMany({
       data: [
@@ -647,6 +648,6 @@ const seed = async (req: NextApiResponse, res: NextApiResponse) => {
   }
 
   return res.status(200).json({ message: "success!" });
-};
+});
 
 export default seed;
