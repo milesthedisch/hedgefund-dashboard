@@ -80,6 +80,13 @@ const getDelta = (fund, userHistorical) => {
   if (!userHistorical?.historicalBalances) return false;
 
   if (fund === "ALL") {
+    if (!Array.isArray(userHistorical.historicalBalances[0])) {
+      const mostRecentBalance = userHistorical.historicalBalances.pop();
+      const oldestBalance = userHistorical.historicalBalances[0];
+
+      return mostRecentBalance - oldestBalance;
+    }
+
     const mostRecentBalance = userHistorical.historicalBalances
       .map(balances => {
         return balances.reduce((a, b) => {
@@ -96,6 +103,10 @@ const getDelta = (fund, userHistorical) => {
       })[0]
 
     return mostRecentBalance - oldestBalance;
+  }
+
+  if (!Array.isArray(userHistorical.historicalBalances[0])) {
+    return 0;
   }
 
   const fundHistoricalBalances = userHistorical.historicalBalances.map(balances => {
@@ -121,6 +132,7 @@ function AccountBalance({
   userHistorical: any;
 }) {
 
+  console.log(userHistorical);
   const [selectedFund, setSelectedFund] = useState<Fund | "ALL">("ALL");
 
   const tabs = Object.keys(DashboardTabs)
@@ -234,13 +246,13 @@ function AccountBalance({
                     )
                   }
                   <Typography variant="subtitle2" noWrap>
-                    {!userHistorical?.historicalBalances
+                    {Array.isArray(userHistorical?.historicalBalances[0]) ? (!userHistorical?.historicalBalances
                       ? "..." :
                       selectedFund !== "ALL" ?
                         `since ${new Date(userHistorical.historicalBalances[0]
                           .find((a) => a.fund === selectedFund)
-                          .dateTime).toLocaleString()}` : "since 30 days ago"
-                    }
+                          .dateTime).toLocaleString()}` : "since 30 days ago") :
+                      "..."}
                   </Typography>
                 </Box>
               </Box>

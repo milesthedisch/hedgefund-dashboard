@@ -35,7 +35,22 @@ const _data = ({ historicalBalances }: any, theme: Theme, selectedFund: string) 
   ];
 
   if (historicalBalances) {
+
     if (selectedFund === "ALL") {
+
+      if (!Array.isArray(historicalBalances[0])) {
+        const data = historicalBalances.map(bal => {
+          return { x: bal.dateTime, y: bal.accountBalance }
+        })
+
+        return {
+          datasets: [{
+            data,
+            borderColor: sharePriceLineColors[0],
+          }]
+        }
+      }
+
       const combinedBalances = historicalBalances
         .map(balances => {
           return balances.reduce((a, b) => {
@@ -49,6 +64,16 @@ const _data = ({ historicalBalances }: any, theme: Theme, selectedFund: string) 
       return {
         datasets: [{
           data: combinedBalances,
+          borderColor: sharePriceLineColors[0],
+        }]
+      }
+    }
+
+
+    if (!Array.isArray(historicalBalances[0])) {
+      return {
+        datasets: [{
+          data: [{ x: 0, y: 0 }],
           borderColor: sharePriceLineColors[0],
         }]
       }
