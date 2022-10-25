@@ -32,6 +32,8 @@ export default withApiAuthRequired(async function(
     return res.status(400).send("Bad request")
   }
 
+  console.log(timeInterval);
+
   try {
     // TODO:  Based on time length return a normalized time series 
     // For each time x return the calculated balance.
@@ -95,7 +97,7 @@ export default withApiAuthRequired(async function(
         }
       });
 
-      return res.status(200).send({ formattedSeries });
+      return res.status(200).send({ historicalBalances: formattedSeries });
     } else {
       console.error("Time intverval selected is incorrect", timeInterval);
       return res.status(400).send({ success: false, message: "Time interval selected is incorrect." });
