@@ -1,5 +1,6 @@
 import { prisma } from "./client";
 import { TransactionType } from "@prisma/client";
+import { Fund } from "@prisma/client";
 
 const gensis = new Date(2022, 0, 0);
 
@@ -67,12 +68,26 @@ const sharePrices = [
   "1.145900",
   "1.149800",
   "1.144400",
+  "1.1058",
+  "1.1110",
+  "1.1180",
+  "1.1170",
+  "1.1183",
+  "1.1251",
+  "1.1246",
+  "1.1244",
+  "1.1220",
+  "1.1226",
+  "1.1237",
+  "1.1253",
+  "1.1293",
 ].map((x, i) => {
   gensis.setDate(gensis.getDate() + 3.5);
 
   return {
     datetime: gensis.toISOString().replace("Z", "+10:00"),
     price: parseFloat(x),
+    fund: Fund.NEUTRAL,
   };
 });
 

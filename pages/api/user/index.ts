@@ -2,7 +2,6 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { AuthenticationClient, ManagementClient } from "auth0";
 import { withApiAuthRequired, getSession } from "@auth0/nextjs-auth0";
 import { getAllUsersWithTxs } from "../../../db/user";
-import getTxs from "../../../db/userTxs";
 
 export default withApiAuthRequired(async function handler(
   req: NextApiRequest,

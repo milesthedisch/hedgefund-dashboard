@@ -2,13 +2,7 @@ import PropTypes from "prop-types";
 import AddTwoToneIcon from "@mui/icons-material/AddTwoTone";
 import { Typography, Button, Grid } from "@mui/material";
 
-const PageTitle = ({
-  heading = "",
-  subHeading = "",
-  docs = "",
-  noDoc,
-  ...rest
-}) => {
+const PageTitle = ({ heading, subHeading = "", docs = "", noDoc, ...rest }) => {
   return (
     <Grid
       container
@@ -43,7 +37,7 @@ const PageTitle = ({
 };
 
 PageTitle.propTypes = {
-  heading: PropTypes.string,
+  heading: PropTypes.oneOfType([PropTypes.string, PropTypes.elementType]),
   subHeading: PropTypes.string,
   docs: PropTypes.string,
 };

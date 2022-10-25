@@ -65,15 +65,7 @@ const applyPagination = (
   return users.slice(page * limit, page * limit + limit);
 };
 
-const RecentOrdersTable = ({
-  users,
-  calcPrice,
-  productionUnitPrice,
-}: {
-  users: BalmoralUser[];
-  calcPrice: number;
-  productionUnitPrice: number;
-}) => {
+const RecentOrdersTable = ({ users, calcPrice, productionUnitPrice }) => {
   const { mutate } = useSWRConfig();
   const [page, setPage] = useState<number>(0);
   const [limit, setLimit] = useState(5);
@@ -208,9 +200,28 @@ const RecentOrdersTable = ({
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography variant="body2" color="text.primary" noWrap>
-                      {user.totalUnits || 0}
-                    </Typography>
+                    {Object.entries(user.totalUnits).map((entry, i) => {
+                      return (
+                        <Box
+                          key={entry[0]}
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            pb: 1,
+                          }}
+                        >
+                          <Label>{entry[0]}</Label>
+                          <Typography
+                            variant="body2"
+                            color="text.primary"
+                            noWrap
+                          >
+                            {entry[1]?.toString() || 0}
+                          </Typography>
+                        </Box>
+                      );
+                    })}
                   </TableCell>
                   <TableCell align="right">
                     <Typography variant="body2" color="text.primary" noWrap>

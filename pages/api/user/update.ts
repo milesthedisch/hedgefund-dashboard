@@ -3,6 +3,7 @@ import { AuthenticationClient, ManagementClient } from "auth0";
 import { withApiAuthRequired, getSession } from "@auth0/nextjs-auth0";
 import { updateUser } from "../../../db/user/update";
 import { TransactionType } from "@prisma/client";
+import { Fund } from "@prisma/client";
 
 export default withApiAuthRequired(async function handler(
   req: NextApiRequest,
@@ -31,8 +32,9 @@ export default withApiAuthRequired(async function handler(
     status,
     statusAction,
     unitAction,
-    audInvestment,
+    audInvestment = 0,
     unitPrice,
+    fund,
   } = body;
 
   const auth0host = new URL(`${process.env.AUTH0_TENTANT_BASE_URL}`).host;
@@ -86,6 +88,7 @@ export default withApiAuthRequired(async function handler(
         unitAction: unitActionMapping[unitAction],
         unitPrice,
         audInvestment,
+        fund,
       });
 
       return res.status(200).json({

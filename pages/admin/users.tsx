@@ -12,6 +12,9 @@ import { useUser, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import router from "next/router";
 import useSWR from "swr";
 
+import userTotalUnits from "../../util/userTotalUnits";
+import { ProductionSharePrice } from "@prisma/client";
+
 const ApplicationsTransactions = ({
   userData,
   calcPrice,
@@ -75,13 +78,16 @@ export default withPageAuthRequired(function (props) {
     data: productionUnitPrice,
     error: pError,
     isValidating: pIsValidating,
-  } = useSWR(`/api/sharePrice?latest=true`, fetcher);
+  } = useSWR<ProductionSharePrice[]>(
+    `/api/sharePrice?latest=true&fund=NEUTRAL&fund=MOMENTUM`,
+    fetcher
+  );
 
   const {
     data: calcPrice,
     error: cError,
     isValidating: cIsValidating,
-  } = useSWR(`/api/calcPrice`, fetcher);
+  } = useSWR(`/api/calcPrice?fund=NEUTRAL&fund=MOMENTUM`, fetcher);
 
   if (!isAdmin || userData?.redirect) {
     return <Custom401 />;
@@ -100,38 +106,19 @@ export default withPageAuthRequired(function (props) {
 
   if (userData && productionUnitPrice && calcPrice) {
     if (userData.users.length) {
+      // Mutating the user object so our dumb components can have the correctly formatted data
       userData.users.forEach((u) => {
-        if (u.transactions.length) {
-          const purchased = u.transactions
-            .filter((tx) => {
-              return tx.type === "PURCHASE";
-            })
-            .map((tx) => tx.units)
-            .map(parseFloat)
-            .reduce((a, b) => a + b);
-
-          let redeemed = u.transactions.filter((tx) => {
-            return tx.type === "REDEMPTION";
-          });
-
-          if (!redeemed.length) {
-            redeemed = 0;
-          } else {
-            redeemed = redeemed
-              .map((tx) => tx.units)
-              .map(parseFloat)
-              .reduce((a, b) => a + b);
-          }
-
-          u.totalUnits = purchased - redeemed;
-        }
+        u.totalUnits = {
+          momentum: userTotalUnits(u, "MOMENTUM"),
+          neutral: userTotalUnits(u, "NEUTRAL"),
+        };
       });
     }
 
     return (
       <ApplicationsTransactions
         userData={userData}
-        productionUnitPrice={productionUnitPrice.price}
+        productionUnitPrice={productionUnitPrice}
         calcPrice={calcPrice}
       />
     );

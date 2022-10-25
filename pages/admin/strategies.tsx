@@ -1,4 +1,4 @@
-import { useState, forwardRef } from "react";
+import { useState, useEffect, forwardRef, ChangeEvent } from "react";
 import {
   CardContent,
   CardHeader,
@@ -8,26 +8,30 @@ import {
   Grid,
   Snackbar,
   TextField,
-  Typography,
+  Tab,
+  Tabs,
 } from "@mui/material";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import type { AlertColor } from "@mui/lab";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { useTheme, styled } from "@mui/material/styles";
 
 import PageTitle from "../../src/components/PageTitle";
 import PageTitleWrapper from "../../src/components/PageTitleWrapper";
 import Footer from "../../src/components/Footer";
 import StrategyForm from "../../src/components/StrategyForm";
 import SuspenseLoader from "../../src/components/SuspenseLoader";
-import { useTheme } from "@mui/material/styles";
+import StrategyHeader from "../../src/components/StrategyHeader";
 
 import Head from "next/head";
 
 import useSWR, { useSWRConfig } from "swr";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { format } from "date-fns";
+
 import { Strategies, StrategyTransactions } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime";
+import { Fund } from "@prisma/client";
 
 const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
@@ -35,6 +39,14 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
 ) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
+
+const TabsWrapper = styled(Tabs)(
+  () => `
+  .MuiTabs-scrollableX {
+    overflow-x: auto !important;
+  }
+`
+);
 
 interface Snackbar {
   open: boolean;
@@ -44,14 +56,20 @@ interface Snackbar {
 
 const fetcher = async (uri: string) => {
   const response = await fetch(uri);
+
+  if (response.status !== 200) {
+    throw await response.json();
+  }
+
   return response.json();
 };
 
 const updateStrategies = async (
-  mutate,
+  mutateStrategy: Function,
+  mutateCalcPrice: Function,
   strategyBalances = {},
-  setSnackbar,
-  setLoadingState
+  setSnackbar: Function,
+  setLoadingState: Function
 ) => {
   setLoadingState(true);
 
@@ -80,8 +98,8 @@ const updateStrategies = async (
     message: `${count} Strategies updated successfully`,
   });
 
-  mutate("/api/strategies");
-  mutate("/api/calcPrice");
+  mutateStrategy();
+  mutateCalcPrice();
   return setLoadingState(false);
 };
 
@@ -89,14 +107,15 @@ const publishLiveSharePrice = async (
   sharePrice: number,
   setSnackbar: Function,
   setSharePriceLoading: Function,
-  mutate: Function
+  mutateLivePrice: Function,
+  fund: Fund
 ) => {
   setSharePriceLoading(true);
 
   let response: any;
 
   try {
-    response = await fetch("/api/sharePrice/create", {
+    response = await fetch("/api/sharePrice/create?fund=" + fund, {
       method: "POST",
       body: JSON.stringify({ sharePrice }),
     });
@@ -111,7 +130,7 @@ const publishLiveSharePrice = async (
   const res = await response.json();
 
   if (res.success) {
-    mutate("/api/sharePrice?latest=true");
+    mutateLivePrice();
     setSharePriceLoading(false);
 
     return setSnackbar({
@@ -128,7 +147,7 @@ const publishLiveSharePrice = async (
   });
 };
 
-export default withPageAuthRequired(function (props) {
+export default withPageAuthRequired(function(props) {
   const { mutate } = useSWRConfig();
   const theme = useTheme();
 
@@ -142,7 +161,19 @@ export default withPageAuthRequired(function (props) {
   const [snackbar, setSnackbar] = useState(snackbarInital);
   const [strategiesLoading, setStrategiesLoading] = useState(false);
   const [sharePriceLoading, setSharePriceLoading] = useState(false);
+  const [currentFund, setCurrentFund] = useState<Fund>(Fund.NEUTRAL);
   const [newSharePrice, setNewSharePrice] = useState(1);
+
+  const tabs = Object.entries(Fund)
+    .map(([key, value]) => ({
+      label: key[0].toUpperCase() + key.split("").splice(1).join(""),
+      value,
+    }))
+    .reverse();
+
+  const handleTabsChange = (_event: ChangeEvent<{}>, value: Fund): void => {
+    setCurrentFund(value);
+  };
 
   type StrategyData = (Strategies & {
     strategyTransactions: StrategyTransactions[];
@@ -152,28 +183,35 @@ export default withPageAuthRequired(function (props) {
     data,
     error,
     isValidating,
-  }: { data?: StrategyData; error?: any; isValidating?: boolean } = useSWR(
-    "/api/strategies",
-    fetcher
-  );
+    mutate: mutateStrategy,
+  } = useSWR("/api/strategies?fund=" + currentFund, fetcher);
 
   const {
-    data: unitPriceData,
-    error: unitPriceError,
-    isValidating: uPriceIsValidating,
-  } = useSWR("/api/calcPrice", fetcher);
+    data: calcPrice,
+    error: calcPriceError,
+    isValidating: calcPriceIsValidating,
+    mutate: mutateCalcPrice,
+  } = useSWR("/api/calcPrice?fund=" + currentFund, fetcher);
 
   const {
-    data: pPriceData,
-    error: pPriceError,
-    isValidating: pPriceIsValidating,
-  } = useSWR("/api/sharePrice?latest=true", fetcher);
+    data: livePrice,
+    error: livePriceError,
+    isValidating: livePriceIsValidating,
+    mutate: mutateLivePrice,
+  } = useSWR("/api/sharePrice?latest=true&fund=" + currentFund, fetcher);
 
-  if (error) {
-    setSnackbar({ open: true, severity: "error", message: error });
-  }
+  useEffect(() => {
+    if (livePriceError || calcPriceError) {
+      setSnackbar({
+        open: true,
+        severity: "error",
+        message: `${livePriceError?.message || ""} ${calcPriceError?.message || ""
+          }`,
+      });
+    }
+  }, [livePriceError, calcPriceError]);
 
-  let strategies;
+  let strategies: React.ElementType[];
 
   if (data?.length) {
     strategies = data.map((strat) => {
@@ -181,15 +219,16 @@ export default withPageAuthRequired(function (props) {
         const time = strat.strategyTransactions[0]?.datetime;
         strat.updateOn = format(new Date(time), "PPpp");
         strat.balance = strat.strategyTransactions[0]?.balance;
-        return StrategyForm(strat, setStrategyBalances);
+        return (
+          <StrategyForm
+            key={strat.id}
+            {...strat}
+            setStrategyBalances={setStrategyBalances}
+          />
+        );
       }
     });
   }
-
-  const currencyUSD = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  });
 
   return (
     <>
@@ -200,49 +239,31 @@ export default withPageAuthRequired(function (props) {
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <PageTitle
             sx={{ width: "auto" }}
-            heading="Strategies"
+            heading={
+              <TabsWrapper
+                onChange={handleTabsChange}
+                value={currentFund}
+                variant="scrollable"
+                scrollButtons="auto"
+                textColor="primary"
+                indicatorColor="primary"
+              >
+                {tabs.map((tab) => (
+                  <Tab key={tab.value} label={tab.label} value={tab.value} />
+                ))}
+              </TabsWrapper>
+            }
             subHeading="Balances for each strategy"
             noDoc={true}
           />
-          <Box
-            display="flex"
-            sx={{ flexGrow: 0.05, justifyContent: "space-between" }}
-          >
-            <Card>
-              <CardHeader
-                sx={{ textAlign: "right" }}
-                title="Calculated Share Price"
-                subheader={
-                  uPriceIsValidating ? (
-                    "..."
-                  ) : (
-                    <Typography>
-                      {unitPriceError
-                        ? "Unavailable"
-                        : `${currencyUSD.format(unitPriceData || 0)}`}
-                    </Typography>
-                  )
-                }
-              ></CardHeader>
-            </Card>
-            <Card>
-              <CardHeader
-                sx={{ textAlign: "right" }}
-                title="Live Share Price"
-                subheader={
-                  pPriceIsValidating ? (
-                    "..."
-                  ) : (
-                    <Typography>
-                      {unitPriceError
-                        ? "Unavailable"
-                        : `${currencyUSD.format(pPriceData?.price || 0)}`}
-                    </Typography>
-                  )
-                }
-              ></CardHeader>
-            </Card>
-          </Box>
+          <StrategyHeader
+            prices={{
+              calc: calcPrice,
+              live: livePrice?.price,
+              validating: calcPriceIsValidating || livePriceIsValidating,
+            }}
+            name={currentFund}
+          />
         </Box>
       </PageTitleWrapper>
       <Container
@@ -286,7 +307,8 @@ export default withPageAuthRequired(function (props) {
                                   newSharePrice,
                                   setSnackbar,
                                   setSharePriceLoading,
-                                  mutate
+                                  mutateLivePrice,
+                                  currentFund
                                 );
                               }}
                               loading={sharePriceLoading}
@@ -313,7 +335,8 @@ export default withPageAuthRequired(function (props) {
           variant="contained"
           onClick={() =>
             updateStrategies(
-              mutate,
+              mutateStrategy,
+              mutateCalcPrice,
               strategyBalances,
               setSnackbar,
               setStrategiesLoading

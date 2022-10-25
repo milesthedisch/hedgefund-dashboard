@@ -59,8 +59,6 @@ const Audit = () => {
     }
   });
 
-  console.log(aggrData, aggrError, aggrIsValidating);
-
   return (
     <>
       <Head>
@@ -124,33 +122,33 @@ const Audit = () => {
         >
           {!aggrIsValidating && aggrData
             ? aggrData.results.map((aggr) => {
-                const profit = aggr.summedFundings * -1 - aggr.borrows;
+              const profit = aggr.summedFundings * -1 - aggr.borrows;
 
-                return (
-                  <Grid item key={aggr.subAccount} xs={12} md={6} lg={"auto"}>
-                    <Card>
-                      <CardHeader title={aggr.subAccount}></CardHeader>
-                      <CardContent>
-                        <Typography sx={{ p: 1 }}>
-                          Funding: {aggr.summedFundings * -1}
+              return (
+                <Grid item key={aggr.subAccount} xs={12} md={6} lg={"auto"}>
+                  <Card>
+                    <CardHeader title={aggr.subAccount}></CardHeader>
+                    <CardContent>
+                      <Typography sx={{ p: 1 }}>
+                        Funding: {aggr.summedFundings * -1}
+                      </Typography>
+                      <Typography sx={{ p: 1 }}>
+                        Borrowed: {aggr.borrows}
+                      </Typography>
+                      {profit > 0 ? (
+                        <Typography sx={{ color: "green", p: 1 }}>
+                          PnL: {profit}
                         </Typography>
-                        <Typography sx={{ p: 1 }}>
-                          Borrowed: {aggr.borrows}
+                      ) : (
+                        <Typography sx={{ color: "red", p: 1 }}>
+                          PnL: {profit}
                         </Typography>
-                        {profit > 0 ? (
-                          <Typography sx={{ color: "green", p: 1 }}>
-                            PnL: {profit}
-                          </Typography>
-                        ) : (
-                          <Typography sx={{ color: "red", p: 1 }}>
-                            PnL: {profit}
-                          </Typography>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                );
-              })
+                      )}
+                    </CardContent>
+                  </Card>
+                </Grid>
+              );
+            })
             : ""}
         </Grid>
       </Container>

@@ -1,0 +1,17 @@
+INSERT INTO `User`(`id`,`auth0UserId`,`initalInvestment`) VALUES
+(1,"auth0|622de999c80965006a93c12c",0),
+(2,"auth0|62bd5ba3c273ba89d2b5f122",10000),
+(3,"auth0|62bd5bbdd4b776891cbb51d1",20000),
+(4,"auth0|62f3e5ad8d9636af66e00a22",20000),
+(5,"auth0|62f3e553a861983a42365f82",50000),
+(6,"auth0|62bd5bb67709b84022ff9e11",75000),
+(7,"auth0|62bd5c7ad4b776891cbb5285",25000),
+(8,"auth0|62bd5c765263d039dfddf32a",20000),
+(9,"auth0|62bd5c7351b4699d9b2b564b",20000),
+(10,"auth0|62bd5c6f5263d039dfddf31c",20000),
+(11,"auth0|62bd5bc1de83a7b7803dda86",92000),
+(12,"auth0|62bd5bb95263d039dfddf276",199850),
+(13,"auth0|62bd5bb25263d039dfddf272",30000),
+(14,"auth0|62bd5bae51b4699d9b2b558a",75000),
+(15,"auth0|62bd5babdad8b06d95b064e4",20000),
+(16,"auth0|6330e716cff0ca0855b4faa5",0);

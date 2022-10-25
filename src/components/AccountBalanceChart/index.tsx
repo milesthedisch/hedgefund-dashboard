@@ -1,8 +1,11 @@
 import { useTheme } from "@mui/material";
 import Line from "./lineChart";
 import type { Theme } from "@mui/material/styles";
+import { AccessibleOutlined } from "@mui/icons-material";
+import PropTypes from "prop-types";
 
 const _options = (theme: Theme, range?: any) => ({
+  type: "line",
   maintainAspectRatio: false,
   resposive: true,
   plugins: {
@@ -11,6 +14,7 @@ const _options = (theme: Theme, range?: any) => ({
     },
   },
   scales: {
+    grid: { display: false },
     x: {
       type: "time",
       time: {
@@ -19,34 +23,97 @@ const _options = (theme: Theme, range?: any) => ({
       },
     },
     y: {
-      min: 0.98,
-      beginAtZero: true,
+      beginAtZero: false,
     },
   },
 });
 
-const _data = (theme: Theme, range) => {
-  return {
-    datasets: [
-      {
-        label: "Price Per Unit",
-        data: range,
-        tension: 0.4,
-        borderColor: theme.graphs.line.border,
-      },
-    ],
-  };
+const _data = ({ historicalBalances }: any, theme: Theme, selectedFund: string) => {
+  const sharePriceLineColors = [
+    theme.colors.primary.balmoral,
+    theme.graphs.line.border,
+  ];
+
+  if (historicalBalances) {
+    if (selectedFund === "ALL") {
+      const combinedBalances = historicalBalances
+        .map(balances => {
+          return balances.reduce((a, b) => {
+            return {
+              x: a.dateTime,
+              y: parseInt(a.accountBalance) + parseInt(b.accountBalance)
+            }
+          })
+        });
+
+      return {
+        datasets: [{
+          data: combinedBalances,
+          borderColor: sharePriceLineColors[0],
+        }]
+      }
+    }
+
+    const data = historicalBalances.map(b => {
+      const filteredFund = b.filter(_b => _b.fund === selectedFund)[0];
+
+      return {
+        x: filteredFund.dateTime,
+        y: filteredFund.accountBalance
+      }
+    });
+
+    return {
+      datasets: [
+        {
+          data,
+          borderColor: sharePriceLineColors[0]
+        }
+      ]
+    }
+  }
+
+  // if (sharePrices?.accountBalanceTimeSeries) {
+  //   let data = sharePrices.accountBalanceTimeSeries.map(data => {
+  //     return {
+  //       x: new Date(data.dateTime),
+  //       y: ~~data.accountBalance
+  //     }
+  //   });
+
+  //   datasets = [{
+  //     label: "Historical Balance",
+  //     data,
+  //     tension: 0.4,
+  //     borderColor: sharePriceLineColors[0],
+  //   }];
+  // }
+
+  // if (currentFund !== "ALL") {
+  //   datasets = sharePrices.map((share, i) => {
+  //     return {
+  //       label: "Price Per Unit -" + share[0].fund,
+  //       data: share.map(price => ({
+  //         x: price.datetime,
+  //         y: parseFloat(price.price)
+  //       })),
+  //       tension: 0.4,
+  //       borderColor: sharePriceLineColors[i],
+  //     }
+  //   });
+  // }
+
+
 };
 
-const AccountBalanceChart = ({ sharePrices }) => {
+const AccountBalanceChart = ({ userHistorical, selectedFund }) => {
   const theme = useTheme();
-
-  const data = (sharePrices = sharePrices.map((s) => ({
-    x: s.datetime,
-    y: parseFloat(s.price),
-  })));
-
-  return <Line data={_data(theme, data)} options={_options(theme)} />;
+  return <Line data={_data(userHistorical, theme, selectedFund)} options={_options(theme)} />;
 };
+
+AccountBalanceChart.propTypes = {
+  userHistorical: PropTypes.oneOf([PropTypes.array, PropTypes.arrayOf(PropTypes.object)]),
+  selectedFund: PropTypes.string
+}
 
 export default AccountBalanceChart;

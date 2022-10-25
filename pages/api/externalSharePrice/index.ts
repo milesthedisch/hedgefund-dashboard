@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import getSharePrice, { getLatestSharePrice } from "../../../db/sharePrice";
 import rateLimit from "../../../util/rateLimit";
 import findUnique from "../../../db/apiKeys/findUnique";
+import { Fund } from "@prisma/client";
 
 const limiter = rateLimit({
   interval: 60 * 1000, // 60 seconds
@@ -12,6 +13,8 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "GET") {
     return res.status(403).send("Incorrect HTTP code");
   }
+
+  const fund = (req.query.fund || "NEUTRAL") as Fund;
 
   const authorizationHeader: string = req.headers.authorization;
   const apiKey = authorizationHeader?.match(/Api-Key: ([\w-]+)/);
@@ -46,14 +49,15 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
 
     try {
       if (latest) {
-        sharePrice = await getLatestSharePrice();
+        sharePrice = await getLatestSharePrice(fund);
       } else if (from && to) {
         sharePrice = await getSharePrice(
           (from as any) || new Date(from as string),
-          (to as any) || new Date(to as string)
+          (to as any) || new Date(to as string),
+          fund
         );
       } else {
-        sharePrice = await getSharePrice(undefined, undefined);
+        sharePrice = await getSharePrice(undefined, undefined, fund);
       }
     } catch (e) {
       console.error(e);

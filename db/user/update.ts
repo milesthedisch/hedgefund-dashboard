@@ -1,5 +1,6 @@
 import { prisma } from "../client";
 import { TransactionType } from "@prisma/client";
+import { Fund } from "@prisma/client";
 
 export async function updateUser({
   userId,
@@ -8,6 +9,7 @@ export async function updateUser({
   unitPrice,
   audInvestment,
   unitAction,
+  fund,
 }) {
   await prisma.user.update({
     where: {
@@ -21,6 +23,7 @@ export async function updateUser({
           unitPrice: unitPrice,
           audInvestment: audInvestment,
           fee: fee,
+          fund,
         },
       },
     },

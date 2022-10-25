@@ -1,13 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { withApiAuthRequired, getSession } from "@auth0/nextjs-auth0";
 import getUserTotalUnits from "../../../db/userTxs";
+import { getLatestSharePrice } from "../../../db/sharePrice";
 import { Fund } from "@prisma/client";
+import { Decimal } from "@prisma/client/runtime";
+import groupBy from "lodash.groupby";
 
 export default withApiAuthRequired(async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   const { user } = getSession(req, res);
+
   const { fund } = req.query;
 
   const FUNDS = Object.keys(Fund);
@@ -20,12 +24,26 @@ export default withApiAuthRequired(async function handler(
 
   try {
     if (Array.isArray(fund) && fund.every((f) => FUNDS.includes(f))) {
-      const [txs1, txs2] = await Promise.all([
-        getUserTotalUnits(user.sub, fund[0] as Fund),
-        getUserTotalUnits(user.sub, fund[1] as Fund),
-      ]);
+      const data = await Promise.all(FUNDS.map(fund => {
+        return Promise.all([
+          fund, // [0]
+          getLatestSharePrice(fund as Fund), // [1]
+          getUserTotalUnits(user.sub, fund as Fund) // [2]
+        ]);
+      }));
 
-      return res.status(200).json({ [fund[0]]: txs1, [fund[1]]: txs2 });
+      const formatted = data.map((x, i) => {
+        return {
+          fund: x[0],
+          fundInfo: x[1],
+          currentBalance: new Decimal(x[1].price).mul(x[2]),
+          units: x[2],
+        }
+      });
+
+      const combined = formatted.map(x => x.currentBalance).reduce((a, b) => a.add(b));
+
+      return res.status(200).json({ funds: formatted, combinedBalance: combined });
     } else if (typeof fund === "string" && FUNDS.includes(fund)) {
       const result = await getUserTotalUnits(user.sub, fund as Fund);
 

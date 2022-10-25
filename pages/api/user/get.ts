@@ -3,7 +3,7 @@ import { withApiAuthRequired, getSession } from "@auth0/nextjs-auth0";
 import protectRoute from "../../../util/protectRoute";
 import getUser from "../../../db/user/get";
 
-export default async function handler(
+export default withApiAuthRequired(async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -31,4 +31,4 @@ export default async function handler(
       .status(405)
       .json({ message: "Method not allowed", success: false });
   }
-}
+});

@@ -9,10 +9,13 @@ import {
   Typography,
 } from "@mui/material";
 
-export default function StrategyForm(
-  { balance, name, id, updateOn },
-  setStrategyBalances
-) {
+export default function StrategyForm({
+  balance,
+  name,
+  id,
+  updateOn,
+  setStrategyBalances,
+}) {
   return (
     <Grid key={id} item xs={6}>
       <Card>

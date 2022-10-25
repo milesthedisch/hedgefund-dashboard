@@ -23,9 +23,11 @@ import DialogAction from "@mui/material/DialogActions";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import type { AlertColor } from "@mui/lab";
 
+import Label from "../Label";
 import SuspenseLoader from "../../components/SuspenseLoader";
 import { useSWRConfig } from "swr";
 import { useUpdateUser } from "../../hooks/index";
+import { Fund, ProductionSharePrice } from "@prisma/client";
 
 const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
@@ -45,7 +47,7 @@ export interface SimpleDialogProps {
   onClose: any;
   selectedUser: any;
   calcUnitPrice: number;
-  productionUnitPrice: number;
+  productionUnitPrice: ProductionSharePrice[];
   setShouldMutate: Function;
 }
 
@@ -54,28 +56,32 @@ enum EUnitAction {
   "WITHDRAW",
 }
 
-type Block = { block: boolean };
-type Activate = { activate: boolean };
-type UserInfo = {
-  fee: number;
-  unitAction: EUnitAction;
-  units: number;
-  status: boolean;
-  statusAction: "block" | "activate";
-};
-
-const UserDialogInfo = ({ children, number }) => {
+const UserDialogInfo = ({
+  children,
+  number,
+  variant,
+}: {
+  children?;
+  variant?;
+  number?;
+}) => {
   return (
-    <Box display="flex" alignItems="center">
-      <Typography
-        sx={{
-          fontWeight: "bold",
-          fontStyle: "bold",
-        }}
-      >
-        {children}
-      </Typography>
-      <Typography sx={{ p: 1 }}>{number}</Typography>
+    <Box sx={{ p: 0 }} display="flex" alignItems="center">
+      {variant !== "multi" ? (
+        <>
+          <Typography
+            sx={{
+              fontWeight: "bold",
+              fontStyle: "bold",
+            }}
+          >
+            {children}
+          </Typography>
+          <Typography sx={{ py: 0, pl: 1 }}>{number?.toString()}</Typography>
+        </>
+      ) : (
+        children
+      )}
     </Box>
   );
 };
@@ -85,10 +91,11 @@ function UserDialog(props: SimpleDialogProps) {
     onClose,
     open,
     selectedUser = {},
-    calcUnitPrice,
     productionUnitPrice,
     setShouldMutate,
   } = props;
+
+  const { mutate } = useSWRConfig();
 
   const snackbarInital: Snackbar = {
     open: false,
@@ -99,6 +106,7 @@ function UserDialog(props: SimpleDialogProps) {
   const theme = useTheme();
   const [status, setStatus] = useState(false);
   const [fee, setFee] = useState(1);
+  const [fund, setFund] = useState("NEUTRAL");
   const [snackbar, setSnackbar] = useState(snackbarInital);
   const [unitAction, setUnitAction] = useState<EUnitAction>(
     EUnitAction.DEPOSIT
@@ -149,17 +157,22 @@ function UserDialog(props: SimpleDialogProps) {
       severity: "success",
       message: `${selectedUser.name} updated successfully`,
     });
+
+    mutate("/api/user");
   }
 
   const handleSubmit = () => {
+    const unitPrice = productionUnitPrice.filter((p) => p.fund === fund)[0]
+      .price;
+
     setUserInfo({
       fee,
       unitAction,
       statusAction: selectedUser?.blocked ? "activate" : "block",
       status,
       units,
-      unitPrice: productionUnitPrice,
-      audInvestment: productionUnitPrice * units,
+      unitPrice,
+      fund,
     });
 
     setUserShouldUpdate(true);
@@ -179,7 +192,7 @@ function UserDialog(props: SimpleDialogProps) {
 
   return (
     <Dialog
-      maxWidth={"xs"}
+      maxWidth={"sm"}
       fullWidth={true}
       onClose={handleClose}
       open={isValidating ? true : open}
@@ -217,41 +230,111 @@ function UserDialog(props: SimpleDialogProps) {
       ) : (
         ""
       )}
-      <Grid container alignItems="center" sx={{ p: 3 }}>
-        <Grid item xs={6}>
-          <UserDialogInfo number={props.selectedUser?.totalUnits || 0}>
-            Current Units
-          </UserDialogInfo>
-        </Grid>
+      <Grid container alignItems="center" spacing={2} sx={{ p: 3 }}>
+        {props.selectedUser?.totalUnits
+          ? Object.entries(props.selectedUser.totalUnits)
+              .reverse()
+              .map((tu) => {
+                return (
+                  <Grid item xs={6}>
+                    <UserDialogInfo variant="multi">
+                      <Typography
+                        sx={{
+                          fontWeight: "bold",
+                          fontStyle: "bold",
+                          pr: 1,
+                        }}
+                      >
+                        Current Units
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontWeight: "bold",
+                          fontStyle: "bold",
+                          display: "flex",
+                          alignItems: "center",
+                          alignContent: "center",
+                        }}
+                      >
+                        <Label
+                          color={
+                            tu[0] === fund.toLowerCase()
+                              ? "primary"
+                              : "secondary"
+                          }
+                          sx={{ mr: 1 }}
+                        >
+                          {tu[0]?.toUpperCase()}
+                        </Label>
+                        {tu[1]?.toString() || 0}
+                      </Typography>
+                    </UserDialogInfo>
+                  </Grid>
+                );
+              })
+          : ""}
+        {Array.isArray(productionUnitPrice)
+          ? productionUnitPrice.map((p) => {
+              return (
+                <Grid item xs={6}>
+                  <UserDialogInfo variant="multi">
+                    <Typography
+                      sx={{
+                        fontWeight: "bold",
+                        fontStyle: "bold",
+                        pr: 1,
+                      }}
+                    >
+                      Live Price
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontWeight: "bold",
+                        fontStyle: "bold",
+                        display: "flex",
+                        alignItems: "center",
+                        alignContent: "center",
+                      }}
+                    >
+                      <Label
+                        color={
+                          p.fund === fund.toUpperCase()
+                            ? "primary"
+                            : "secondary"
+                        }
+                        sx={{ mr: 1 }}
+                      >
+                        {p.fund}
+                      </Label>
+                      {p.price?.toString()}
+                    </Typography>
+                  </UserDialogInfo>
+                </Grid>
+              );
+            })
+          : ""}
         <Grid item xs={6}>
           <UserDialogInfo number={`${fee}%`}>Fee</UserDialogInfo>
-        </Grid>
-        <Grid item xs={6}>
-          <UserDialogInfo number={`$${calcUnitPrice?.toFixed(3) || fee}`}>
-            Unit Price
-          </UserDialogInfo>
         </Grid>
         <Grid item xs={6}>
           <UserDialogInfo number={`$${selectedUser?.initalInvestment || 0}`}>
             Initial Investment
           </UserDialogInfo>
         </Grid>
-        <Grid item xs={6}>
-          <UserDialogInfo number={`$${productionUnitPrice || 0}`}>
-            Live Unit Price
-          </UserDialogInfo>
-        </Grid>
-        <Grid item xs={6}>
-          <UserDialogInfo
-            number={`$${(units * productionUnitPrice).toFixed(3)}`}
-          >
-            Aud Investment
-          </UserDialogInfo>
-        </Grid>
       </Grid>
       <Divider />
       <DialogContent>
         <Box sx={{ paddingBottom: 2 }}>
+          <FormControl sx={{ marginRight: 1 }}>
+            <Select value={fund} onChange={(e) => setFund(e.target.value)}>
+              <MenuItem value={Object.entries(Fund)[0][0]}>{`${
+                Object.entries(Fund)[0][0]
+              }`}</MenuItem>
+              <MenuItem value={Object.entries(Fund)[1][0]}>{`${
+                Object.entries(Fund)[1][0]
+              }`}</MenuItem>
+            </Select>
+          </FormControl>
           <FormControl>
             <FormGroup>
               <TextField

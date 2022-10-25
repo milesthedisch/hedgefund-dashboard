@@ -1,11 +1,19 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import createSharePrice from "../../../db/sharePrice/create";
 import { withApiAuthRequired, getSession } from "@auth0/nextjs-auth0";
+import { Fund } from "@prisma/client";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const session = getSession(req, res);
   const user = session.user;
   const roles = user["https://app.balmoral.digital/roles"];
+  const fund = req.query.fund;
+
+  const funds = Object.keys(Fund);
+
+  if (!funds.includes(fund as string) || typeof fund !== "string") {
+    return res.status(400).json({ message: "Incorrect fund", success: false });
+  }
 
   if (!user || !roles.includes("admin")) {
     return res
@@ -21,7 +29,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     }
 
     try {
-      const updatedSharePrice = await createSharePrice(sharePrice);
+      const updatedSharePrice = await createSharePrice(
+        sharePrice,
+        fund as Fund
+      );
 
       return res
         .status(200)

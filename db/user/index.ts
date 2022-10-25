@@ -9,6 +9,7 @@ export async function getAllUsersWithTxs() {
           type: true,
           datetime: true,
           userId: true,
+          fund: true,
         },
         orderBy: {
           datetime: "desc",
