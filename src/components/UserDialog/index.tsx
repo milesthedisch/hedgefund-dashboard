@@ -233,50 +233,10 @@ function UserDialog(props: SimpleDialogProps) {
       <Grid container alignItems="center" spacing={2} sx={{ p: 3 }}>
         {props.selectedUser?.totalUnits
           ? Object.entries(props.selectedUser.totalUnits)
-              .reverse()
-              .map((tu) => {
-                return (
-                  <Grid item xs={6}>
-                    <UserDialogInfo variant="multi">
-                      <Typography
-                        sx={{
-                          fontWeight: "bold",
-                          fontStyle: "bold",
-                          pr: 1,
-                        }}
-                      >
-                        Current Units
-                      </Typography>
-                      <Typography
-                        sx={{
-                          fontWeight: "bold",
-                          fontStyle: "bold",
-                          display: "flex",
-                          alignItems: "center",
-                          alignContent: "center",
-                        }}
-                      >
-                        <Label
-                          color={
-                            tu[0] === fund.toLowerCase()
-                              ? "primary"
-                              : "secondary"
-                          }
-                          sx={{ mr: 1 }}
-                        >
-                          {tu[0]?.toUpperCase()}
-                        </Label>
-                        {tu[1]?.toString() || 0}
-                      </Typography>
-                    </UserDialogInfo>
-                  </Grid>
-                );
-              })
-          : ""}
-        {Array.isArray(productionUnitPrice)
-          ? productionUnitPrice.map((p) => {
+            .reverse()
+            .map((tu, i) => {
               return (
-                <Grid item xs={6}>
+                <Grid key={i} item xs={6}>
                   <UserDialogInfo variant="multi">
                     <Typography
                       sx={{
@@ -285,7 +245,7 @@ function UserDialog(props: SimpleDialogProps) {
                         pr: 1,
                       }}
                     >
-                      Live Price
+                      Current Units
                     </Typography>
                     <Typography
                       sx={{
@@ -298,20 +258,60 @@ function UserDialog(props: SimpleDialogProps) {
                     >
                       <Label
                         color={
-                          p.fund === fund.toUpperCase()
+                          tu[0] === fund.toLowerCase()
                             ? "primary"
                             : "secondary"
                         }
                         sx={{ mr: 1 }}
                       >
-                        {p.fund}
+                        {tu[0]?.toUpperCase()}
                       </Label>
-                      {p.price?.toString()}
+                      {tu[1]?.toString() || 0}
                     </Typography>
                   </UserDialogInfo>
                 </Grid>
               );
             })
+          : ""}
+        {Array.isArray(productionUnitPrice)
+          ? productionUnitPrice.map((p, i) => {
+            return (
+              <Grid key={i} item xs={6}>
+                <UserDialogInfo variant="multi">
+                  <Typography
+                    sx={{
+                      fontWeight: "bold",
+                      fontStyle: "bold",
+                      pr: 1,
+                    }}
+                  >
+                    Live Price
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontWeight: "bold",
+                      fontStyle: "bold",
+                      display: "flex",
+                      alignItems: "center",
+                      alignContent: "center",
+                    }}
+                  >
+                    <Label
+                      color={
+                        p.fund === fund.toUpperCase()
+                          ? "primary"
+                          : "secondary"
+                      }
+                      sx={{ mr: 1 }}
+                    >
+                      {p.fund}
+                    </Label>
+                    {p.price?.toString()}
+                  </Typography>
+                </UserDialogInfo>
+              </Grid>
+            );
+          })
           : ""}
         <Grid item xs={6}>
           <UserDialogInfo number={`${fee}%`}>Fee</UserDialogInfo>
@@ -327,12 +327,10 @@ function UserDialog(props: SimpleDialogProps) {
         <Box sx={{ paddingBottom: 2 }}>
           <FormControl sx={{ marginRight: 1 }}>
             <Select value={fund} onChange={(e) => setFund(e.target.value)}>
-              <MenuItem value={Object.entries(Fund)[0][0]}>{`${
-                Object.entries(Fund)[0][0]
-              }`}</MenuItem>
-              <MenuItem value={Object.entries(Fund)[1][0]}>{`${
-                Object.entries(Fund)[1][0]
-              }`}</MenuItem>
+              <MenuItem value={Object.entries(Fund)[0][0]}>{`${Object.entries(Fund)[0][0]
+                }`}</MenuItem>
+              <MenuItem value={Object.entries(Fund)[1][0]}>{`${Object.entries(Fund)[1][0]
+                }`}</MenuItem>
             </Select>
           </FormControl>
           <FormControl>
