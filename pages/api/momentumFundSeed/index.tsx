@@ -88,6 +88,31 @@ const seed = withApiAuthRequired(async function(req: NextApiRequest, res: NextAp
           datetime: new Date(2022, 8, 27),
           price: 0.97938,
         },
+        {
+          fund: "MOMENTUM",
+          datetime: new Date(2022, 8, 30),
+          price: 0.97938
+        },
+        {
+          fund: "MOMENTUM",
+          datetime: new Date(2022, 9, 7),
+          price: 0.96037
+        },
+        {
+          fund: "MOMENTUM",
+          datetime: new Date(2022, 9, 12),
+          price: 0.98204
+        },
+        {
+          fund: "MOMENTUM",
+          datetime: new Date(2022, 9, 17),
+          price: 0.95858
+        },
+        {
+          fund: "MOMENTUM",
+          datetime: new Date(2022, 9, 24),
+          price: 0.93286
+        },
       ],
     });
 
@@ -639,6 +664,106 @@ const seed = withApiAuthRequired(async function(req: NextApiRequest, res: NextAp
           // FTT
           balance: 3749.55,
           datetime: new Date(2022, 8, 27),
+        },
+
+        {
+          strategyId: 21,
+          // FTX USD
+          balance: -27273.58,
+          datetime: new Date(2022, 8, 30),
+        },
+        {
+          strategyId: 22,
+          // FTX AUD
+          balance: 1254735.92,
+          datetime: new Date(2022, 8, 30),
+        },
+        {
+          strategyId: 20,
+          // CBA BALANCE
+          balance: 88833.66,
+          datetime: new Date(2022, 8, 30),
+        },
+        {
+          strategyId: 23,
+          // FTT
+          balance: 3657.15,
+          datetime: new Date(2022, 8, 30),
+        },
+
+        {
+          strategyId: 21,
+          // FTX USD
+          balance: -34140.75,
+          datetime: new Date(2022, 9, 7),
+        },
+        {
+          strategyId: 22,
+          // FTX AUD
+          balance: 1254764.72,
+          datetime: new Date(2022, 9, 7),
+        },
+        {
+          strategyId: 20,
+          // CBA BALANCE
+          balance: 88833.66,
+          datetime: new Date(2022, 9, 7),
+        },
+        {
+          strategyId: 23,
+          // FTT
+          balance: 3670.20,
+          datetime: new Date(2022, 9, 7),
+        },
+
+        {
+          strategyId: 21,
+          // FTX USD
+          balance: -34650.00,
+          datetime: new Date(2022, 9, 17),
+        },
+        {
+          strategyId: 22,
+          // FTX AUD
+          balance: 1254845.04,
+          datetime: new Date(2022, 9, 17),
+        },
+        {
+          strategyId: 20,
+          // CBA BALANCE
+          balance: 88833.66,
+          datetime: new Date(2022, 9, 17),
+        },
+        {
+          strategyId: 23,
+          // FTT
+          balance: 3550.05,
+          datetime: new Date(2022, 9, 17),
+        },
+
+        {
+          strategyId: 21,
+          // FTX USD
+          balance: -34650.00,
+          datetime: new Date(2022, 9, 24),
+        },
+        {
+          strategyId: 22,
+          // FTX AUD
+          balance: 1254935.53,
+          datetime: new Date(2022, 9, 24),
+        },
+        {
+          strategyId: 20,
+          // CBA BALANCE
+          balance: 88833.66,
+          datetime: new Date(2022, 9, 24),
+        },
+        {
+          strategyId: 23,
+          // FTT
+          balance: 3426.75,
+          datetime: new Date(2022, 9, 24),
         },
       ],
     });
