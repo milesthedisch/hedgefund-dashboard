@@ -234,7 +234,7 @@ function AccountBalance({
                     )
                   }
                   <Typography variant="subtitle2" noWrap>
-                    {!userHistorical?.historicalBalances[0]
+                    {!userHistorical?.historicalBalances
                       ? "..." :
                       selectedFund !== "ALL" ?
                         `since ${new Date(userHistorical.historicalBalances[0]

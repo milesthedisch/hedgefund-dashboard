@@ -4,7 +4,6 @@ import getUserTotalUnits from "../../../db/userTxs";
 import { getLatestSharePrice } from "../../../db/sharePrice";
 import { Fund } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime";
-import groupBy from "lodash.groupby";
 
 export default withApiAuthRequired(async function handler(
   req: NextApiRequest,
