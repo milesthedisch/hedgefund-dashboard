@@ -87,13 +87,14 @@ export default withApiAuthRequired(async function(
         const sharePrice = getLastSharePriceFrom(userFund, deltaDate);
         const unitBalance = getUnitBalanceFrom(user.sub, userFund, deltaDate);
 
-        return Promise.all([sharePrice, unitBalance, deltaDate]);
+        return Promise.all([sharePrice, unitBalance, deltaDate, userFund]);
       }));
 
-      const formattedSeries = priceAndUnitsSeries.map(([sharePrice, balance, delta]) => {
+      const formattedSeries = priceAndUnitsSeries.map(([sharePrice, balance, delta, fund]) => {
         return {
           dateTime: new Date(delta),
           accountBalance: new Decimal(sharePrice.price).mul(balance),
+          fund,
         }
       });
 

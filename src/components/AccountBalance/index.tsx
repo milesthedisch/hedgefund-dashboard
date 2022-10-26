@@ -49,20 +49,34 @@ box-shadow: ${theme.colors.shadows.balmoral};
 const DashboardTabs = { ...Fund, ALL: "ALL" };
 type DashboardTabs = typeof DashboardTabs;
 
+const audCurrency = (str: number | string) => {
+  if (typeof str === "string") {
+    return (0).toLocaleString("en-AU", {
+      style: "currency",
+      currency: "AUD"
+    });
+  }
+
+  return str.toLocaleString("en-AU", {
+    style: "currency",
+    currency: "AUD",
+  });
+};
+
 const getFundBalance = (fund, userCurrent) => {
   if (!userCurrent) {
     return false;
   }
 
   if (fund === "ALL") {
-    return userCurrent.combinedBalance;
+    return Number(userCurrent.combinedBalance);
   }
 
-  return userCurrent.funds?.find((_fund) => _fund.fund === fund)
-    .currentBalance;
+  return Number(userCurrent.funds?.find((_fund) => _fund.fund === fund)
+    .currentBalance);
 };
 
-
+// TODO MILES: Probably a better way to send down this data from the backend that doesn't require all this funky stuff.
 const getUnits = (fund, userCurrent) => {
   if (!userCurrent) {
     return false;
@@ -76,53 +90,97 @@ const getUnits = (fund, userCurrent) => {
     .units;
 }
 
-const getDelta = (fund, userHistorical) => {
-  if (!userHistorical?.historicalBalances) return false;
+const getDelta = (fund: string, historicalBalances) => {
+  if (!historicalBalances) return 0;
 
   if (fund === "ALL") {
-    if (!Array.isArray(userHistorical.historicalBalances[0])) {
-      const mostRecentBalance = userHistorical.historicalBalances.pop();
-      const oldestBalance = userHistorical.historicalBalances[0];
+    if (!Array.isArray(historicalBalances[0])) {
+      const mostRecentBalance = historicalBalances.slice(-1);
+      const oldestBalance = historicalBalances.slice(0, 1);
 
-      return mostRecentBalance - oldestBalance;
+      return parseInt(mostRecentBalance[0].accountBalance) - parseInt(oldestBalance[0].accountBalance);
     }
 
-    const mostRecentBalance = userHistorical.historicalBalances
+    const mostRecentBalance = historicalBalances
       .map(balances => {
         return balances.reduce((a, b) => {
           return parseInt(a.accountBalance) + parseInt(b.accountBalance);
         })
       })
-      .pop();
+      .slice(-1);
 
-    const oldestBalance = userHistorical.historicalBalances
+    const oldestBalance = historicalBalances
       .map(balances => {
         return balances.reduce((a, b) => {
           return parseInt(a.accountBalance) + parseInt(b.accountBalance);
         })
-      })[0]
+      })
+      .slice(0, 1);
 
-    return mostRecentBalance - oldestBalance;
+    return parseInt(mostRecentBalance) - parseInt(oldestBalance);
   }
 
-  if (!Array.isArray(userHistorical.historicalBalances[0])) {
-    return 0;
+  if (historicalBalances) {
+    if (!Array.isArray(historicalBalances[0])) {
+      if (!historicalBalances.find(x => x.fund === fund)) {
+        return "...";
+      }
+
+      const mostRecentBalance = historicalBalances.slice(-1);
+
+      const oldestBalance = historicalBalances.slice(0, 1);
+
+      return parseInt(mostRecentBalance[0].accountBalance) - parseInt(oldestBalance[0].accountBalance);
+    }
+
+    const fundHistoricalBalances = historicalBalances.map(balances => {
+      return balances.filter(balance => {
+        return balance.fund === fund;
+      })[0];
+    });
+
+    const mostRecentBalance = fundHistoricalBalances.slice(-1);
+
+    const oldestBalance = fundHistoricalBalances.slice(0, 1);
+
+    return parseInt(mostRecentBalance[0].accountBalance) - parseInt(oldestBalance[0].accountBalance);
   }
 
-  const fundHistoricalBalances = userHistorical.historicalBalances.map(balances => {
-    return balances.filter(balance => {
-      return balance.fund === fund;
-    })[0];
-  });
-
-  const mostRecentBalance = fundHistoricalBalances.pop();
-
-  const oldestBalance = fundHistoricalBalances[0];
-
-  return parseInt(mostRecentBalance.accountBalance) - parseInt(oldestBalance.accountBalance);
+  return 0;
 }
 
+// TODO MILES: Probably a better way to send down this data from the backend that doesn't require all this funky stuff.
+const getDeltaLastUpdateDateTime = (historicalBalances, selectedFund) => {
+  if (!historicalBalances) { return "..."; }
 
+  if (Array.isArray(historicalBalances[0]) && selectedFund !== "ALL") {
+    const filteredBalance = historicalBalances[0].find(x => {
+      return x.fund === selectedFund;
+    });
+
+    if (filteredBalance) {
+      return new Date(historicalBalances[0][0].dateTime)
+        .toLocaleString("en-AU", { year: "numeric", month: "short", day: "numeric" })
+    }
+
+
+    const dateTime = new Date(filteredBalance.dateTime);
+    const formattedDate = dateTime
+      .toLocaleString("en-AU", { year: "numeric", month: "short", day: "numeric" });
+
+    return formattedDate;
+  }
+
+  if (Array.isArray(historicalBalances[0]) && selectedFund === "ALL") {
+    return new Date(historicalBalances[0][0].dateTime)
+      .toLocaleString("en-AU", { year: "numeric", month: "short", day: "numeric" })
+  }
+
+  if (historicalBalances[0].fund !== selectedFund && selectedFund !== "ALL") return "...";
+
+  return new Date(historicalBalances[0].dateTime)
+    .toLocaleString("en-AU", { year: "numeric", month: "short", day: "numeric" })
+}
 
 function AccountBalance({
   userCurrent,
@@ -132,7 +190,6 @@ function AccountBalance({
   userHistorical: any;
 }) {
 
-  console.log(userHistorical);
   const [selectedFund, setSelectedFund] = useState<Fund | "ALL">("ALL");
 
   const tabs = Object.keys(DashboardTabs)
@@ -199,7 +256,7 @@ function AccountBalance({
                 {!userCurrent ? (
                   <CircularProgress size={"2rem"} />
                 ) : (
-                  getFundBalance(selectedFund, userCurrent) || "No Funds"
+                  audCurrency(getFundBalance(selectedFund, userCurrent) || "") || "No Funds"
                 )}
               </Typography>
               {selectedFund === "ALL" ? (
@@ -220,12 +277,13 @@ function AccountBalance({
                   fontWeight="normal"
                   color="text.secondary"
                 >
+                  <Label sx={{ mr: 1 }}>{selectedFund} </Label>
                   {getUnits(selectedFund, userCurrent) || "..."} Units
                 </Typography>
               )}
               <Box display="flex" sx={{ py: 2 }} alignItems="center">
                 {
-                  getDelta(selectedFund, userHistorical) < 0 ? (
+                  getDelta(selectedFund, userHistorical?.historicalBalances) < 0 ? (
                     <AvatarFailure sx={{ mr: 2 }} variant="rounded">
                       <TrendingDown fontSize="large" />
                     </AvatarFailure>
@@ -237,22 +295,16 @@ function AccountBalance({
                 }
                 <Box>
                   {
-                    !userCurrent ? (
+                    !userHistorical ? (
                       <CircularProgress size={"2rem"} />
                     ) : (
                       <Typography variant="h4">
-                        {getDelta(selectedFund, userHistorical)}
+                        {audCurrency(getDelta(selectedFund, userHistorical?.historicalBalances))}
                       </Typography>
                     )
                   }
                   <Typography variant="subtitle2" noWrap>
-                    {Array.isArray(userHistorical?.historicalBalances[0]) ? (!userHistorical?.historicalBalances
-                      ? "..." :
-                      selectedFund !== "ALL" ?
-                        `since ${new Date(userHistorical.historicalBalances[0]
-                          .find((a) => a.fund === selectedFund)
-                          .dateTime).toLocaleString()}` : "since 30 days ago") :
-                      "..."}
+                    since: {getDeltaLastUpdateDateTime(userHistorical?.historicalBalances, selectedFund)}
                   </Typography>
                 </Box>
               </Box>
