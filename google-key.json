@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "balmoral-digital-351107",
+  "private_key_id": "adc814b74e8ac4cbf1675ca9251bb5005f97fc5a",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDZHpUz8dBuufCD\nyWS3RZxQzLZl7afpMGtPy6D+EceERKtvMbNjLYs3wLevVejDqh/0SRZ7DRx2VhJy\nmRNDRVoPSZmShKiLaj3iVq/At2lO7wyywnk0vqutOMnanmL6FJXs5b1h1ywrl1GA\nbsujOZH/vNvfDhYJGwqdb2B2QFtGlZaVkq7kPem6SI/LnUx+DId4Qi1iKFuzuTsj\nTSVOnnF/HsEZjzy+U2SzJWty7W43OMpuvFoRnBh6IJ/w9uNBj3gaW4WtWT8Nca/W\n57UkyuSS69ozoYHUWn3n9li8GfRAPlZDZNuhhJKlavmXTKkMGzmEViej5Y75Hx2X\nMDiaUAy/AgMBAAECggEAQHCWQeuEPEjNfJ+6V7a+VTDc9dWaX1hykSVTq/Sk7bnf\n08nBfy8WQb7eBZkO03vbrgo/NNhIWUrkgMSz9eRQfXcPsG/VAkPPCC1ITn9hLv8+\nGpQjmyb4FxpitpMJt0WC1eO92JsfTfTESMUZhWFh1rA75bDtk1hGR0G2NIKXVJQn\nQcP9QPwhkKELR35qbiMsXrA4GVl7Em/FYrOzRvzTWefmCXOELejIiMjWJzEr+zff\n4jlw6eEMfIYF3h99pObtQS5dPGIXT0s1WwhhhP2/RWdb/Mckq7dWsvwvdxSgK3ip\nvJYGzyYokKllgQY4AVze8bISNOtNfMArb842MdhwyQKBgQDsuIrQDTESKJV2CDd9\nbd9M67F8vZNjqBmG8VNcPC3R57reRB/KbjuGDl6aqEr/gKi6DKwXEtLv6r1hperv\n5ZAEJATWc7LsJJA5Fgl7NtJKnXk7B0EAM0gTESTTF5RzXNRZIXbX79OZq2tqDudT\nhi5/P+tYM8uQP4HV1/wpYyhYqwKBgQDqzV2W8LkGGO/XVMtZXiY4YRlR7Ub03Ijs\njwm5WTGQMjq0hxr0vErnPmCDiNLnNnCKmO25hYFOZCjJ+MwRoAi+JqVAdpUFVQHH\niL0a8Wp0xrQo54CWcGNkqYgx1AGVro9+5kJ3E6NQnq+T0V2YSFue2Eiyk0nAf3Iw\nEfCU4XDEPQKBgQCHZYJYP8NafIYIbei3QFnhmEn7bD9aV/LJ4UxpzC31CpMywEpi\nsawwIBXyZeIHxCI90DO6OtUVzvElYg4/ytEV3Tg7JRAoyz0GudkQdanQbcPChIKk\nR7Co3zxt1OXfGjCHDoH4Pr+L/KVCk2Wyu2Pq+rd0yqNbTUfI9XHQhlu0YwKBgD23\nYSQtfdSWdWQ6C4Ef+BfVndwk7AOse+kB5+JqCVcHfNq6sGEnpOCHSsMIEbdoXchw\nTfv3lXdPaFE+LhVr5SBl9AWvpZfTMjaKQHp2fi7Xk780ql3giJ+K2BuQyCHZ0ine\nyBWYedLVAv1tiJZgXoSwANu/TyFj3lW4QW5Am21ZAoGBAKnfNcAnX0JyeUBKW6jx\nq/EwrgaD/rYwiPQHfxu0ZVsRZJfWb7HyIBsBmvGeQ1yIfX5dHLQ99tHIPFFy0rD3\nNsyGiCFlXZ+Z/yEM6Ol5pP/ILabidwM2GOquMQ6ZbUJJCVx219tulLmf2jj/lMXG\nb76Af5DhgH8FVEO3G8EVv862\n-----END PRIVATE KEY-----\n",
+  "client_email": "gmail-service@balmoral-digital-351107.iam.gserviceaccount.com",
+  "client_id": "103220455538881284555",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/gmail-service%40balmoral-digital-351107.iam.gserviceaccount.com"
+}

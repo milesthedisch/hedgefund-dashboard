@@ -21,7 +21,7 @@ function Footer() {
         >
           <Box>
             <Typography variant="subtitle1">
-              &copy; 2021 - Balmoral Digital
+              &copy; {new Date().getFullYear()} - Balmoral Digital
             </Typography>
           </Box>
           <Typography sx={{ pt: { xs: 2, md: 0 } }} variant="subtitle1">

@@ -5,6 +5,7 @@
 
 # misc
 .DS_Store
+.env
 .env.local
 .env.development.local
 .env.test.local
@@ -16,3 +17,9 @@ yarn-error.log*
 
 # Next.js
 /.next
+.vercel
+sendgrid.env
+sendgrid.env
+
+/pscale_dump_balmoral-digital_revert-price-change
+/pscale_dump*

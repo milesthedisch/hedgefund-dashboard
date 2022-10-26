@@ -1,4 +1,12 @@
 {
   "extends": ["next", "prettier"],
-  "plugins": ["react", "import"]
+  "plugins": ["react", "import"],
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": ["@mui/*/*/*", "!@mui/material/test-utils/*"]
+      }
+    ]
+  }
 }
